@@ -1,0 +1,60 @@
+{
+  "folders": [
+    {
+      "name": "📚 Docs",
+      "path": "_docs"
+    },
+    {
+      "name": "📱 Apps",
+      "path": "apps"
+    },
+    {
+      "name": "📦 Packages",
+      "path": "packages"
+    },
+    {
+      "name": "🔧 Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.dart_tool": true,
+      "**/.packages": true,
+      "**/pubspec.lock": true,
+      "**/.flutter-plugins": true,
+      "**/.flutter-plugins-dependencies": true
+    },
+    "search.exclude": {
+      "**/.dart_tool": true,
+      "**/build": true,
+      "**/.melos_tool": true
+    },
+    "dart.lineLength": 100,
+    "editor.rulers": [100],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    },
+    "github.copilot.enable": {
+      "*": true,
+      "markdown": true,
+      "plaintext": false
+    },
+    "github.copilot.chat.codeGeneration.instructions": [
+      {
+        "file": ".github/copilot-instructions.md"
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "dart-code.dart-code",
+      "dart-code.flutter",
+      "github.copilot",
+      "github.copilot-chat",
+      "usernamehw.errorlens",
+      "wayou.vscode-todo-highlight"
+    ]
+  }
+}

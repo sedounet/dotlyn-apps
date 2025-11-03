@@ -1,0 +1,35 @@
+name: dotlyn_ui
+description: Shared UI components and theme for Dotlyn apps
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - lib/assets/sounds/
+    - lib/assets/fonts/
+    
+  fonts:
+    - family: Satoshi
+      fonts:
+        - asset: lib/assets/fonts/Satoshi-Variable.ttf
+        - asset: lib/assets/fonts/Satoshi-VariableItalic.ttf
+          style: italic
+    
+    - family: Manrope
+      fonts:
+        - asset: lib/assets/fonts/Manrope-VariableFont_wght.ttf

@@ -1,0 +1,37 @@
+name: dotlyn_apps
+repository: https://github.com/sedounet/dotlyn-apps
+
+packages:
+  - apps/**
+  - packages/**
+
+command:
+  bootstrap:
+    environment:
+      sdk: '>=3.0.0 <4.0.0'
+      flutter: '>=3.0.0'
+    
+  version:
+    branch: main
+    message: 'chore: publish packages'
+
+scripts:
+  analyze:
+    run: flutter analyze
+    description: Run Flutter analyze for all packages
+    
+  format:
+    run: dart format . --set-exit-if-changed
+    description: Format all Dart code
+    
+  test:
+    run: flutter test
+    description: Run tests for all packages
+    
+  clean:
+    run: flutter clean
+    description: Clean all packages
+
+  build:runner:
+    run: flutter pub run build_runner build --delete-conflicting-outputs
+    description: Run build_runner for code generation
