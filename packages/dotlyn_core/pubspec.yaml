@@ -5,9 +5,12 @@ publish_to: 'none'
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
-  # Add shared dependencies here
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
 
 dev_dependencies:
   test: ^1.24.0
