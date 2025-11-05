@@ -13,13 +13,69 @@ L’esprit DotLyn : *sans surcharge, sans fioriture, simplement efficace.*
 ## 2. Palette colorimétrique
 Palette inspirée du croquis (orange terre cuite) avec une base sobre et contrastée.
 
-| Usage | Nom | Code Hex | Description |
-|--------|------|-----------|--------------|
-| Primaire | **Orange Terre Cuite** | `#E36C2D` | Identité principale, chaleur et énergie |
-| Secondaire | **Gris Anthracite** | `#2C2C2C` | Texte, contraste, stabilité |
-| Tertiaire | **Blanc Cassé** | `#F8F8F8` | Fond clair, pureté, sobriété |
-| Accent | **Bleu Acier** | `#3A6EA5` | Liens, actions, contrepoint froid |
-| Variante Douce | **Beige Sable** | `#EADAC0` | Fond alternatif, ambiance douce |
+### Couleurs de base
+
+| Usage          | Nom                    | Code Hex  | Description                             |
+| -------------- | ---------------------- | --------- | --------------------------------------- |
+| Primaire       | **Orange Terre Cuite** | `#E36C2D` | Identité principale, chaleur et énergie |
+| Secondaire     | **Gris Anthracite**    | `#2C2C2C` | Texte, contraste, stabilité             |
+| Tertiaire      | **Blanc Cassé**        | `#F8F8F8` | Fond clair, pureté, sobriété            |
+| Accent         | **Bleu Acier**         | `#3A6EA5` | Liens, actions, contrepoint froid       |
+| Variante Douce | **Beige Sable**        | `#EADAC0` | Fond alternatif, ambiance douce         |
+
+### Nuances et variantes (pour interfaces)
+
+**Orange Terre Cuite (Primaire)**
+- Base : `#E36C2D`
+- Light : `#FF8D54` (hover, états actifs)
+- Dark : `#B84D15` (pressed, focus)
+- Lightest : `#FFF4EE` (backgrounds légers)
+- Darkest : `#8A3510` (texte sur fond clair)
+
+**Gris Anthracite (Secondaire)**
+- Base : `#2C2C2C`
+- Light : `#4A4A4A` (texte secondaire)
+- Dark : `#1A1A1A` (backgrounds sombres)
+
+**Bleu Acier (Accent)**
+- Base : `#3A6EA5`
+- Light : `#5A8EC5` (hover)
+- Dark : `#2A5E95` (pressed)
+
+**Beige Sable (Variante Douce)**
+- Base : `#EADAC0`
+- Light : `#F5EAD8` (backgrounds très légers)
+- Dark : `#D5C5A8` (bordures, dividers)
+
+### Couleurs sémantiques (feedback utilisateur)
+
+| Type    | Couleur | Code Hex  | Variantes                                              |
+| ------- | ------- | --------- | ------------------------------------------------------ |
+| Success | Vert    | `#4CAF50` | Light: `#81C784`, Dark: `#388E3C`, Lightest: `#E8F5E9` |
+| Warning | Ambre   | `#FFC107` | Light: `#FFD54F`, Dark: `#FFA000`, Lightest: `#FFF8E1` |
+| Error   | Rouge   | `#F44336` | Light: `#E57373`, Dark: `#D32F2F`, Lightest: `#FFEBEE` |
+| Info    | Bleu    | `#2196F3` | Light: `#64B5F6`, Dark: `#1976D2`, Lightest: `#E3F2FD` |
+
+### Échelle de gris (neutre)
+
+Utilisée pour textes, bordures, backgrounds secondaires :
+- Grey 50 : `#FAFAFA`
+- Grey 100 : `#F5F5F5`
+- Grey 200 : `#EEEEEE`
+- Grey 300 : `#E0E0E0`
+- Grey 400 : `#BDBDBD`
+- Grey 500 : `#9E9E9E`
+- Grey 600 : `#757575`
+- Grey 700 : `#616161`
+- Grey 800 : `#424242`
+- Grey 900 : `#212121`
+
+### Principes d'utilisation
+
+1. **Hiérarchie visuelle** : Utiliser l'orange terre cuite pour les CTA principaux, le bleu acier pour les actions secondaires
+2. **Contraste** : Toujours vérifier le ratio de contraste (WCAG AA minimum : 4.5:1 pour le texte)
+3. **Cohérence** : Utiliser les variantes (light/dark) de manière cohérente pour les états (hover, pressed, disabled)
+4. **Accessibilité** : Les couleurs sémantiques doivent être accompagnées d'icônes ou de texte (ne pas se fier uniquement à la couleur)
 
 ---
 

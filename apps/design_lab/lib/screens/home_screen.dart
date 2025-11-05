@@ -6,6 +6,7 @@ import 'theme_screen.dart';
 import 'buttons_screen.dart';
 import 'inputs_screen.dart';
 import 'cards_screen.dart';
+import 'dialogs_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -73,6 +74,15 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const CardsScreen()),
             ),
           ),
+          _MenuCard(
+            title: 'Dialogs & Popups',
+            description: 'DialogBox, Popup, ListView',
+            icon: Icons.chat_bubble_outline,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const DialogsScreen()),
+            ),
+          ),
         ],
       ),
     );
@@ -112,7 +122,8 @@ class _MenuCard extends StatelessWidget {
                 child: Icon(icon, color: DotlynColors.primary, size: 32),
               ),
               const SizedBox(width: 16),
-              Expanded(
+              Flexible(
+                fit: FlexFit.loose,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
