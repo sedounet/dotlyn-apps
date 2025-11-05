@@ -30,6 +30,8 @@ flutter:
         - asset: lib/assets/fonts/Satoshi-VariableItalic.ttf
           style: italic
     
-    - family: Manrope
+    - family: PlusJakartaSans
       fonts:
-        - asset: lib/assets/fonts/Manrope-VariableFont_wght.ttf
+        - asset: lib/assets/fonts/PlusJakartaSans-VariableFont_wght.ttf
+        - asset: lib/assets/fonts/PlusJakartaSans-Italic-VariableFont_wght.ttf
+          style: italic

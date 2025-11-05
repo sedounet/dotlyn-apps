@@ -446,7 +446,7 @@ cd ../..
 
 ---
 
-## 📱 ÉTAPE 5 : App Design Lab
+## 📱 ÉTAPE 5 : App Design Lab (COMPLÈTE ET STANDALONE)
 
 ### Créer l'app
 
@@ -462,7 +462,7 @@ cd design_lab
 
 ```yaml
 name: design_lab
-description: Dotlyn Design System Showcase
+description: Dotlyn Design System Showcase - APP STANDALONE POUR TESTER TOUS LES WIDGETS
 version: 0.1.0
 publish_to: none
 
@@ -501,6 +501,7 @@ import 'package:dotlyn_core/dotlyn_core.dart';
 import 'screens/home_screen.dart';
 
 void main() {
+  debugPrint('🚀 Design Lab - App standalone pour tester le Design System');
   runApp(const DesignLabApp());
 }
 
@@ -528,7 +529,7 @@ class DesignLabApp extends StatelessWidget {
 }
 ```
 
-### home_screen.dart
+### home_screen.dart (Navigation principale)
 
 Créer `apps/design_lab/lib/screens/home_screen.dart` :
 
@@ -537,6 +538,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:dotlyn_core/dotlyn_core.dart';
+import 'theme_screen.dart';
+import 'buttons_screen.dart';
+import 'inputs_screen.dart';
+import 'cards_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -558,15 +563,335 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Display Large', style: Theme.of(context).textTheme.displayLarge),
-          const SizedBox(height: 16),
-          Text('Headline Medium', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 16),
-          Text('Body Large', style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            'Design System Showcase',
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Explore tous les composants Dotlyn',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           const SizedBox(height: 32),
+          
+          _MenuCard(
+            title: 'Theme & Typography',
+            description: 'Couleurs, fonts, styles de texte',
+            icon: Icons.palette,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ThemeScreen()),
+            ),
+          ),
+          
+          _MenuCard(
+            title: 'Buttons',
+            description: 'Tous les types de boutons',
+            icon: Icons.smart_button,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ButtonsScreen()),
+            ),
+          ),
+          
+          _MenuCard(
+            title: 'Inputs',
+            description: 'Champs de texte, formulaires',
+            icon: Icons.input,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const InputsScreen()),
+            ),
+          ),
+          
+          _MenuCard(
+            title: 'Cards',
+            description: 'Cartes et containers',
+            icon: Icons.credit_card,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CardsScreen()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MenuCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _MenuCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: DotlynColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: DotlynColors.primary, size: 32),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(description, style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+### theme_screen.dart
+
+Créer `apps/design_lab/lib/screens/theme_screen.dart` :
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:dotlyn_ui/dotlyn_ui.dart';
+
+class ThemeScreen extends StatelessWidget {
+  const ThemeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Theme & Typography')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text('Couleurs', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _ColorChip('Primary', DotlynColors.primary),
+              _ColorChip('Secondary', DotlynColors.secondary),
+              _ColorChip('Accent', DotlynColors.accent),
+              _ColorChip('Success', DotlynColors.success),
+              _ColorChip('Warning', DotlynColors.warning),
+              _ColorChip('Error', DotlynColors.error),
+            ],
+          ),
+          const SizedBox(height: 32),
+          
+          Text('Typographie', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          Text('Display Large (Satoshi)', style: Theme.of(context).textTheme.displayLarge),
+          Text('Headline Medium (Satoshi)', style: Theme.of(context).textTheme.headlineMedium),
+          Text('Title Large (Jakarta)', style: Theme.of(context).textTheme.titleLarge),
+          Text('Body Large (Jakarta)', style: Theme.of(context).textTheme.bodyLarge),
+          Text('Label Medium (Jakarta)', style: Theme.of(context).textTheme.labelMedium),
+        ],
+      ),
+    );
+  }
+}
+
+class _ColorChip extends StatelessWidget {
+  final String name;
+  final Color color;
+
+  const _ColorChip(this.name, this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(name, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+}
+```
+
+### buttons_screen.dart
+
+Créer `apps/design_lab/lib/screens/buttons_screen.dart` :
+
+```dart
+import 'package:flutter/material.dart';
+
+class ButtonsScreen extends StatelessWidget {
+  const ButtonsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Buttons')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text('Button Types', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          ElevatedButton(onPressed: () {}, child: const Text('Elevated Button')),
+          const SizedBox(height: 12),
+          OutlinedButton(onPressed: () {}, child: const Text('Outlined Button')),
+          const SizedBox(height: 12),
+          TextButton(onPressed: () {}, child: const Text('Text Button')),
+          const SizedBox(height: 32),
+          
+          Text('Button Sizes', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {},
-            child: const Text('Primary Button'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: const Text('Small'),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(onPressed: () {}, child: const Text('Medium (default)')),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            ),
+            child: const Text('Large'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### inputs_screen.dart
+
+Créer `apps/design_lab/lib/screens/inputs_screen.dart` :
+
+```dart
+import 'package:flutter/material.dart';
+
+class InputsScreen extends StatelessWidget {
+  const InputsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Inputs')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text('Text Fields', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          const TextField(decoration: InputDecoration(labelText: 'Basic Input')),
+          const SizedBox(height: 16),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'Email',
+              prefixIcon: Icon(Icons.email),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'Password',
+              prefixIcon: Icon(Icons.lock),
+              suffixIcon: Icon(Icons.visibility),
+            ),
+            obscureText: true,
+          ),
+          const SizedBox(height: 16),
+          const TextField(
+            decoration: InputDecoration(labelText: 'Multiline'),
+            maxLines: 4,
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### cards_screen.dart
+
+Créer `apps/design_lab/lib/screens/cards_screen.dart` :
+
+```dart
+import 'package:flutter/material.dart';
+
+class CardsScreen extends StatelessWidget {
+  const CardsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Cards')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text('Card Types', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Basic Card', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text('Contenu de la carte', style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 8,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Elevated Card', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text('Avec elevation plus haute', style: Theme.of(context).textTheme.bodyMedium),
+                ],
+              ),
+            ),
           ),
         ],
       ),
