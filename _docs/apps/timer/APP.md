@@ -1,97 +1,95 @@
 # Timer — Documentation de développement
 
 > **Version actuelle** : 0.1.0 (MVP)  
-> **Dernière update** : 2025-11-03  
+> **Dernière update** : 2025-11-06  
 > **Status** : 🚧 En développement actif
 
 ---
 
 ## 🎯 Vision
 
-Timer simple et fiable qui fonctionne en arrière-plan avec notifications riches.  
-Permet de gérer des sessions de travail/repos (Pomodoro ou custom).
+**Le timer le plus simple et fiable.**  
+Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
-**Cas d'usage** : Étudiants en révision, freelances, professionnels utilisant méthode Pomodoro.
+**Différenciation** : Pas de features inutiles, juste un timer qui marche à tous les coups.  
+**Cas d'usage** : Cuisine, méditation, révisions, sieste, sport, n'importe quelle tâche chronométrée.
 
 ---
 
 ## 📦 Versions
 
 ### v0.1 — MVP (en cours)
-- [x] Interface timer avec play/pause/reset
-- [x] Configuration durée personnalisée
-- [x] Sons configurables (3 choix)
-- [x] Vibrations
-- [ ] **EN COURS** : Fonctionnement en background (iOS/Android)
-- [ ] **EN COURS** : Notifications basiques de fin de session
+- [ ] Interface timer simple : durée + play/pause/reset
+- [ ] Sélecteur durée rapide (1/5/10/15/30 min + custom)
+- [ ] Sons configurables (3 choix simples)
+- [ ] Vibrations
+- [ ] Fonctionnement en background (iOS/Android)
+- [ ] Notification de fin de session
+- [ ] Page settings minimale (son, vibration, thème)
 
-**Critère de succès MVP** : Timer utilisable quotidiennement sans avoir à garder l'app ouverte.
+**Critère de succès MVP** : Timer utilisable en cuisine/méditation sans avoir à garder l'app ouverte.
 
----
-
-### v0.2 — Post-MVP Phase 1
-- [ ] Notifications enrichies (pause/resume depuis notif)
-- [ ] Presets timers favoris (25min Pomodoro, 5min pause, custom)
-- [ ] Historique des sessions (local)
-- [ ] Settings avancés (sons custom, vibreur on/off, thème clair/sombre)
-- [ ] Animations UI polish
+**Note** : Pas d'analytics/ads dans MVP. Focus sur la fiabilité technique (background service).
 
 ---
 
-### v0.3 — Phase 2
-- [ ] Stats graphiques (temps total/jour, sessions/semaine)
-- [ ] Export données CSV
+### v0.2 — Post-MVP Phase 1 (Monétisation)
+- [ ] Google Analytics intégré
+- [ ] Google Ads (bannière en bas)
+- [ ] Possibilité de support par video ads (remove ads)
+- [ ] Système de favoris UI (presets) stockage local
+- [ ] Réglage retour haptique avancé
+
+---
+
+### v0.3 — Phase 2 (Features avancées)
 - [ ] Multi-timers simultanés (max 3)
-- [ ] Mode focus avec DND automatique
+- [ ] Backup données sur cloud (Google Drive/iCloud)
 - [ ] Widget home screen (Android/iOS)
+- [ ] Mode focus avec DND automatique
+- [ ] Sons custom (upload perso)
 
 ---
 
 ## 📝 TODO
 
-### 🔴 P1 — ASAP (débloqueurs)
+### 🔴 P1 — ASAP (MVP)
 
-- [ ] **Bug critique** : Timer se réinitialise si app tuée brutalement (Android 12+) → Issue #1
-  - **Impact** : Rend l'app inutilisable en arrière-plan
-  - **Action** : Implémenter service foreground Android
-  
-- [ ] Implémenter permissions background Android 12+ → Issue #2
-  - **Bloque** : Background service (feature MVP)
-  - **Action** : REQUEST_IGNORE_BATTERY_OPTIMIZATIONS + config AndroidManifest
-  
-- [ ] Configurer plugin notification iOS avec validation → Issue #3
-  - **Bloque** : Notifications (feature MVP)
-  - **Action** : Setup flutter_local_notifications + permissions iOS
+- [ ] Implémenter background service Android (Foreground Service)
+- [ ] Implémenter background task iOS (Background Modes + Local Notifications)
+- [ ] Configurer permissions Android 12+ (REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+- [ ] Setup flutter_local_notifications + permissions iOS
+- [ ] Tester comportement avec écran éteint pendant 30+ minutes
 
 ---
 
-### 🟡 P2 — v0.2 (prochaine version)
+### � P2 — v0.2 (Monétisation)
 
-- [ ] Notifications enrichies avec boutons pause/resume → Issue #10
-- [ ] Presets favoris (UI + storage local) → Issue #11
-- [ ] Historique sessions avec SQLite → Issue #12
-- [ ] Settings page complète (sons, vibreur, thème) → Issue #13
+- [ ] Intégration Firebase Analytics
+- [ ] Intégration Google AdMob (bannière + interstitiel)
+- [ ] Consent GDPR/CCPA (app_tracking_transparency iOS)
+- [ ] Presets favoris (UI + storage local)
+- [ ] Réglage haptique avancé
 
 ---
 
-### 🔵 P3 — v0.3 et plus tard
+### 🔵 P3 — v0.3 (Features avancées)
 
-- [ ] Stats graphiques avec charts (fl_chart package)
-- [ ] Export CSV avec share
-- [ ] Multi-timers (architecture à revoir)
-- [ ] Trouver sonnerie plus dynamique/énergique
-- [ ] Mode focus avec intégration DND système
+- [ ] Multi-timers simultanés (max 3)
+- [ ] Backup cloud (Google Drive/iCloud)
+- [ ] Widget home screen (Android/iOS)
+- [ ] Mode focus avec DND automatique
+- [ ] Sons custom uploadés par utilisateur
 
 ---
 
 ## 🐛 Bugs connus
 
 ### Critiques (empêchent utilisation)
-- [ ] Timer se réinitialise si app tuée → #1
+
+---
 
 ### Mineurs (contournables)
-- [ ] Son ne joue pas si téléphone en mode silencieux total → #4
-- [ ] Vibration parfois retardée de 1-2 secondes → #5
 
 ---
 
