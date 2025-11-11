@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dotlyn_ui/dotlyn_ui.dart';
 
 class DialogsScreen extends StatelessWidget {
-  const DialogsScreen({Key? key}) : super(key: key);
+  const DialogsScreen({super.key});
 
   void _showDialog(BuildContext context) {
     showDialog(

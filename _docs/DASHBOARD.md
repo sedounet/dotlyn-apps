@@ -33,12 +33,12 @@
 
 ## 📊 Vue globale
 
-| App | Version | Status | Cible 1ère sortie |
-|-----|---------|--------|-------------------|
-| Timer | 0.1.0 | 🚧 MVP | Janvier 2025 |
-| Pomodoro | - | 📋 Planifié | Février 2025 |
-| Tabata | - | 📋 Planifié | Mars 2025 |
-| Design Lab | - | ✅ Interne | - |
+| App        | Version | Status     | Cible 1ère sortie |
+| ---------- | ------- | ---------- | ----------------- |
+| Timer      | 0.1.0   | 🚧 MVP      | Janvier 2025      |
+| Pomodoro   | -       | 📋 Planifié | Février 2025      |
+| Tabata     | -       | 📋 Planifié | Mars 2025         |
+| Design Lab | -       | ✅ Interne  | -                 |
 
 ---
 
@@ -54,11 +54,11 @@
 
 ## 📦 Packages Partagés
 
-| Package | Utilité | Status |
-|---------|---------|--------|
-| `dotlyn_ui` | Thème, couleurs, typography, widgets | ✅ Opérationnel |
-| `dotlyn_core` | Providers, utils, constants | ✅ Opérationnel |
-| `dotlyn_timer_engine` | Logique timer réutilisable | 📋 À créer |
+| Package               | Utilité                              | Status         |
+| --------------------- | ------------------------------------ | -------------- |
+| `dotlyn_ui`           | Thème, couleurs, typography, widgets | ✅ Opérationnel |
+| `dotlyn_core`         | Providers, utils, constants          | ✅ Opérationnel |
+| `dotlyn_timer_engine` | Logique timer réutilisable           | 📋 À créer      |
 
 ---
 

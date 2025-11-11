@@ -34,7 +34,7 @@ class DotlynTheme {
         outline: DotlynColors.borderLight,
         outlineVariant: DotlynColors.dividerLight,
         shadow: DotlynColors.grey300,
-        scrim: DotlynColors.secondary.withOpacity(0.5),
+        scrim: DotlynColors.secondary.withValues(alpha: 0.5),
         inverseSurface: DotlynColors.secondary,
         onInverseSurface: Colors.white,
         inversePrimary: DotlynColors.primaryLight,
@@ -86,9 +86,9 @@ class DotlynTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed))
-              return DotlynColors.primaryDark.withOpacity(0.2);
+              return DotlynColors.primaryDark.withValues(alpha: 0.2);
             if (states.contains(WidgetState.hovered))
-              return DotlynColors.primaryLight.withOpacity(0.1);
+              return DotlynColors.primaryLight.withValues(alpha: 0.1);
             return null;
           }),
         ),
@@ -102,8 +102,10 @@ class DotlynTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.pressed)) return DotlynColors.primary.withOpacity(0.1);
-            if (states.contains(WidgetState.hovered)) return DotlynColors.primary.withOpacity(0.05);
+            if (states.contains(WidgetState.pressed))
+              return DotlynColors.primary.withValues(alpha: 0.1);
+            if (states.contains(WidgetState.hovered))
+              return DotlynColors.primary.withValues(alpha: 0.05);
             return null;
           }),
         ),
@@ -115,8 +117,10 @@ class DotlynTheme {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.pressed)) return DotlynColors.primary.withOpacity(0.1);
-            if (states.contains(WidgetState.hovered)) return DotlynColors.primary.withOpacity(0.05);
+            if (states.contains(WidgetState.pressed))
+              return DotlynColors.primary.withValues(alpha: 0.1);
+            if (states.contains(WidgetState.hovered))
+              return DotlynColors.primary.withValues(alpha: 0.05);
             return null;
           }),
         ),
@@ -224,7 +228,7 @@ class DotlynTheme {
         outline: DotlynColors.borderDark,
         outlineVariant: DotlynColors.dividerDark,
         shadow: Colors.black,
-        scrim: Colors.black.withOpacity(0.5),
+        scrim: Colors.black.withValues(alpha: 0.5),
         inverseSurface: DotlynColors.grey100,
         onInverseSurface: DotlynColors.secondary,
         inversePrimary: DotlynColors.primaryDark,
@@ -273,9 +277,9 @@ class DotlynTheme {
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed))
-              return DotlynColors.primaryDark.withOpacity(0.3);
+              return DotlynColors.primaryDark.withValues(alpha: 0.3);
             if (states.contains(WidgetState.hovered))
-              return DotlynColors.primaryLight.withOpacity(0.2);
+              return DotlynColors.primaryLight.withValues(alpha: 0.2);
             return null;
           }),
         ),
@@ -289,8 +293,10 @@ class DotlynTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.pressed)) return DotlynColors.primary.withOpacity(0.2);
-            if (states.contains(WidgetState.hovered)) return DotlynColors.primary.withOpacity(0.1);
+            if (states.contains(WidgetState.pressed))
+              return DotlynColors.primary.withValues(alpha: 0.2);
+            if (states.contains(WidgetState.hovered))
+              return DotlynColors.primary.withValues(alpha: 0.1);
             return null;
           }),
         ),
@@ -302,8 +308,10 @@ class DotlynTheme {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.pressed)) return DotlynColors.primary.withOpacity(0.2);
-            if (states.contains(WidgetState.hovered)) return DotlynColors.primary.withOpacity(0.1);
+            if (states.contains(WidgetState.pressed))
+              return DotlynColors.primary.withValues(alpha: 0.2);
+            if (states.contains(WidgetState.hovered))
+              return DotlynColors.primary.withValues(alpha: 0.1);
             return null;
           }),
         ),
