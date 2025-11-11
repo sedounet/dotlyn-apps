@@ -44,7 +44,7 @@ dotlyn-apps/
 
 ### 2. Système de Documentation
 
-**Chaque app a EXACTEMENT 2 fichiers** :
+**Chaque app a EXACTEMENT 3 fichiers** :
 
 #### APP.md (fichier de travail)
 - Versions (v0.1 MVP, v0.2, v0.3+)
@@ -62,10 +62,16 @@ dotlyn-apps/
 - Différenciation
 - Métriques succès
 
+#### PROMPTS.md (instructions pour LLMs)
+- Template structuré pour formuler des prompts à GPT-4 ou autres LLMs
+- Sections : Objectif, Instructions détaillées, Contraintes design, Dépendances, Critères de validation, Points d'attention, Fichiers concernés, Références
+- Usage : remplir les sections pertinentes avant de soumettre à un LLM pour effectuer des opérations en série
+- Permet de structurer les demandes complexes et de maintenir le contexte projet
+
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
 - Créer de fichier MASTER.md
-- Multiplier les fichiers de doc
+- Multiplier les fichiers de doc au-delà de ces 3 fichiers
 
 ---
 
