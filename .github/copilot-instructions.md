@@ -63,10 +63,10 @@ dotlyn-apps/
 - Métriques succès
 
 #### PROMPTS.md (instructions pour LLMs)
-- Template structuré pour formuler des prompts à GPT-4 ou autres LLMs
-- Sections : Objectif, Instructions détaillées, Contraintes design, Dépendances, Critères de validation, Points d'attention, Fichiers concernés, Références
-- Usage : remplir les sections pertinentes avant de soumettre à un LLM pour effectuer des opérations en série
-- Permet de structurer les demandes complexes et de maintenir le contexte projet
+- Espace pour écrire en langage naturel ce qu'on veut réaliser
+- Optionnel : ajouter maquette/capture et points d'attention
+- Workflow : utilisateur écrit → Copilot transforme en prompt structuré → exécution
+- Permet de garder une trace des demandes et du contexte projet
 
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
