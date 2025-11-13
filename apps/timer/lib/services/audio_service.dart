@@ -7,17 +7,17 @@ class AudioService {
 
   /// Précharge le son pour éviter les lags
   Future<void> preloadSound(String soundName) async {
-    await _audioPlayer.setSource(AssetSource('sounds/$soundName'));
+    await _audioPlayer.setSource(AssetSource('assets/sounds/$soundName'));
   }
 
   /// Joue un son depuis assets/sounds/
   Future<void> playSound(String soundName) async {
-    await _audioPlayer.play(AssetSource('sounds/$soundName'));
+    await _audioPlayer.play(AssetSource('assets/sounds/$soundName'));
   }
 
   /// Déclenche une vibration
   Future<void> vibrate() async {
-    final hasVibrator = await Vibration.hasVibrator() ?? false;
+    final hasVibrator = await Vibration.hasVibrator();
     if (hasVibrator) {
       Vibration.vibrate(duration: 500);
     }
