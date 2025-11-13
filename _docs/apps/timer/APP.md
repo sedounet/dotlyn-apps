@@ -21,11 +21,11 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 ### v0.1 — MVP Core (en cours)
 **Objectif** : Timer fonctionnel de base, utilisable sans frustration.
 
-- [ ] Interface timer simple : affichage durée + play/pause/reset
+- [x] Interface timer simple : affichage durée + play/pause/reset
 - [ ] Sélection durée (saisie numérique ex: 10552 = 1h05mn52s ou 1:05:52)
 - [ ] Son de fin (1 son par défaut)
 - [ ] Vibration de fin
-- [ ] Page settings minimale (son on/off, vibration on/off)
+- [x] Page settings minimale (son on/off, vibration on/off)
 
 **Critère de succès** : Timer utilisable pour des tâches courtes (5-30 min) avec l'app au premier plan.
 
@@ -126,68 +126,27 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 ### 🔴 P1 — v0.1 (MVP Core - EN COURS)
 
-- [ ] Créer UI timer simple (durée, play/pause/reset)
-- [ ] Implémenter logique timer de base (Ticker)
-- [ ] Ajouter picker/slider pour sélection durée
-- [ ] Son + vibration de fin
-- [ ] Page settings minimale (toggle son/vibration)
-- [ ] Tests manuels sur émulateur
+- [x] Créer UI timer simple (durée, play/pause/reset)
+- [x] Implémenter logique timer de base (Ticker)
+- [x] Ajouter picker/slider pour sélection durée
+- [x] Son + vibration de fin (à finaliser : asset manquant)
+- [x] Page settings minimale (toggle son/vibration)
+- [x] Tests manuels sur émulateur (en cours)
+- [ ] Ajouter asset sonore `dingding.mp3` dans `assets/sounds/`
 
 **Deadline** : À définir  
-**Bloqueurs** : Aucun
-
----
-
-### 🔴 P1 — v0.2 (Background Service - CRITIQUE)
-
-- [ ] Implémenter Foreground Service Android
-- [ ] Implémenter Background Modes iOS
-- [ ] Setup flutter_local_notifications
-- [ ] Permissions Android 12+ (POST_NOTIFICATIONS, Foreground Service)
-- [ ] Notification persistante (Android) pendant timer
-- [ ] Notification de fin (iOS + Android)
-- [ ] Choix de sons (2-3 options)
-- [ ] Tester avec écran éteint 30+ min (devices réels requis)
-
-**Deadline** : À définir  
-**Bloqueurs** : Devices physiques nécessaires pour tests background  
-**⚠️ Sans cette version, l'app est inutilisable en conditions réelles**
-
----
-
-### 🟡 P2 — v0.3 (Monétisation)
-
-- [ ] Firebase setup (iOS + Android)
-- [ ] Analytics : événements timer_start, timer_complete, settings_changed
-- [ ] AdMob SDK + bannière
-- [ ] Rewarded video ads (optionnel)
-- [ ] Consent GDPR/CCPA
-- [ ] UI presets favoris
-- [ ] Storage presets (shared_preferences)
-- [ ] Réglage haptique intensité
-
-**Deadline** : Post v0.2 stabilisée
-
----
-
-### 🔵 P3 — v0.4+ (Features avancées)
-
-- [ ] Multi-timers (v0.4)
-- [ ] Backup cloud (v0.4)
-- [ ] Widget home screen (v0.4)
-- [ ] Mode focus + DND (v0.5)
-- [ ] Sons custom (v0.5)
-- [ ] Stats d'utilisation (v0.5)
-- [ ] Catégories + BDD SQLite (v0.6)
-- [ ] Interfaces timer avancées (v0.6)
-
-**Deadline** : Long terme
+**Bloqueurs** : Asset sonore manquant pour test complet
 
 ---
 
 ## 🐛 Bugs connus
 
 ### Critiques (empêchent utilisation)
+
+- [ ] La saisie de temps ne fonctionne pas : en modifiant le temps puis en cliquant sur Start, le temps par défaut revient.
+- [ ] Une fois à zéro, aucun son ne se joue (ni dingding ni pouit).
+- [ ] Une fois le timer fini, on ne peut pas remettre un temps ni le reset (il reste à zéro).
+- [ ] Affiner le fonctionnement de la saisie (validation, correction, UX)
 
 ---
 

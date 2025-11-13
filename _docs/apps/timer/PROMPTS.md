@@ -7,6 +7,15 @@
 ## � Ce que je veux faire
 
 <!-- Décris librement ce que tu veux accomplir, comme si tu parlais à quelqu'un -->
+nous allons commencer par les deux pages prinipales du timer. la page principale avec le timer et les boutons play/pause/reset, et la page des paramètres avec les options son et vibration.
+
+la page timer doit afficher le temps restant, un champ pour saisir la durée (en format numérique ou hh:mm:ss), et les boutons play, pause, reset en dessous.
+
+la saisie se fait par selection du champ numérique qui ouvre un clavier numérique. la saisie se fait au format hh:mm:ss avec une limite de 12h au maximum. 
+
+la saisie doit etre validee. si l'utilisateur entre par exemple 1:65:00, il faut corriger en 2:05:00 automatiquement. si l'utilisateur entre plus de 12h, on bloque la saisie et on affiche un message d'erreur non bloquant.
+
+a rediscuter le meilleur moyen d'implementer la saisie et la gestion des erreurs et validation
 
 **Exemple** :
 ```
