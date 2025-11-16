@@ -143,10 +143,10 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 ### Critiques (empêchent utilisation)
 
-- [ ] La saisie de temps ne fonctionne pas : en modifiant le temps puis en cliquant sur Start, le temps par défaut revient.
-- [ ] Une fois à zéro, aucun son ne se joue (ni dingding ni pouit).
-- [ ] Une fois le timer fini, on ne peut pas remettre un temps ni le reset (il reste à zéro).
-- [ ] Affiner le fonctionnement de la saisie (validation, correction, UX)
+- [x] ~~La saisie de temps ne fonctionne pas : en modifiant le temps puis en cliquant sur Start, le temps par défaut revient.~~ **Corrigé** : Controller initialisé correctement, flag `_isEditing`
+- [x] ~~Une fois à zéro, aucun son ne se joue (ni dingding ni pouit).~~ **Corrigé** : Asset path corrigé
+- [x] ~~Une fois le timer fini, on ne peut pas remettre un temps ni le reset (il reste à zéro).~~ **Corrigé** : Start utilise duration au lieu de remaining
+- [x] ~~Saisie non fluide (controller recréé à chaque build).~~ **Corrigé** : Controller stable + flag `_isEditing`
 
 ---
 

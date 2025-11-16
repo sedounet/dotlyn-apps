@@ -32,9 +32,9 @@ class TimerControls extends StatelessWidget {
             } else if (status == TimerStatus.paused) {
               timerProvider.resume();
             } else {
-              // Idle - start with current duration
+              // Idle - start with configured duration (not the potentially-zero remaining)
               if (timerProvider.errorMessage == null) {
-                timerProvider.start(timerProvider.remaining);
+                timerProvider.start(timerProvider.duration);
               }
             }
           },

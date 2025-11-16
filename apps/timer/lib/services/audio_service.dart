@@ -7,12 +7,14 @@ class AudioService {
 
   /// Précharge le son pour éviter les lags
   Future<void> preloadSound(String soundName) async {
-    await _audioPlayer.setSource(AssetSource('assets/sounds/$soundName'));
+    // Use path relative to assets declared in pubspec (flutter will map assets/ prefix).
+    // audioplayers expects the asset path without duplicating 'assets/' prefix.
+    await _audioPlayer.setSource(AssetSource('sounds/$soundName'));
   }
 
   /// Joue un son depuis assets/sounds/
   Future<void> playSound(String soundName) async {
-    await _audioPlayer.play(AssetSource('assets/sounds/$soundName'));
+    await _audioPlayer.play(AssetSource('sounds/$soundName'));
   }
 
   /// Déclenche une vibration

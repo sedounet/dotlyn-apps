@@ -62,16 +62,28 @@ dotlyn-apps/
 - Différenciation
 - Métriques succès
 
-#### PROMPTS.md (instructions pour LLMs)
-- Espace pour écrire en langage naturel ce qu'on veut réaliser
-- Optionnel : ajouter maquette/capture et points d'attention
-- Workflow : utilisateur écrit → Copilot transforme en prompt structuré → exécution
-- Permet de garder une trace des demandes et du contexte projet
+#### PROMPT_USER.md (demande utilisateur)
+- Fichier en langage naturel (1-2 chapitres max)
+- L'utilisateur décrit ce qu'il veut réaliser
+- Optionnel : maquette/capture et points d'attention
+- **À vider ou supprimer après transformation**
+
+#### PROMPT_AI.md (instructions structurées)
+- Généré par Copilot à partir de PROMPT_USER.md
+- Objectif + tâches + contexte technique + critères de succès
+- **Supprimé ou réécrit à chaque nouvelle demande**
+
+**Workflow** :
+1. Utilisateur écrit dans PROMPT_USER.md
+2. Copilot lit et transforme en PROMPT_AI.md structuré
+3. Copilot exécute les tâches
+4. Fichiers vidés/supprimés pour la prochaine demande
 
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
 - Créer de fichier MASTER.md
-- Multiplier les fichiers de doc au-delà de ces 3 fichiers
+- Garder plusieurs versions de prompts (PROMPT_V0.1.md, etc.)
+- Multiplier les fichiers de doc au-delà de APP.md + PITCH.md + PROMPT_USER.md + PROMPT_AI.md
 
 ---
 

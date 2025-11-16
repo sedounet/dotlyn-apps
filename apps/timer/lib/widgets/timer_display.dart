@@ -14,17 +14,43 @@ class TimerDisplay extends StatefulWidget {
 
 class _TimerDisplayState extends State<TimerDisplay> {
   late TextEditingController _controller;
+  late FocusNode _focusNode;
   final TimerService _timerService = TimerService();
+  bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    final timerProvider = context.read<TimerProvider>();
+    _controller = TextEditingController(text: _timerService.formatDuration(timerProvider.duration));
+    _focusNode = FocusNode();
+
+    _focusNode.addListener(() {
+      setState(() {
+        _isEditing = _focusNode.hasFocus;
+      });
+
+      if (!_focusNode.hasFocus) {
+        // When focus is lost, validate and correct input
+        final timerProvider = context.read<TimerProvider>();
+        final corrected = timerProvider.validateAndCorrectInput(_controller.text);
+        if (corrected != null) {
+          _controller.text = corrected;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✓ Temps corrigé : $corrected'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -34,11 +60,20 @@ class _TimerDisplayState extends State<TimerDisplay> {
     final remaining = timerProvider.remaining;
     final status = timerProvider.status;
 
-    // Mettre à jour le texte du controller
-    _controller.text = _timerService.formatDuration(remaining);
-    _controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: _controller.text.length),
-    );
+    // Mettre à jour le texte du controller uniquement si l'utilisateur n'est pas en train d'éditer
+    if (!_isEditing && status != TimerStatus.idle) {
+      // Pendant que le timer tourne, mettre à jour l'affichage
+      final text = _timerService.formatDuration(remaining);
+      if (_controller.text != text) {
+        _controller.text = text;
+      }
+    } else if (!_isEditing && status == TimerStatus.idle) {
+      // Quand idle, afficher la durée configurée (pas remaining)
+      final text = _timerService.formatDuration(timerProvider.duration);
+      if (_controller.text != text) {
+        _controller.text = text;
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -46,6 +81,7 @@ class _TimerDisplayState extends State<TimerDisplay> {
         children: [
           TextField(
             controller: _controller,
+            focusNode: _focusNode,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontFamily: 'Satoshi',
@@ -63,6 +99,7 @@ class _TimerDisplayState extends State<TimerDisplay> {
             onSubmitted: (value) {
               final corrected = timerProvider.validateAndCorrectInput(value);
               if (corrected != null) {
+                _controller.text = corrected;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('✓ Temps corrigé : $corrected'),
