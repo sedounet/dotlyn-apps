@@ -23,7 +23,7 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 - [x] Interface timer simple : affichage durée + play/pause/reset
 - [ ] Sélection durée (saisie numérique ex: 10552 = 1h05mn52s ou 1:05:52)
-- [ ] Son de fin (1 son par défaut)
+- [x] Son de fin (1 son par défaut)
 - [ ] Vibration de fin
 - [x] Page settings minimale (son on/off, vibration on/off)
 
@@ -43,6 +43,7 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 - [ ] Notification de fin de session (iOS/Android)
 - [ ] Sons configurables (2-3 choix simples)
 - [ ] Page settings : choix du son
+- [ ] **Page settings : choix du mode de saisie par défaut** (classique hh:mm:ss ou nombre de secondes)
 
 **Critère de succès** : Timer fonctionne avec écran éteint pendant 30+ min (cuisine, méditation).
 
@@ -132,7 +133,7 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 - [x] Son + vibration de fin (à finaliser : asset manquant)
 - [x] Page settings minimale (toggle son/vibration)
 - [x] Tests manuels sur émulateur (en cours)
-- [ ] Ajouter asset sonore `dingding.mp3` dans `assets/sounds/`
+- [x] Ajouter asset sonore `dingding.mp3` dans `assets/sounds/`
 
 **Deadline** : À définir  
 **Bloqueurs** : Asset sonore manquant pour test complet
