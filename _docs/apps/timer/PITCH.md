@@ -14,8 +14,8 @@ Timer minimaliste pour gérer des sessions de travail/repos selon méthode Pomod
 
 **Personnalisation Timer** :
 - **Icône** : Chronomètre (Remix Icon `timer-line`)
-- **Couleur dominante** : Orange terre cuite (#E36C2D)
-- **Couleur secondaire** : Gris anthracite (#2C2C2C)
+- **Couleur dominante** : Orange terre cuite (E36C2D)
+- **Couleur secondaire** : Gris anthracite (2C2C2C)
 - **Ambiance** : Énergique, focus, minimaliste
 
 **Assets spécifiques** :

@@ -52,7 +52,7 @@ dotlyn-apps/
   - 🔴 P1 = ASAP (bugs bloquants + débloqueurs techniques)
   - 🟡 P2 = Prochaine version
   - 🔵 P3 = Plus tard
-- Liens vers issues GitHub (`→ #XX`)
+- Liens vers issues GitHub (→ numéro issue)
 - Notes en vrac
 
 #### PITCH.md (vision stable)
@@ -153,7 +153,7 @@ apps/[nom]/
 ### 6. Styleguide Dotlyn
 
 **TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` :
-- Couleurs : Orange terre cuite (#E36C2D), Gris anthracite (#2C2C2C)
+- Couleurs : Orange terre cuite (E36C2D), Gris anthracite (2C2C2C)
 - Typo : Satoshi (titres), Manrope (UI)
 - Icônes : Remix Icon uniquement
 - Zone sécurité icônes : 640px diamètre
@@ -190,7 +190,7 @@ apps/[nom]/
 - [ ] Tests passent (si existants)
 - [ ] Doc à jour (APP.md si changement de features/bugs)
 - [ ] Commit message respecte format `[app] type: description`
-- [ ] Issue liée si applicable (`closes #XX`)
+- [ ] Issue liée si applicable (closes numéro)
 
 ---
 
@@ -206,8 +206,8 @@ Actions Copilot:
 3. Update _docs/apps/timer/APP.md:
    - Déplacer "Notifications enrichies" de P2 vers "En cours"
 4. Commit: "[timer] feat: add rich notifications with actions"
-5. Créer issue #XX si pas existante
-6. Update APP.md avec lien: "→ #XX"
+5. Créer issue si pas existante
+6. Update APP.md avec lien vers issue
 ```
 
 ### Exemple 2 : Bug critique
@@ -218,10 +218,10 @@ Actions Copilot:
 1. Créer issue GitHub: "[P1] Timer crash on Android 12+"
 2. Label: timer, bug, P1
 3. Update _docs/apps/timer/APP.md section "🔴 P1":
-   - [ ] Bug: Timer crash Android 12+ → #XX
+   - [ ] Bug: Timer crash Android 12+ (lien issue)
 4. Créer branche: fix/timer-android12-crash
 5. Investiguer + fix
-6. Commit: "[timer] fix: resolve crash on Android 12+ (closes #XX)"
+6. Commit: "[timer] fix: resolve crash on Android 12+ (closes issue)"
 ```
 
 ### Exemple 3 : Nouvelle app
