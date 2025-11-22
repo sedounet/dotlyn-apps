@@ -28,7 +28,7 @@ class VibrationService {
   Future<void> vibrate({int duration = 500}) async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     await Vibration.vibrate(duration: duration);
   }
 
@@ -37,17 +37,8 @@ class VibrationService {
   Future<void> vibratePattern(List<int> pattern) async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
-    await Vibration.vibrate(pattern: pattern);
-  }
 
-  /// Vibration avec preset prédéfini
-  /// Presets disponibles: alarm, notification, heartbeat, etc.
-  Future<void> vibratePreset(VibrationPreset preset) async {
-    if (!_isEnabled) return;
-    if (!await hasVibrator()) return;
-    
-    await Vibration.vibrate(preset: preset);
+    await Vibration.vibrate(pattern: pattern);
   }
 
   /// Vibration personnalisée avec amplitude (Android 8+ uniquement)
@@ -57,7 +48,7 @@ class VibrationService {
   }) async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     if (await hasAmplitudeControl()) {
       await Vibration.vibrate(duration: duration, amplitude: amplitude);
     } else {
@@ -71,20 +62,33 @@ class VibrationService {
     await Vibration.cancel();
   }
 
-  /// Vibration spécifique pour fin de timer (pattern "alarm")
+  /// Vibration spécifique pour fin de timer (pattern "alarm") - une seule fois
   Future<void> vibrateTimerComplete() async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     // Pattern: 3 vibrations courtes puis 1 longue
     await Vibration.vibrate(pattern: [0, 200, 100, 200, 100, 200, 200, 800]);
+  }
+
+  /// Vibration en boucle pour fin de timer (jusqu'à arrêt manuel)
+  Future<void> vibrateTimerCompleteLoop() async {
+    if (!_isEnabled) return;
+    if (!await hasVibrator()) return;
+
+    // Pattern: 3 vibrations courtes + 1 longue + pause, repeat à l'index 0
+    // [pause, vibrate, pause, vibrate, ...] repeat=0 pour boucler
+    await Vibration.vibrate(
+      pattern: [0, 200, 100, 200, 100, 200, 200, 800, 500], // pause 500ms entre cycles
+      repeat: 0, // Répéter depuis l'index 0
+    );
   }
 
   /// Vibration légère pour feedback utilisateur (tap, bouton)
   Future<void> vibrateLight() async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     await Vibration.vibrate(duration: 50);
   }
 
@@ -92,7 +96,7 @@ class VibrationService {
   Future<void> vibrateMedium() async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     await Vibration.vibrate(duration: 200);
   }
 
@@ -100,7 +104,7 @@ class VibrationService {
   Future<void> vibrateStrong() async {
     if (!_isEnabled) return;
     if (!await hasVibrator()) return;
-    
+
     await Vibration.vibrate(duration: 500);
   }
 }

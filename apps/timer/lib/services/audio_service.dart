@@ -21,7 +21,10 @@ class AudioService {
   }
 
   /// Joue un son depuis assets/sounds/
-  Future<void> playSound(String soundName) async {
+  Future<void> playSound(String soundName, {bool loop = false}) async {
+    if (loop) {
+      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+    }
     await _audioPlayer.play(AssetSource('sounds/$soundName'));
   }
 
@@ -40,16 +43,17 @@ class AudioService {
     _vibrationService.setEnabled(vibrationEnabled);
 
     if (soundEnabled) {
-      await playSound('dingding.mp3');
+      await playSound('dingding.mp3', loop: true);
     }
     if (vibrationEnabled) {
-      await vibrate();
+      await _vibrationService.vibrateTimerCompleteLoop();
     }
   }
 
-  /// Arrête la lecture du son
+  /// Arrête la lecture du son et de la vibration
   void stopSound() {
     _audioPlayer.stop();
+    _vibrationService.cancel();
   }
 
   /// Nettoie les ressources

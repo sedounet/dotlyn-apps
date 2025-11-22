@@ -29,8 +29,8 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
   - [x] Conservation de la valeur au basculement de mode
   - [x] Édition possible en pause
   - [x] Validation et correction automatique des erreurs
-- [x] Son de fin (1 son par défaut)
-- [x] Vibration de fin (pattern personnalisé pour timer)
+- [x] Son de fin (1 son par défaut, boucle infinie jusqu'à arrêt manuel)
+- [x] Vibration de fin (pattern personnalisé, boucle infinie synchronisée avec le son)
 - [x] Page settings minimale (son on/off, vibration on/off)
 
 **Critère de succès** : Timer utilisable pour des tâches courtes (5-30 min) avec l'app au premier plan.
@@ -138,15 +138,25 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 - [x] Système de saisie numérique avec BottomSheet
 - [x] Basculement secondes/hhmmss avec conservation de valeur
 - [x] Édition en pause
-- [x] Son de fin (dingding.mp3)
-- [x] Vibration de fin (pattern 3 courtes + 1 longue)
+- [x] Son de fin (dingding.mp3, loop infini)
+- [x] Vibration de fin (pattern 3 courtes + 1 longue, loop infini)
+- [x] Synchronisation son + vibration (arrêt simultané)
 - [x] Page settings minimale (toggle son/vibration)
 - [x] Correction bugs UX (dialog double, affichage défaut, etc.)
 - [x] VibrationService réutilisable dans dotlyn_core
-- [ ] Tests manuels complets sur device réel
+- [x] Tests manuels sur device réel (Android 15)
 
 **Deadline** : À définir  
 **Bloqueurs** : Tests sur device physique requis pour validation finale
+
+---
+
+## ✅ Tests
+
+- [x] Test sur device réel Android 15 (Nothing Phone A015)
+- [x] Son en boucle validé
+- [x] Vibration en boucle validée
+- [x] Arrêt simultané son + vibration validé
 
 ---
 

@@ -107,15 +107,10 @@ class TimerProvider extends ChangeNotifier {
   void _onTimerComplete() {
     _status = TimerStatus.idle;
     _showCompletionDialog = true;
-    _audioService.playTimerComplete(); // Son + vibration
+    _audioService.playTimerComplete(); // Son + vibration en boucle
     notifyListeners();
 
-    // Auto-stop after 30 seconds
-    Future.delayed(Duration(seconds: 30), () {
-      if (_showCompletionDialog) {
-        dismissCompletionDialog();
-      }
-    });
+    // Note: Plus de timeout automatique, l'utilisateur doit arrêter manuellement
   }
 
   void dismissCompletionDialog() {

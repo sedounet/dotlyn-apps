@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _updateSetting(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
-    
+
     // Recharger les settings dans AudioService si vibration modifiée
     if (key == 'vibration_enabled' && mounted) {
       // Note: AudioService est créé dans TimerProvider, pas accessible ici directement
