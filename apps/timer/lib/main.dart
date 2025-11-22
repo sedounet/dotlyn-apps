@@ -1,10 +1,17 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:dotlyn_core/services/notification_service.dart';
 import 'screens/timer_screen.dart';
 import 'screens/settings_screen.dart';
 import 'providers/timer_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AndroidAlarmManager.initialize();
+  await NotificationService.initialize();
+  // Test notification au démarrage
+  await NotificationService.showTestNotification();
   runApp(const TimerApp());
 }
 
@@ -17,10 +24,7 @@ class TimerApp extends StatelessWidget {
       create: (_) => TimerProvider(),
       child: MaterialApp(
         title: 'Dotlyn Timer',
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-          useMaterial3: true,
-        ),
+        theme: ThemeData(primarySwatch: Colors.orange, useMaterial3: true),
         initialRoute: '/',
         routes: {
           '/': (context) => const TimerScreen(),
