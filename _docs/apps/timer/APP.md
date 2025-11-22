@@ -1,7 +1,7 @@
 # Timer — Documentation de développement
 
 > **Version actuelle** : 0.1.0 (MVP)  
-> **Dernière update** : 2025-11-06  
+> **Dernière update** : 2025-11-22  
 > **Status** : 🚧 En développement actif
 
 ---
@@ -22,7 +22,13 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 **Objectif** : Timer fonctionnel de base, utilisable sans frustration.
 
 - [x] Interface timer simple : affichage durée + play/pause/reset
-- [ ] Sélection durée (saisie numérique ex: 10552 = 1h05mn52s ou 1:05:52)
+- [x] Sélection durée (saisie numérique avec basculement secondes/hhmmss)
+  - [x] BottomSheet de saisie avec preview en temps réel
+  - [x] Mode secondes (ex: 125 = 2min05s)
+  - [x] Mode hhmmss (ex: 12530 = 1h25min30s)
+  - [x] Conservation de la valeur au basculement de mode
+  - [x] Édition possible en pause
+  - [x] Validation et correction automatique des erreurs
 - [x] Son de fin (1 son par défaut)
 - [ ] Vibration de fin
 - [x] Page settings minimale (son on/off, vibration on/off)
@@ -129,14 +135,17 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 - [x] Créer UI timer simple (durée, play/pause/reset)
 - [x] Implémenter logique timer de base (Ticker)
-- [x] Ajouter picker/slider pour sélection durée
-- [x] Son + vibration de fin (à finaliser : asset manquant)
+- [x] Système de saisie numérique avec BottomSheet
+- [x] Basculement secondes/hhmmss avec conservation de valeur
+- [x] Édition en pause
+- [x] Son de fin (dingding.mp3)
 - [x] Page settings minimale (toggle son/vibration)
-- [x] Tests manuels sur émulateur (en cours)
-- [x] Ajouter asset sonore `dingding.mp3` dans `assets/sounds/`
+- [x] Correction bugs UX (dialog double, affichage défaut, etc.)
+- [ ] Vibration de fin
+- [ ] Tests manuels complets sur device réel
 
 **Deadline** : À définir  
-**Bloqueurs** : Asset sonore manquant pour test complet
+**Bloqueurs** : Tests sur device physique requis pour validation finale
 
 ---
 
@@ -148,6 +157,9 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 - [x] ~~Une fois à zéro, aucun son ne se joue (ni dingding ni pouit).~~ **Corrigé** : Asset path corrigé
 - [x] ~~Une fois le timer fini, on ne peut pas remettre un temps ni le reset (il reste à zéro).~~ **Corrigé** : Start utilise duration au lieu de remaining
 - [x] ~~Saisie non fluide (controller recréé à chaque build).~~ **Corrigé** : Controller stable + flag `_isEditing`
+- [x] ~~Dialog de fin s'ouvre deux fois.~~ **Corrigé** : Flag `_showCompletionDialog` pour éviter les doublons
+- [x] ~~Affichage par défaut 00:05:00 au lieu de vide.~~ **Corrigé** : Duration initiale à zéro avec affichage grisé
+- [x] ~~Perte de la valeur saisie au basculement secondes/hhmmss.~~ **Corrigé** : Conversion automatique préservant la durée
 
 ---
 

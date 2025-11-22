@@ -70,5 +70,5 @@
 
 ---
 
-**Dernière mise à jour** : 2025-11-06  
+**Dernière mise à jour** : 2025-11-22  
 **Apps suivies** : 4 (1 active, 2 planifiées, 1 interne)
