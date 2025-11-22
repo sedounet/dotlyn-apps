@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permission requise pour la vibration -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    
     <application
         android:label="timer"
         android:name="${applicationName}"

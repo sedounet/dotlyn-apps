@@ -6,10 +6,11 @@ import '../services/audio_service.dart';
 
 class TimerProvider extends ChangeNotifier {
   TimerStatus _status = TimerStatus.idle;
-  Duration _duration = const Duration(minutes: 5); // Durée par défaut
-  Duration _remaining = const Duration(minutes: 5);
+  Duration _duration = Duration.zero; // 0 par défaut
+  Duration _remaining = Duration.zero;
   Timer? _timer;
   String? _errorMessage;
+  bool _showCompletionDialog = false;
 
   final TimerService _timerService = TimerService();
   final AudioService _audioService = AudioService();
@@ -18,10 +19,13 @@ class TimerProvider extends ChangeNotifier {
   Duration get duration => _duration;
   Duration get remaining => _remaining;
   String? get errorMessage => _errorMessage;
+  bool get showCompletionDialog => _showCompletionDialog;
 
   TimerProvider() {
     // Précharger le son au démarrage
     _audioService.preloadSound('dingding.mp3');
+    // Charger les settings de vibration
+    _audioService.loadVibrationSettings();
   }
 
   /// Démarre le timer avec la durée donnée
@@ -37,9 +41,7 @@ class TimerProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         _timer?.cancel();
-        _status = TimerStatus.idle;
-        _audioService.playTimerComplete();
-        notifyListeners();
+        _onTimerComplete();
       }
     });
     notifyListeners();
@@ -100,6 +102,26 @@ class TimerProvider extends ChangeNotifier {
       notifyListeners();
       return null;
     }
+  }
+
+  void _onTimerComplete() {
+    _status = TimerStatus.idle;
+    _showCompletionDialog = true;
+    _audioService.playTimerComplete(); // Son + vibration
+    notifyListeners();
+
+    // Auto-stop after 30 seconds
+    Future.delayed(Duration(seconds: 30), () {
+      if (_showCompletionDialog) {
+        dismissCompletionDialog();
+      }
+    });
+  }
+
+  void dismissCompletionDialog() {
+    _showCompletionDialog = false;
+    _audioService.stopSound();
+    notifyListeners();
   }
 
   @override

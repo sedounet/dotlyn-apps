@@ -30,7 +30,7 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
   - [x] Édition possible en pause
   - [x] Validation et correction automatique des erreurs
 - [x] Son de fin (1 son par défaut)
-- [ ] Vibration de fin
+- [x] Vibration de fin (pattern personnalisé pour timer)
 - [x] Page settings minimale (son on/off, vibration on/off)
 
 **Critère de succès** : Timer utilisable pour des tâches courtes (5-30 min) avec l'app au premier plan.
@@ -139,9 +139,10 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 - [x] Basculement secondes/hhmmss avec conservation de valeur
 - [x] Édition en pause
 - [x] Son de fin (dingding.mp3)
+- [x] Vibration de fin (pattern 3 courtes + 1 longue)
 - [x] Page settings minimale (toggle son/vibration)
 - [x] Correction bugs UX (dialog double, affichage défaut, etc.)
-- [ ] Vibration de fin
+- [x] VibrationService réutilisable dans dotlyn_core
 - [ ] Tests manuels complets sur device réel
 
 **Deadline** : À définir  
