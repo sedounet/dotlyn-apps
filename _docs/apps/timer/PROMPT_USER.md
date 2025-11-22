@@ -52,42 +52,82 @@ Implémenter un système de notifications pour que le timer continue de fonction
 
 ---
 
-## 📦 Architecture proposée (simple)
+## 📦 Architecture proposée (multi-plateforme)
 
 ```
-1. Package flutter_local_notifications
-   - Affichage notifications simples
-   - Support Android/iOS out-of-the-box
+1. Packages multi-plateforme
+   - android_alarm_manager_plus : alarme Android native (économie batterie)
+   - flutter_local_notifications : notifications Android + iOS
+   - Code partagé avec Platform.isAndroid / Platform.isIOS
    
-2. Service NotificationService (dans dotlyn_core)
+2. Service AlarmService (dans dotlyn_core)
+   - scheduleTimer(duration) : Android AlarmManager / iOS notification programmée
+   - cancelTimer() : annule alarme/notification
+   - Platform checks intégrés dans le service
+   
+3. Service NotificationService (dans dotlyn_core)
    - showTimerRunning(remaining)
    - showTimerComplete()
    - cancelAll()
-   
-3. Background Timer (dans timer_provider.dart)
-   - Isolate ou WorkManager ? → **Isolate + Timer natif Dart** (plus simple)
-   - Update notification chaque seconde (ou chaque 5s pour économie)
 ```
+
+**⚠️ Stratégie multi-plateforme :**
+
+**Android (AlarmManager) :**
+- ✅ Vraie alarme système (comme un réveil)
+- ✅ Fonctionne app tuée/fermée
+- ✅ Très économe batterie
+- ✅ Son + vibration en boucle au réveil
+
+**iOS (Notification programmée) :**
+- ✅ Notification apparaît au bon moment
+- ✅ Code compatible sans Mac (test plus tard)
+- ⚠️ Limitation : son joue 1 fois (pas de boucle)
+- ⚠️ App ne se réveille pas automatiquement
+
+**Workflow dev sans Mac :**
+1. Code avec Platform checks dès le début
+2. Test Android sur device physique
+3. Code iOS dormant jusqu'à accès Mac/CI
 
 ---
 
 ## 🔧 Plan d'implémentation par étapes
 
-### **Étape 1 : Setup flutter_local_notifications**
+### **Étape 1 : Setup packages**
 
 **Fichiers à modifier :**
-- `packages/dotlyn_core/pubspec.yaml` : ajouter `flutter_local_notifications: ^17.0.0`
+- `apps/timer/pubspec.yaml` : ajouter les dépendances
 - `apps/timer/android/app/src/main/AndroidManifest.xml` : ajouter permissions
 
+**Dépendances à ajouter :**
+```yaml
+android_alarm_manager_plus: ^4.0.3
+flutter_local_notifications: ^17.0.0
+```
+
+**Permissions Android :**
+```xml
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.VIBRATE"/> (déjà fait)
+```
+
+**iOS Info.plist :**
+```xml
+<key>UIBackgroundModes</key>
+<array>
+    <string>fetch</string>
+</array>
+```
+
 **Actions :**
-1. Ajouter la dépendance
-2. Configurer les permissions Android :
-   ```xml
-   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-   <uses-permission android:name="android.permission.VIBRATE"/> (déjà fait)
-   <uses-permission android:name="android.permission.WAKE_LOCK"/> (si besoin)
-   ```
-3. Initialiser le plugin dans `main.dart`
+1. Ajouter les dépendances
+2. `flutter pub get`
+3. Configurer les permissions
+4. Initialiser `flutter_local_notifications` dans `main.dart`
 
 **Test :** Afficher une notification test au lancement de l'app
 
@@ -133,33 +173,93 @@ class NotificationService {
 
 ---
 
-### **Étape 4 : Background execution (Android Foreground Service)**
+### **Étape 4 : AlarmService multi-plateforme**
 
-**Objectif :** Timer continue en arrière-plan
+**Objectif :** Timer continue même si app tuée/fermée (Android) ou notification programmée (iOS)
 
-**Solution simple :**
-- Utiliser `flutter_local_notifications` avec `startForeground` (Android)
-- Pas besoin de WorkManager pour un timer continu
-- Le timer Dart continue de tourner si app en background grâce au Foreground Service
+**Fichier à créer :** `packages/dotlyn_core/lib/services/alarm_service.dart`
 
-**Modifications :**
-1. Configurer notification en mode "foreground" (priority high, ongoing=true)
-2. Démarrer service au start du timer
-3. Stopper service à la fin/reset
+**Structure multi-plateforme :**
+```dart
+import 'dart:io';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-**Fichiers Android natifs (si nécessaire) :**
-- `android/app/src/main/AndroidManifest.xml` : déclarer foreground service
+// Callback top-level ANDROID (OBLIGATOIRE, hors classe)
+@pragma('vm:entry-point')
+void fireTimerAlarm() {
+  // Android : ce code s'exécute au réveil
+  AudioService.playTimerComplete(loop: true);
+  NotificationService.showTimerComplete();
+}
 
-**Test :** Lancer timer, éteindre écran → timer continue, notification mise à jour
+class AlarmService {
+  static Future<void> scheduleTimer(Duration duration) async {
+    if (Platform.isAndroid) {
+      await AndroidAlarmManager.initialize();
+      await AndroidAlarmManager.oneShotAt(
+        DateTime.now().add(duration),
+        0,
+        fireTimerAlarm,
+        exact: true,
+        wakeup: true,
+      );
+    } else if (Platform.isIOS) {
+      // iOS : notification programmée simple
+      await NotificationService.scheduleTimerComplete(duration);
+    }
+  }
+  
+  static Future<void> cancelTimer() async {
+    if (Platform.isAndroid) {
+      await AndroidAlarmManager.cancel(0);
+    } else if (Platform.isIOS) {
+      await NotificationService.cancelAll();
+    }
+  }
+}
+
+// Dans TimerProvider :
+void start() {
+  AlarmService.scheduleTimer(_remainingDuration);
+  // + timer local pour UI
+}
+```
+
+**Test Android :** 
+1. Lancer timer 2min
+2. Fermer complètement l'app (swipe dans recents)
+3. Attendre 2min
+4. Android réveille l'app → son + notification !
+
+**Test iOS (plus tard avec Mac) :**
+1. Lancer timer 2min
+2. Fermer app
+3. Attendre 2min
+4. Notification apparaît (son 1 fois)
 
 ---
 
-### **Étape 5 : iOS Background Modes (optionnel, plus tard)**
+### **Étape 5 : NotificationService.scheduleTimerComplete() pour iOS**
 
-**Pour v0.2 : focus Android uniquement**
-iOS a des limitations strictes sur le background. On peut implémenter plus tard avec :
-- Background Modes (audio, fetch)
-- Local notifications uniquement
+**Objectif :** Programmer notification iOS qui apparaît au bon moment
+
+**Ajouter dans NotificationService :**
+```dart
+Future<void> scheduleTimerComplete(Duration duration) async {
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    1,
+    'Timer terminé !',
+    'Votre timer est terminé',
+    tz.TZDateTime.now(tz.local).add(duration),
+    notificationDetails,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+  );
+}
+```
+
+**Test :** Code compilable sur iOS (test fonctionnel nécessite Mac)
 
 ---
 
@@ -199,14 +299,14 @@ iOS a des limitations strictes sur le background. On peut implémenter plus tard
 
 ## 🧪 Tests à faire à chaque étape
 
-| Étape | Test                                      | Résultat attendu                          |
-|-------|-------------------------------------------|-------------------------------------------|
-| 1     | Notification test au lancement            | Notification visible                      |
-| 2     | Bouton "Test notif" → showTimerComplete() | Notification "Timer terminé" visible      |
-| 3     | Timer 10s, app en background              | Notification affiche temps restant        |
-| 4     | Timer 30s, écran éteint                   | Timer termine, notification finale        |
-| 6     | Clic notification terminée                | App s'ouvre                               |
-| 7     | Clic "Pause" dans notification            | Timer se met en pause                     |
+| Étape | Test                                      | Résultat attendu                     |
+| ----- | ----------------------------------------- | ------------------------------------ |
+| 1     | Notification test au lancement            | Notification visible                 |
+| 2     | Bouton "Test notif" → showTimerComplete() | Notification "Timer terminé" visible |
+| 3     | Timer 10s, app en background              | Notification affiche temps restant   |
+| 4     | Timer 30s, écran éteint                   | Timer termine, notification finale   |
+| 6     | Clic notification terminée                | App s'ouvre                          |
+| 7     | Clic "Pause" dans notification            | Timer se met en pause                |
 
 ---
 
@@ -230,11 +330,32 @@ await notificationService.requestPermissions();
 
 ## 🚫 Ce qu'il NE FAUT PAS faire
 
-❌ Utiliser WorkManager pour un timer continu (overkill, énergie)
+❌ Utiliser WorkManager (pas adapté pour alarmes précises)
+❌ Écrire du code natif Kotlin/Java/Swift (packages le font)
+❌ Utiliser seulement Timer Dart (s'arrête en background)
+❌ Utiliser flutter_background_service (service continu = batterie)
 ❌ Polling serveur ou base de données
-❌ Implémenter un service natif Android complet (trop complexe)
 ❌ Sur-optimiser avant que ça marche
-❌ Faire iOS en même temps qu'Android (séparé v0.2.1)
+❌ Dupliquer code Android/iOS (utiliser Platform checks)
+
+## ⚠️ Pièges connus
+
+**Callback top-level obligatoire :**
+- ❌ Callback dans une classe = ne marche pas avec AlarmManager
+- ✅ Fonction top-level avec `@pragma('vm:entry-point')`
+
+**Permissions Android 12+ :**
+- `SCHEDULE_EXACT_ALARM` requise pour alarmes précises
+- Demander explicitement dans les settings si refusée
+
+**Timer continue en local :**
+- L'alarme est pour le moment de fin, mais garder aussi le timer local pour l'UI
+- Ne pas dépendre uniquement de l'alarme pour l'affichage
+
+**iOS sans Mac :**
+- Code iOS compilable mais non testé sans Mac
+- Utiliser `if (Platform.isIOS)` pour éviter erreurs Android
+- Test iOS possible via CI/CD macOS runner ou accès Mac futur
 
 ---
 
