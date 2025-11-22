@@ -7,8 +7,8 @@
 ## 🎯 Apps Actives
 
 ### ⏱️ Timer (Simple)
-**Status** : 🚧 MVP v0.1 en cours  
-**Focus actuel** : Background service + notifications basiques  
+**Status** : 🚧 v0.2 notifications/alarme en cours  
+**Focus actuel** : AlarmManager Android + notifications de fin + sonnerie système  
 **Tagline** : "Le timer le plus simple et fiable"  
 📁 [Doc](./apps/timer/APP.md) • 🐛 [Issues](https://github.com/sedounet/dotlyn-apps/labels/timer)
 
@@ -33,12 +33,12 @@
 
 ## 📊 Vue globale
 
-| App        | Version | Status     | Cible 1ère sortie |
-| ---------- | ------- | ---------- | ----------------- |
-| Timer      | 0.1.0   | 🚧 MVP      | Janvier 2025      |
-| Pomodoro   | -       | 📋 Planifié | Février 2025      |
-| Tabata     | -       | 📋 Planifié | Mars 2025         |
-| Design Lab | -       | ✅ Interne  | -                 |
+| App        | Version | Status                  | Cible 1ère sortie |
+| ---------- | ------- | ----------------------- | ----------------- |
+| Timer      | 0.2.0   | 🚧 Notifications/Alarmes | Décembre 2025     |
+| Pomodoro   | -       | 📋 Planifié              | Février 2025      |
+| Tabata     | -       | 📋 Planifié              | Mars 2025         |
+| Design Lab | -       | ✅ Interne               | -                 |
 
 ---
 

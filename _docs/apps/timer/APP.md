@@ -39,21 +39,21 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 ---
 
-### v0.2 — Background Service (MVP complet)
+### v0.2 — Notifications & Alarmes (EN COURS)
 **Objectif** : Timer fiable en arrière-plan, notification de fin.
 
-- [ ] Background service Android (Foreground Service)
-- [ ] Background task iOS (Background Modes + Local Notifications)
-- [ ] Permissions Android 12+ (POST_NOTIFICATIONS, Foreground Service)
-- [ ] Notification persistante pendant le timer (Android)
-- [ ] Notification de fin de session (iOS/Android)
-- [ ] Sons configurables (2-3 choix simples)
-- [ ] Page settings : choix du son
-- [ ] **Page settings : choix du mode de saisie par défaut** (classique hh:mm:ss ou nombre de secondes)
+- [x] AlarmManager Android (alarme exacte, callback top-level)
+- [x] Notification de fin de timer (Android/iOS)
+- [x] Permissions Android 12+ (POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM, WAKE_LOCK, RECEIVE_BOOT_COMPLETED)
+- [x] Notification "Timer en cours" au démarrage
+- [x] Notification "Timer terminé" avec sonnerie système
+- [ ] Rappel d'app au clic sur notification (à faire)
+- [ ] Sons configurables (à faire)
+- [ ] Page settings : choix du son (à faire)
 
-**Critère de succès** : Timer fonctionne avec écran éteint pendant 30+ min (cuisine, méditation).
+**Critère de succès** : Timer fonctionne avec écran éteint/app tuée, notification sonore à la fin.
 
-**Tech** : `flutter_local_notifications`, `workmanager` (Android), Background Modes (iOS).
+**Tech** : `android_alarm_manager_plus`, `flutter_local_notifications`, permissions Android.
 
 **⚠️ Débloqueur technique MVP** : Sans cette version, l'app n'a pas de valeur.
 
@@ -131,20 +131,16 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 ## 📝 TODO
 
-### 🔴 P1 — v0.1 (MVP Core - EN COURS)
+### 🔴 P1 — v0.2 (Notifications & Alarmes - EN COURS)
 
-- [x] Créer UI timer simple (durée, play/pause/reset)
-- [x] Implémenter logique timer de base (Ticker)
-- [x] Système de saisie numérique avec BottomSheet
-- [x] Basculement secondes/hhmmss avec conservation de valeur
-- [x] Édition en pause
-- [x] Son de fin (dingding.mp3, loop infini)
-- [x] Vibration de fin (pattern 3 courtes + 1 longue, loop infini)
-- [x] Synchronisation son + vibration (arrêt simultané)
-- [x] Page settings minimale (toggle son/vibration)
-- [x] Correction bugs UX (dialog double, affichage défaut, etc.)
-- [x] VibrationService réutilisable dans dotlyn_core
-- [x] Tests manuels sur device réel (Android 15)
+- [x] Intégration AlarmManager Android
+- [x] Notification "Timer en cours" au démarrage
+- [x] Notification "Timer terminé" avec sonnerie système
+- [x] Permissions Android 12+ (POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM, WAKE_LOCK, RECEIVE_BOOT_COMPLETED)
+- [x] Tests sur émulateur et device réel
+- [ ] Rappel d'app au clic sur notification (à faire)
+- [ ] Sons configurables (à faire)
+- [ ] Page settings : choix du son (à faire)
 
 **Deadline** : À définir  
 **Bloqueurs** : Tests sur device physique requis pour validation finale
