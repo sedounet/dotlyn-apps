@@ -42,20 +42,40 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 ### v0.2 — Notifications & Alarmes (EN COURS)
 **Objectif** : Timer fiable en arrière-plan, notification de fin.
 
-- [x] AlarmManager Android (alarme exacte, callback top-level)
-- [x] Notification de fin de timer (Android/iOS)
-- [x] Permissions Android 12+ (POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM, WAKE_LOCK, RECEIVE_BOOT_COMPLETED)
-- [x] Notification "Timer en cours" au démarrage
-- [x] Notification "Timer terminé" avec sonnerie système
-- [ ] Rappel d'app au clic sur notification (à faire)
-- [ ] Sons configurables (à faire)
-- [ ] Page settings : choix du son (à faire)
 
 **Critère de succès** : Timer fonctionne avec écran éteint/app tuée, notification sonore à la fin.
 
 **Tech** : `android_alarm_manager_plus`, `flutter_local_notifications`, permissions Android.
 
 **⚠️ Débloqueur technique MVP** : Sans cette version, l'app n'a pas de valeur.
+
+**🔬 Piste à creuser (v0.2.1 ou v0.3)** :
+Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en boucle :
+
+---
+
+### Différences Android / iOS & Contournements
+
+#### Android
+- Deux options pour la sonnerie :
+  - Sonnerie système (alarme/notification) : fiabilité maximale, jouée même si l’app est tuée, mais peu personnalisable.
+  - Son embarqué dans l’app : personnalisation totale, mais fiabilité variable (nécessite que l’app soit réveillée).
+- Possibilité d’utiliser un foreground service pour garantir la sonnerie/vibration, au prix d’une notification persistante.
+- AlarmManager : économe en énergie, mais fiabilité limitée si l’app est tuée.
+
+#### iOS
+- Uniquement son embarqué dans le bundle de l’app (pas d’accès aux sonneries système).
+- Notification locale : joue le son si l’app n’est pas tuée et si l’utilisateur n’a pas coupé le son des notifications.
+- Pas de foreground service possible, limitations strictes d’Apple sur l’exécution en arrière-plan.
+
+#### Contournements & Possibilités
+- Embarquer 3-4 sonneries propres à l’app pour renforcer l’identité Dotlyn et garantir une expérience cohérente sur les deux plateformes.
+- Proposer le choix du son dans les paramètres (settings), avec une UI simple.
+- Informer l’utilisateur des limites (fiabilité, restrictions OS) dans l’app et la documentation.
+- Pour Android, permettre l’utilisation de la sonnerie système en option (pour fiabilité maximale).
+- Pour iOS, accepter les limites et privilégier la simplicité.
+
+**Recommandation** : architecture hybride (AlarmManager + foreground service sur Android, notification locale sur iOS), sons embarqués pour l’identité, et communication transparente sur les limites techniques.
 
 ---
 
@@ -171,6 +191,42 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 ---
 
 ### Mineurs (contournables)
+
+---
+
+## 📊 Analyse Concurrence
+
+### Apps existantes — Points faibles identifiés
+
+#### Google Clock (natif Android) — 3.3/5 ⭐
+- Alarmes qui ne sonnent parfois pas (seulement vibration)
+- UI changée régulièrement, manque de cohérence
+- Plus de clics requis pour activer/sauver une alarme
+- Impossible de supprimer toutes les alarmes en une fois
+
+#### Alarm Clock for Me — 4.3/5 ⭐
+- **Alarmes non fiables** : alarme sonnée au mauvais moment (raté entretien)
+- **Publicités agressives** : vidéo plein écran à 3h du matin
+- Bugs critiques : impossible de stopper/snooze sur l'écran
+- Alarmes récurrentes cassées après réinstallation
+
+#### Forest (focus timer) — 4.5/5 ⭐
+- UI laggy, crashes fréquents
+- App se ferme automatiquement sans raison
+- Bloque les autres apps mais fiabilité timer en arrière-plan non garantie
+
+### Points faibles récurrents
+- **Fiabilité** : alarmes qui ne sonnent pas ou au mauvais moment
+- **UX** : UI surchargée, publicités intrusives, changements d'interface fréquents
+- **Technique** : crashes, bugs après mises à jour, fonctionnalités cassées
+
+### Opportunités Dotlyn Timer
+1. **Fiabilité avant tout** : garantir que le timer sonne (notification + son/vibration fiables)
+2. **Simplicité** : un seul timer, pas de sur-fonctionnalités
+3. **Pas de pub intrusive** : bannière discrète ou premium sans pub
+4. **UI stable** : cohérence visuelle, pas de changements brutaux
+5. **Sons embarqués** : identité sonore propre (3-4 sons Dotlyn)
+6. **Communication transparente** : informer des limites OS au lieu de promettre l'impossible
 
 ---
 
