@@ -1,495 +1,411 @@
-# Timer - Instructions AI# Timer - Instructions AI
+# PROMPT AI — Implémentation Foreground Service pour Timer Dotlyn
 
-
-
-> **Note** : Fichier généré par Copilot à partir de PROMPT_USER.md.  > **Note** : Fichier généré par Copilot à partir de PROMPT_USER.md.  
-
-> Supprimé ou réécrit à chaque nouvelle demande.> Supprimé ou réécrit à chaque nouvelle demande.
-
-
-
-------
-
-
-
-## 🎯 Objectif## Objectif
-
-
-
-Résoudre deux problèmes UX critiques du Timer :<!-- Résumé de la demande utilisateur en une phrase -->
-
-1. **Arrêter la sonnerie** : Aucun moyen d'arrêter le son à la fin du timer (obligé de quitter l'app)
-
-2. **Saisie durée intuitive** : Input actuel trop complexe (sélectionner/effacer chaque segment hh:mm:ss)
-
-
-
-------
-
-
-
-## 📋 Tâches## Tâches
-
-
-
-### Tâche 1 : Bouton "Arrêter la sonnerie" (P1 - Critique)<!-- Liste des actions concrètes à réaliser -->
-
-
-
-**Problème** : Quand le timer atteint 0, le son joue en boucle sans contrôle utilisateur.- [ ] 
-
-- [ ] 
-
-**Solution** :- [ ] 
-
-- [ ] Ajouter un **Dialog** (AlertDialog) qui s'affiche automatiquement quand `remaining == 0`
-
-- [ ] Dialog contient :---
-
-  - **Titre** : "⏰ Timer terminé !"
-
-  - **Message** : "Votre session est terminée"## Contexte technique
-
-  - **Bouton principal** : "Arrêter" (gros, orange, pleine largeur)
-
-  - **Bouton secondaire** (optionnel) : "Relancer" (petit, gris)<!-- Fichiers concernés, dépendances, points d'attention -->
-
-- [ ] Cliquer "Arrêter" → stop le son + ferme dialog + reset timer à idle
-
-- [ ] Dialog **barrierDismissible: false** (pas de fermeture en tapant à côté)
-
-- [ ] Son s'arrête automatiquement après **30 secondes** si pas de clic (fallback)
+## 🎯 Objectif
+Implémenter un système de notification/alarme **100% fiable** pour le timer Dotlyn, garantissant que la sonnerie et la vibration fonctionnent **dans tous les cas** (app en arrière-plan, écran éteint, app tuée, mode silence).
 
 ---
 
-**Fichiers à modifier** :
+## 📋 Contexte Technique
 
-- `apps/timer/lib/providers/timer_provider.dart` : Ajouter flag `_showCompletionDialog`## Critères de succès
+### Architecture actuelle
+- **App** : `apps/timer/` (Flutter)
+- **Services partagés** : `packages/dotlyn_core/lib/services/`
+  - `alarm_service.dart` : AlarmManager Android (callback top-level)
+  - `notification_service.dart` : Notifications locales Flutter
+- **Provider** : `apps/timer/lib/providers/timer_provider.dart`
 
-- `apps/timer/lib/screens/timer_screen.dart` : Listener sur flag + showDialog()
+### Problème identifié
+- Les notifications locales ne garantissent pas la sonnerie/vibration si l'app est tuée ou le téléphone en mode économie d'énergie.
+- Sur iOS, pas de solution native pour garantir la sonnerie (limitation Apple).
+- Besoin d'une solution **fiable à 100%** pour Android, et **maximale** pour iOS.
 
-- `apps/timer/lib/services/audio_service.dart` : Ajouter méthode `stopSound()`<!-- Comment savoir que c'est terminé ? -->
+---
 
+## 🚀 Solution à Implémenter
 
+### Android : Foreground Service Natif (Kotlin)
 
-**Détails implémentation** :- 
+#### Étape 1 : Créer le Foreground Service
+**Fichier** : `apps/timer/android/app/src/main/kotlin/com/dotlyn/timer/TimerForegroundService.kt`
 
-```dart- 
+**Fonctionnalités** :
+- Démarre au lancement du timer (depuis Flutter via MethodChannel).
+- Affiche une notification persistante : "Timer en cours : 05:00" (mise à jour chaque seconde).
+- À la fin du timer, joue la sonnerie embarquée (`assets/sounds/dingding.mp3`) en boucle.
+- Active la vibration (pattern personnalisé) en boucle.
+- L'utilisateur arrête le service via notification action ("Arrêter") ou en ouvrant l'app.
+- Le service s'arrête automatiquement après arrêt manuel.
 
-// timer_provider.dart- 
+**Permissions nécessaires** (déjà présentes) :
+- `FOREGROUND_SERVICE`
+- `FOREGROUND_SERVICE_MEDIA_PLAYBACK`
+- `POST_NOTIFICATIONS`
+- `VIBRATE`
+- `WAKE_LOCK`
 
-bool _showCompletionDialog = false;
+**Code à inclure** :
+```kotlin
+class TimerForegroundService : Service() {
+    private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
+    private var isRunning = false
+    private var remainingSeconds = 0
+    private val handler = Handler(Looper.getMainLooper())
 
-bool get showCompletionDialog => _showCompletionDialog;---
-
-
-
-void _onTimerComplete() {**Généré le** : [Date]  
-
-  _status = TimerStatus.idle;**À partir de** : PROMPT_USER.md
-
-  _showCompletionDialog = true;
-
-  _audioService.playTimerComplete();
-  notifyListeners();
-  
-  // Auto-stop après 30s
-  Future.delayed(Duration(seconds: 30), () {
-    if (_showCompletionDialog) {
-      dismissCompletionDialog();
+    companion object {
+        const val ACTION_START = "com.dotlyn.timer.START"
+        const val ACTION_STOP = "com.dotlyn.timer.STOP"
+        const val ACTION_COMPLETE = "com.dotlyn.timer.COMPLETE"
+        const val EXTRA_DURATION = "duration"
+        const val CHANNEL_ID = "timer_foreground_channel"
+        const val NOTIFICATION_ID = 1
     }
-  });
-}
 
-void dismissCompletionDialog() {
-  _showCompletionDialog = false;
-  _audioService.stopSound();
-  notifyListeners();
-}
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_START -> startTimer(intent.getIntExtra(EXTRA_DURATION, 0))
+            ACTION_COMPLETE -> completeTimer()
+            ACTION_STOP -> stopSelf()
+        }
+        return START_STICKY
+    }
 
-// audio_service.dart
-void stopSound() {
-  _audioPlayer.stop();
+    private fun startTimer(durationSeconds: Int) {
+        remainingSeconds = durationSeconds
+        isRunning = true
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, buildNotification("Timer en cours : ${formatTime(remainingSeconds)}"))
+        updateTimerNotification()
+    }
+
+    private fun updateTimerNotification() {
+        if (!isRunning) return
+        
+        if (remainingSeconds > 0) {
+            val notification = buildNotification("Timer en cours : ${formatTime(remainingSeconds)}")
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(NOTIFICATION_ID, notification)
+            remainingSeconds--
+            handler.postDelayed({ updateTimerNotification() }, 1000)
+        } else {
+            completeTimer()
+        }
+    }
+
+    private fun completeTimer() {
+        isRunning = false
+        playAlarmSound()
+        startVibration()
+        val notification = buildNotification("Timer terminé !", true)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    private fun playAlarmSound() {
+        try {
+            mediaPlayer = MediaPlayer.create(this, R.raw.dingding)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun startVibration() {
+        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+
+        val pattern = longArrayOf(0, 500, 200, 500, 200)
+        vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
+    }
+
+    private fun buildNotification(text: String, withStopAction: Boolean = false): Notification {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Dotlyn Timer")
+            .setContentText(text)
+            .setSmallIcon(R.drawable.ic_timer)
+            .setContentIntent(pendingIntent)
+            .setOngoing(!withStopAction)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        if (withStopAction) {
+            val stopIntent = Intent(this, TimerForegroundService::class.java).apply {
+                action = ACTION_STOP
+            }
+            val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+            builder.addAction(R.drawable.ic_stop, "Arrêter", stopPendingIntent)
+        }
+
+        return builder.build()
+    }
+
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Timer Foreground Service",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Affiche le timer en cours et l'alarme de fin"
+            setSound(null, null)
+        }
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun formatTime(seconds: Int): String {
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val secs = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, secs)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isRunning = false
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        vibrator?.cancel()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
 ```
 
-```dart
-// timer_screen.dart (dans build)
-// Écouter le flag avec Consumer
-Consumer<TimerProvider>(
-  builder: (context, provider, _) {
-    if (provider.showCompletionDialog) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showCompletionDialog(context, provider);
-      });
-    }
-    return TimerDisplay();
-  }
-)
+**AndroidManifest.xml** (ajout) :
+```xml
+<service
+    android:name=".TimerForegroundService"
+    android:enabled="true"
+    android:exported="false"
+    android:foregroundServiceType="mediaPlayback" />
+```
 
-void _showCompletionDialog(BuildContext context, TimerProvider provider) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AlertDialog(
-      title: Text('⏰ Timer terminé !'),
-      content: Text('Votre session est terminée'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            provider.dismissCompletionDialog();
-            Navigator.of(context).pop();
-          },
-          child: Text('Relancer', style: TextStyle(color: Colors.grey)),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            provider.dismissCompletionDialog();
-            Navigator.of(context).pop();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
-            minimumSize: Size(double.infinity, 48),
-          ),
-          child: Text('Arrêter', style: TextStyle(fontSize: 18)),
-        ),
-      ],
-    ),
+---
+
+#### Étape 2 : MethodChannel Flutter -> Kotlin
+**Fichier** : `apps/timer/android/app/src/main/kotlin/com/dotlyn/timer/MainActivity.kt`
+
+**Ajouter** :
+```kotlin
+class MainActivity: FlutterActivity() {
+    private val CHANNEL = "com.dotlyn.timer/foreground"
+
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "startForegroundService" -> {
+                    val duration = call.argument<Int>("duration") ?: 0
+                    startTimerService(duration)
+                    result.success(null)
+                }
+                "stopForegroundService" -> {
+                    stopTimerService()
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun startTimerService(durationSeconds: Int) {
+        val intent = Intent(this, TimerForegroundService::class.java).apply {
+            action = TimerForegroundService.ACTION_START
+            putExtra(TimerForegroundService.EXTRA_DURATION, durationSeconds)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
+
+    private fun stopTimerService() {
+        val intent = Intent(this, TimerForegroundService::class.java)
+        stopService(intent)
+    }
+}
+```
+
+---
+
+#### Étape 3 : Service Flutter (Dart)
+**Fichier** : `packages/dotlyn_core/lib/services/foreground_service.dart`
+
+```dart
+import 'package:flutter/services.dart';
+
+class ForegroundService {
+  static const platform = MethodChannel('com.dotlyn.timer/foreground');
+
+  static Future<void> startTimer(int durationSeconds) async {
+    try {
+      await platform.invokeMethod('startForegroundService', {
+        'duration': durationSeconds,
+      });
+    } on PlatformException catch (e) {
+      print("Erreur foreground service: ${e.message}");
+    }
+  }
+
+  static Future<void> stopTimer() async {
+    try {
+      await platform.invokeMethod('stopForegroundService');
+    } on PlatformException catch (e) {
+      print("Erreur arrêt foreground service: ${e.message}");
+    }
+  }
+}
+```
+
+**Export** dans `packages/dotlyn_core/lib/dotlyn_core.dart` :
+```dart
+export 'services/foreground_service.dart';
+```
+
+---
+
+#### Étape 4 : Intégration dans TimerProvider
+**Fichier** : `apps/timer/lib/providers/timer_provider.dart`
+
+**Modifier la méthode `start()`** :
+```dart
+void start() async {
+  if (_duration.inSeconds == 0) return;
+
+  _remaining = _duration;
+  _isRunning = true;
+  notifyListeners();
+
+  // Démarrer le foreground service (Android uniquement)
+  if (Platform.isAndroid) {
+    await ForegroundService.startTimer(_duration.inSeconds);
+  } else {
+    // iOS : notification locale programmée
+    await NotificationService.scheduleTimerNotification(_duration);
+  }
+
+  // Démarrer le ticker UI
+  _ticker?.cancel();
+  _ticker = Ticker((elapsed) {
+    _remaining = _duration - elapsed;
+    if (_remaining.isNegative) {
+      _remaining = Duration.zero;
+      stop();
+    }
+    notifyListeners();
+  });
+  _ticker!.start();
+}
+```
+
+**Modifier la méthode `stop()`** :
+```dart
+void stop() async {
+  _isRunning = false;
+  _ticker?.stop();
+  notifyListeners();
+
+  // Arrêter le foreground service
+  if (Platform.isAndroid) {
+    await ForegroundService.stopTimer();
+  }
+
+  // Afficher le dialog de fin si timer terminé
+  if (_remaining.inSeconds == 0) {
+    _showCompletionDialog = true;
+    notifyListeners();
+  }
+}
+```
+
+---
+
+### iOS : Notification Locale (Fallback)
+
+**Fichier** : `packages/dotlyn_core/lib/services/notification_service.dart`
+
+**Ajouter une méthode pour iOS** :
+```dart
+static Future<void> scheduleTimerNotification(Duration duration) async {
+  if (!Platform.isIOS) return;
+
+  const iOSDetails = DarwinNotificationDetails(
+    sound: 'dingding.aiff', // Son embarqué dans le bundle iOS
+    presentAlert: true,
+    presentBadge: true,
+    presentSound: true,
+  );
+
+  const details = NotificationDetails(iOS: iOSDetails);
+
+  await _notifications.zonedSchedule(
+    1,
+    'Timer terminé !',
+    'Votre timer Dotlyn est terminé.',
+    tz.TZDateTime.now(tz.local).add(duration),
+    details,
+    androidScheduleMode: AndroidScheduleMode.exact,
+    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
   );
 }
 ```
 
----
-
-### Tâche 2 : Saisie durée intuitive (P1 - UX)
-
-**Problème actuel** : Format `hh:mm:ss` rigide, faut sélectionner/effacer chaque segment.
-
-**Solution proposée** : Saisie numérique **droite-à-gauche** avec remplissage automatique.
-
-#### Option A : Saisie numérique pure (RECOMMANDÉ)
-
-**Comportement** :
-- TextField affiche `00:00:00` (placeholder grisé)
-- L'utilisateur tape des chiffres **sans sélectionner** → remplissage de droite à gauche
-- Exemples :
-  - Tape `5` → `00:00:05` (5 secondes)
-  - Tape `10` → `00:00:10` (10 secondes)
-  - Tape `130` → `00:01:30` (1 min 30s)
-  - Tape `10552` → `01:05:52` (1h 5min 52s)
-  - Tape `235959` → `23:59:59` (23h 59min 59s - max)
-- Touche **Backspace** → efface le dernier chiffre (retour droite-à-gauche)
-- Format affiché en temps réel : `hh:mm:ss` avec séparateurs `:`
-
-**Implémentation** :
-- [ ] Remplacer le TextField actuel par un **GestureDetector + Container** stylisé
-- [ ] Gérer la saisie manuellement avec **RawKeyboardListener** ou **TextField + TextInputFormatter custom**
-- [ ] Stocker les chiffres tapés dans une String interne (ex: "10552")
-- [ ] Formatter la String → Duration → `hh:mm:ss` affichée
-- [ ] Limiter à 6 chiffres max (23:59:59 = 235959)
-
-**Code suggéré** :
-```dart
-// widgets/numeric_timer_input.dart
-class NumericTimerInput extends StatefulWidget {
-  final Duration initialDuration;
-  final ValueChanged<Duration> onChanged;
-  
-  const NumericTimerInput({
-    required this.initialDuration,
-    required this.onChanged,
-  });
-  
-  @override
-  State<NumericTimerInput> createState() => _NumericTimerInputState();
-}
-
-class _NumericTimerInputState extends State<NumericTimerInput> {
-  String _digits = '';
-  final FocusNode _focusNode = FocusNode();
-  
-  @override
-  void initState() {
-    super.initState();
-    _digits = _durationToDigits(widget.initialDuration);
-  }
-  
-  String _durationToDigits(Duration d) {
-    int totalSeconds = d.inSeconds;
-    return totalSeconds.toString().padLeft(6, '0');
-  }
-  
-  Duration _digitsToDuration(String digits) {
-    if (digits.isEmpty) return Duration.zero;
-    
-    // Pad à 6 chiffres (ex: "552" -> "000552")
-    String padded = digits.padLeft(6, '0');
-    
-    // Parse HHMMSS
-    int hours = int.parse(padded.substring(0, 2));
-    int minutes = int.parse(padded.substring(2, 4));
-    int seconds = int.parse(padded.substring(4, 6));
-    
-    // Limite 12h max
-    if (hours > 12) hours = 12;
-    if (minutes > 59) minutes = 59;
-    if (seconds > 59) seconds = 59;
-    
-    return Duration(hours: hours, minutes: minutes, seconds: seconds);
-  }
-  
-  String _formatDisplay(String digits) {
-    String padded = digits.padLeft(6, '0');
-    return '${padded.substring(0, 2)}:${padded.substring(2, 4)}:${padded.substring(4, 6)}';
-  }
-  
-  void _handleKeyPress(String key) {
-    setState(() {
-      if (key == 'Backspace' && _digits.isNotEmpty) {
-        _digits = _digits.substring(0, _digits.length - 1);
-      } else if (RegExp(r'[0-9]').hasMatch(key) && _digits.length < 6) {
-        _digits += key;
-      }
-      
-      widget.onChanged(_digitsToDuration(_digits));
-    });
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _focusNode.requestFocus(),
-      child: RawKeyboardListener(
-        focusNode: _focusNode,
-        onKey: (event) {
-          if (event is RawKeyDownEvent) {
-            _handleKeyPress(event.logicalKey.keyLabel);
-          }
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          decoration: BoxDecoration(
-            border: Border.all(color: _focusNode.hasFocus ? Colors.orange : Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            _formatDisplay(_digits),
-            style: TextStyle(
-              fontFamily: 'Satoshi',
-              fontWeight: FontWeight.w900,
-              fontSize: 56,
-              color: _focusNode.hasFocus ? Colors.orange : Colors.black,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-  }
-}
-```
-
-**Alternative plus simple** : Utiliser TextField avec **TextInputFormatter** custom qui reformatte en `hh:mm:ss` en temps réel.
+**Ajouter le son dans iOS** :
+- Placer `dingding.aiff` dans `apps/timer/ios/Runner/Resources/`.
+- Ajouter dans `Info.plist` (si nécessaire).
 
 ---
 
-#### Option B : Toggle entre deux modes (si demandé)
+## ✅ Critères de Validation
 
-**UI** :
-- Petit Switch/SegmentedButton à côté du timer display
-- **Mode 1** : Saisie numérique (droite-à-gauche) - par défaut
-- **Mode 2** : Format `hh:mm:ss` classique (comme actuellement)
+### Tests Android
+- [ ] Timer démarre → notification persistante visible
+- [ ] Écran éteint → notification persistante reste active
+- [ ] App tuée (swipe) → service reste actif, notification persistante
+- [ ] Timer terminé → sonnerie + vibration jouées en boucle
+- [ ] Bouton "Arrêter" → service s'arrête, sonnerie/vibration stoppées
+- [ ] Mode silence → sonnerie et vibration jouées quand même
+- [ ] Mode économie d'énergie → service reste actif
 
-**Implémentation** :
-- [ ] Ajouter `bool _numericInputMode = true` dans `TimerProvider`
-- [ ] SegmentedButton au-dessus du TextField :
-  - "123" (numérique)
-  - "00:00" (format classique)
-- [ ] Switch du widget input selon le mode
-
-**Recommandation** : **NE PAS implémenter Option B** pour v0.1. Trop complexe, ajoute de la friction.  
-→ Garder **uniquement saisie numérique** (Option A) pour simplicité.
-
----
-
-## 💡 Suggestions d'amélioration ergonomie (bonus)
-
-### Suggestion 1 : Presets rapides
-- Ajouter des chips/boutons rapides sous le timer :
-  - `5 min` `10 min` `15 min` `30 min` `1h`
-- Tap sur un preset → remplit le timer instantanément
-- Gain UX énorme pour cas d'usage courants
-
-```dart
-Wrap(
-  spacing: 8,
-  children: [
-    ActionChip(
-      label: Text('5 min'),
-      onPressed: () => provider.setDuration(Duration(minutes: 5)),
-    ),
-    ActionChip(label: Text('10 min'), onPressed: ...),
-    ActionChip(label: Text('15 min'), onPressed: ...),
-    ActionChip(label: Text('30 min'), onPressed: ...),
-    ActionChip(label: Text('1h'), onPressed: ...),
-  ],
-)
-```
-
-### Suggestion 2 : Incrément/décrément par pas
-- Ajouter petits boutons `+` et `-` autour du timer
-- **Tap simple** : +/- 1 minute
-- **Long press** : +/- 5 minutes
-- **Double tap** : +/- 10 minutes
-
-### Suggestion 3 : Slider visuel
-- Ajouter un Slider horizontal sous le timer (optionnel)
-- Range 0-120 minutes (ou 0-12h)
-- Drag pour ajuster rapidement
-- Moins précis mais rapide pour gros ajustements
-
-### Suggestion 4 : Validation visuelle claire
-- Quand l'utilisateur finit de taper → animation checkmark ✓
-- Feedback haptique léger (vibration courte)
-- Évite le doute "est-ce que c'est pris en compte ?"
+### Tests iOS
+- [ ] Timer démarre → notification programmée
+- [ ] App tuée → notification apparaît à la fin du timer
+- [ ] Mode silence → notification visible, son peut ne pas être joué (limité par Apple)
+- [ ] Informer l'utilisateur des limites iOS dans l'app
 
 ---
 
-## 🎨 Contraintes design
+## 📝 Documentation Utilisateur
 
-**Respecter** :
-- Couleurs Dotlyn (Orange E36C2D, Gris 2C2C2C)
-- Typo : Satoshi Black 56pt pour timer display
-- Icônes : Remix Icon uniquement
-- Dialog : Material Design standard, coins arrondis 12px
-- Bouton "Arrêter" : Minimum 48px hauteur (accessibilité)
+Ajouter dans l'app (écran Settings ou première utilisation) :
 
-**Accessibilité** :
-- Contraste texte/fond : WCAG AA minimum
-- Boutons cliquables : zone minimum 44x44 (iOS guidelines)
-- Dialog lisible avec TalkBack/VoiceOver
+**Android** :
+> "Pour garantir la fiabilité du timer, une notification persistante sera affichée pendant l'exécution. Vous pouvez l'arrêter à tout moment."
+
+**iOS** :
+> "En raison des restrictions Apple, la sonnerie peut ne pas être jouée si l'app est fermée ou le mode silence activé. Pour une fiabilité maximale, gardez l'app ouverte."
 
 ---
 
-## ✅ Critères de succès
+## 🎯 Prochaines Étapes
 
-### Fonctionnel
-- [ ] Son s'arrête quand Dialog "Arrêter" cliqué
-- [ ] Son s'arrête automatiquement après 30s max
-- [ ] Dialog non-dismissible (pas de fermeture accidentelle)
-- [ ] Saisie numérique fonctionne droite-à-gauche
-- [ ] Backspace efface le dernier chiffre
-- [ ] Affichage `hh:mm:ss` mis à jour en temps réel
-- [ ] Limite 12h respectée
-- [ ] Pas de crash si saisie vide
-
-### UX
-- [ ] Utilisateur peut arrêter le son en 1 tap
-- [ ] Saisie durée = max 6 taps clavier (ex: "001030")
-- [ ] Pas besoin de sélectionner/effacer
-- [ ] Feedback visuel clair (focus, validation)
-
-### Code Quality
-- [ ] `flutter analyze` = 0 issues
-- [ ] Code commenté (logique saisie numérique)
-- [ ] Pas de duplication avec ancien TextField
+1. Implémenter le foreground service Android (Kotlin).
+2. Ajouter le MethodChannel et intégrer dans `TimerProvider`.
+3. Tester sur plusieurs modèles Android (Samsung, Pixel, Xiaomi, etc.).
+4. Implémenter la notification locale iOS avec son embarqué.
+5. Tester sur iOS (iPhone 12+, iOS 15+).
+6. Documenter les limites dans l'app et la doc technique.
+7. Commit et push : `[timer] feat: add foreground service for reliable alarm (Android) + local notification (iOS)`.
 
 ---
 
-## 🚨 Points d'attention
-
-### 1. Dialog timing (critique)
-- **Problème potentiel** : Dialog peut s'afficher plusieurs fois si `notifyListeners()` appelé en boucle
-- **Solution** : Flag `_dialogShown` qui bloque l'affichage multiple
-- **Test** : Laisser timer atteindre 0 → vérifier 1 seul dialog
-
-### 2. Saisie numérique sur mobile
-- **RawKeyboardListener** ne fonctionne **PAS** sur clavier virtuel mobile
-- **Solution** : Utiliser TextField avec TextInputFormatter custom
-- **Formatter** : Intercepte chaque caractère tapé, reformatte en `hh:mm:ss`
-
-### 3. Limite 12h
-- Si utilisateur tape `999999` → doit clamper à `12:00:00`
-- Afficher message "Durée max : 12h" si dépassement
-
-### 4. Focus management
-- Quand timer démarre (status = running) → **retirer le focus** du TextField
-- Empêche la saisie pendant le countdown
-
-### 5. Persistence
-- Sauvegarder la dernière durée saisie dans SharedPreferences
-- Restaurer au prochain lancement
-
----
-
-## 📦 Fichiers à créer/modifier
-
-### Créer
-```
-apps/timer/lib/widgets/
-  numeric_timer_input.dart   # Widget saisie numérique custom
-  duration_presets.dart      # Chips presets (bonus, optionnel)
-```
-
-### Modifier
-```
-apps/timer/lib/providers/timer_provider.dart
-  → Ajouter flag _showCompletionDialog
-  → Méthode dismissCompletionDialog()
-  → Auto-stop son après 30s
-
-apps/timer/lib/services/audio_service.dart
-  → Méthode stopSound()
-
-apps/timer/lib/screens/timer_screen.dart
-  → Listener sur showCompletionDialog
-  → showDialog() avec AlertDialog
-  → Remplacer TimerDisplay par NumericTimerInput
-
-apps/timer/lib/widgets/timer_display.dart
-  → Supprimer (ou garder en backup)
-```
-
----
-
-## 📚 Références
-
-- [Flutter AlertDialog](https://api.flutter.dev/flutter/material/AlertDialog-class.html)
-- [TextInputFormatter custom](https://api.flutter.dev/flutter/services/TextInputFormatter-class.html)
-- [RawKeyboardListener](https://api.flutter.dev/flutter/widgets/RawKeyboardListener-class.html)
-- [Material Design Dialogs](https://m3.material.io/components/dialogs/overview)
-
----
-
-## 🔄 Workflow d'exécution
-
-1. **Phase 1 : Dialog stop son (30 min)**
-   - Modifier audio_service.dart (stopSound)
-   - Modifier timer_provider.dart (flag + dismiss)
-   - Modifier timer_screen.dart (dialog UI)
-   - Tester : timer → 0 → son joue → clic Arrêter → son stop
-
-2. **Phase 2 : Saisie numérique (1-2h)**
-   - Créer numeric_timer_input.dart
-   - Implémenter logique droite-à-gauche
-   - Tester cas limites (Backspace, 6 chiffres, 12h max)
-   - Remplacer TimerDisplay dans timer_screen.dart
-
-3. **Phase 3 : Tests + Doc (30 min)**
-   - Tests manuels (émulateur + device réel si possible)
-   - flutter analyze
-   - Update APP.md (bugs cochés)
-   - Commit : `[timer] feat: dialog stop son + saisie numérique intuitive`
-
----
-
-**Priorité** : **Phase 1 (Dialog)** = critique, utilisateur bloqué actuellement.  
-**Phase 2** = amélioration UX importante mais pas bloquante.
-
-**Estimation totale** : 2-3 heures de dev + tests.
-
----
-
-**Généré le** : 2025-11-16  
-**À partir de** : PROMPT_USER.md  
-**Version Timer** : v0.1 MVP
+**Note** : Cette solution garantit la **fiabilité maximale** sur Android (foreground service) et la **meilleure expérience possible** sur iOS (notification locale avec son embarqué), tout en respectant les contraintes des OS.

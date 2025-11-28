@@ -49,6 +49,27 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 **⚠️ Débloqueur technique MVP** : Sans cette version, l'app n'a pas de valeur.
 
+---
+
+### 🚀 MVP v0.2 — Ce qui sera en production
+
+- Un seul timer simple, durée personnalisable
+- Notification locale à la fin du timer (Android/iOS)
+- Sonnerie embarquée Dotlyn (1 son par défaut, boucle jusqu’à arrêt manuel)
+- Vibration à la fin (pattern Dotlyn)
+- Fonctionne en arrière-plan (notification fiable, selon limites OS)
+- Page settings minimale (activer/désactiver son/vibration)
+- UI sobre, stable, cohérente (Dotlyn styleguide)
+- Pas de pub intrusive (aucune ou bannière discrète)
+- Communication claire sur les limites OS (fiabilité, background, etc.)
+- **Tests et re-tests obligatoires** :
+  - Vérifier la sonnerie et le vibreur sur différents modèles
+  - Tester en mode silence, vibreur seul, sonnerie seule
+  - Tester avec écran éteint, app en arrière-plan, app tuée
+  - Réglages dans les settings (son/vibreur activables/désactivables)
+
+---
+
 **🔬 Piste à creuser (v0.2.1 ou v0.3)** :
 Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en boucle :
 
