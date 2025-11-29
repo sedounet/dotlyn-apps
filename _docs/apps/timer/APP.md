@@ -1,8 +1,8 @@
 # Timer — Documentation de développement
 
-> **Version actuelle** : 0.1.0 (MVP)  
-> **Dernière update** : 2025-11-22  
-> **Status** : 🚧 En développement actif
+> **Version actuelle** : 0.2.0 (Notifications & Alarmes)  
+> **Dernière update** : 2025-11-29  
+> **Status** : 🧪 Phase de test
 
 ---
 
@@ -39,15 +39,154 @@ Un seul timer, durée personnalisable, fonctionne en arrière-plan.
 
 ---
 
-### v0.2 — Notifications & Alarmes (EN COURS)
+### v0.2 — Notifications & Alarmes (EN TEST)
 **Objectif** : Timer fiable en arrière-plan, notification de fin.
 
+**Implémentation** :
+- [x] `AlarmService` avec `android_alarm_manager_plus` (Android) + notifications programmées (iOS)
+- [x] `NotificationService` avec `flutter_local_notifications` + `timezone`
+- [x] Permissions Android (SCHEDULE_EXACT_ALARM, POST_NOTIFICATIONS, WAKE_LOCK, etc.)
+- [x] Intégration dans `TimerProvider` (planification alarme, notification en cours, notification terminé)
+- [x] Initialisation des services au démarrage
+- [x] Test notification au lancement de l'app
 
 **Critère de succès** : Timer fonctionne avec écran éteint/app tuée, notification sonore à la fin.
 
 **Tech** : `android_alarm_manager_plus`, `flutter_local_notifications`, permissions Android.
 
 **⚠️ Débloqueur technique MVP** : Sans cette version, l'app n'a pas de valeur.
+
+---
+
+## 🧪 Plan de Tests v0.2
+
+### Tests Fonctionnels
+
+#### ✅ T1 - Timer avec App au Premier Plan
+- [ ] Démarrer un timer de 30 secondes
+- [ ] Vérifier que le compte à rebours se déroule correctement
+- [ ] Vérifier notification "timer en cours" visible
+- [ ] À la fin : vérifier son + vibration + notification "timer terminé"
+- [ ] Vérifier que le son/vibration s'arrête après arrêt manuel
+
+#### ✅ T2 - Timer avec Écran Éteint
+- [ ] Démarrer un timer de 1 minute
+- [ ] Éteindre l'écran
+- [ ] Attendre la fin du timer
+- [ ] Vérifier que la notification sonore réveille l'écran
+- [ ] Vérifier son + vibration + notification "timer terminé"
+
+#### ✅ T3 - Timer avec App en Arrière-Plan
+- [ ] Démarrer un timer de 1 minute
+- [ ] Passer à une autre app (ne pas fermer Timer)
+- [ ] Attendre la fin du timer
+- [ ] Vérifier notification "timer terminé" avec son + vibration
+- [ ] Cliquer sur la notification pour revenir à Timer
+
+#### ✅ T4 - Timer avec App Tuée (Critical Test)
+- [ ] Démarrer un timer de 2 minutes
+- [ ] Fermer l'app complètement (swipe ou force stop)
+- [ ] Attendre la fin du timer
+- [ ] **Android** : Vérifier que l'alarme se déclenche quand même
+- [ ] **iOS** : Vérifier comportement (peut échouer selon restrictions)
+- [ ] Vérifier notification visible dans le tiroir de notifications
+
+#### ✅ T5 - Pause et Reprise
+- [ ] Démarrer un timer de 2 minutes
+- [ ] Mettre en pause après 30s
+- [ ] Vérifier que la notification "timer en cours" disparaît
+- [ ] Reprendre le timer
+- [ ] Vérifier que l'alarme est replanifiée correctement
+- [ ] Attendre la fin et vérifier notification
+
+#### ✅T6 - Reset Timer
+- [ ] Démarrer un timer de 3 minutes
+- [ ] Après 1 minute, faire reset
+- [ ] Vérifier que l'alarme est annulée
+- [ ] Vérifier que la notification "timer en cours" disparaît
+- [ ] Redémarrer le timer et vérifier comportement normal
+
+### Tests Paramètres (Settings)
+
+#### ✅ T7 - Désactiver Son
+- [ ] Aller dans Settings
+- [ ] Désactiver le son
+- [ ] Démarrer un timer de 30s
+- [ ] À la fin : vérifier vibration OK mais pas de son
+- [ ] Vérifier notification affichée quand même
+
+#### ✅ T8 - Désactiver Vibration
+- [ ] Aller dans Settings
+- [ ] Désactiver vibration
+- [ ] Démarrer un timer de 30s
+- [ ] À la fin : vérifier son OK mais pas de vibration
+- [ ] Vérifier notification affichée quand même
+
+#### ✅ T9 - Désactiver Son ET Vibration
+- [ ] Désactiver son et vibration dans Settings
+- [ ] Démarrer un timer de 30s
+- [ ] À la fin : vérifier notification silencieuse uniquement
+- [ ] Vérifier que l'app ne crash pas
+
+### Tests Edge Cases
+
+#### ✅ T10 - Timer Très Court (5 secondes)
+- [ ] Démarrer un timer de 5s
+- [ ] Vérifier que tout se passe correctement
+- [ ] Notification "timer en cours" peut ne pas apparaître (normal)
+
+#### ✅ T11 - Timer Très Long (12 heures)
+- [ ] Démarrer un timer de 12h (durée max)
+- [ ] Vérifier que l'alarme est planifiée sans erreur
+- [ ] Vérifier notification "timer en cours"
+- [ ] Annuler le timer après 10s (pas besoin d'attendre 12h)
+
+#### ✅ T12 - Multiples Démarrages Rapides
+- [ ] Démarrer un timer de 1 min
+- [ ] Reset immédiatement
+- [ ] Redémarrer 1 min
+- [ ] Répéter 3-4 fois
+- [ ] Vérifier qu'il n'y a pas de conflits d'alarmes
+
+#### ✅ T13 - Redémarrage Téléphone
+- [ ] Démarrer un timer de 5 minutes
+- [ ] Redémarrer le téléphone
+- [ ] **Android** : Vérifier si l'alarme persiste (dépend de RECEIVE_BOOT_COMPLETED)
+- [ ] **iOS** : Timer sera perdu (comportement attendu)
+
+### Tests Permissions
+
+#### ✅ T14 - Permissions Notifications
+- [ ] Installer l'app
+- [ ] Vérifier que la permission notifications est demandée
+- [ ] Accepter la permission
+- [ ] Démarrer un timer et vérifier notifications OK
+
+#### ✅ T15 - Permissions Refusées
+- [ ] Refuser la permission notifications
+- [ ] Démarrer un timer
+- [ ] Vérifier que l'app fonctionne quand même (dégradé)
+- [ ] Vérifier message d'erreur ou warning si applicable
+
+### Résultats Attendus
+
+**Android :**
+- ✅ T1-T3 : Doivent passer sans problème
+- ⚠️ T4 : Peut échouer sur certains modèles (optimisation batterie agressive)
+- ✅ T5-T12 : Doivent passer
+- ⚠️ T13 : Peut échouer selon config du téléphone
+
+**iOS :**
+- ✅ T1-T3 : Doivent passer
+- ❌ T4 : Échec attendu (limitation iOS)
+- ✅ T5-T12 : Doivent passer
+- ❌ T13 : Échec attendu
+
+### Notes de Test
+- Tester sur au moins 2 appareils Android différents (si possible)
+- Tester sur au moins 1 appareil iOS (si disponible)
+- Noter les modèles/versions d'OS pour chaque test
+- Documenter les échecs avec logs si possible
 
 ---
 

@@ -16,6 +16,22 @@ class NotificationService {
       // TODO: router vers l'écran Timer si besoin
       print('Notification clicked: ${response.payload}');
     });
+
+    // Créer le canal de notification avec son d'alarme (son système par défaut)
+    const androidChannel = AndroidNotificationChannel(
+      'timer_complete',
+      'Timer',
+      description: 'Notifications when timer completes',
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+      audioAttributesUsage:
+          AudioAttributesUsage.alarm, // IMPORTANT : canal alarme, sonne même en mode silencieux
+    );
+
+    await _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(androidChannel);
   }
 
   static Future<void> showTestNotification() async {
@@ -43,6 +59,7 @@ class NotificationService {
       enableVibration: true,
       ticker: 'timer',
       category: AndroidNotificationCategory.alarm,
+      audioAttributesUsage: AudioAttributesUsage.alarm, // Son joue via canal alarme
     );
     const iosDetails = DarwinNotificationDetails(
       presentSound: true,
