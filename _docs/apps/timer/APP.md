@@ -6,6 +6,24 @@
 
 ---
 
+## 📑 Table des Matières
+
+- [🎯 Vision](#-vision)
+- [📦 Versions](#-versions)
+  - [v0.1 — MVP Core](#v01--mvp-core-en-cours)
+  - [v0.2 — Notifications & Alarmes (EN TEST)](#v02--notifications--alarmes-en-test)
+  - [🚀 MVP v0.2 — Production](#-mvp-v02--ce-qui-sera-en-production)
+  - [🧪 Plan de Tests v0.2](#-plan-de-tests-v02)
+  - [🔬 Différences Android / iOS](#différences-android--ios--contournements)
+  - [v0.3 — Foreground Service](#v03--foreground-service--fiabilité-max-si-v02-instable)
+  - [v0.4 — Monétisation & UX](#v04--monétisation--ux-post-mvp)
+  - [v0.5 — Multi-timers & Cloud](#v05--multi-timers--cloud)
+- [📋 TODO](#-todo)
+- [🐛 Bugs Connus](#-bugs-connus)
+- [📝 Notes](#-notes)
+
+---
+
 ## 🎯 Vision
 
 **Le timer le plus simple et fiable.**  
@@ -239,7 +257,42 @@ Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en b
 
 ---
 
-### v0.3 — Monétisation & UX (Post-MVP)
+### v0.3 — Foreground Service & Fiabilité MAX (si v0.2 instable)
+**Objectif** : Garantir 100% de fiabilité avec foreground service + gestion sons flexible.
+
+**⚠️ Notice** : Si les tests v0.2 révèlent une instabilité (timer ne sonne pas en arrière-plan, app tuée par l'OS, etc.), on bascule sur cette architecture plus robuste.
+
+#### Foreground Service (Android)
+- [ ] Implémenter foreground service qui démarre avec le timer
+- [ ] Notification persistante "Timer en cours : 05:23" (non supprimable)
+- [ ] Garantie que l'OS ne tue pas l'app en arrière-plan
+- [ ] Service joue le son à la fin (fiabilité 100%)
+
+#### Gestion Sons Flexible
+- [ ] **Option 1 (défaut)** : Son système alarme
+  - Fiabilité maximale
+  - Pas de complexité
+  - Volume alarme (pas média)
+- [ ] **Option 2 (settings)** : Son custom
+  - L'utilisateur peut choisir un fichier .mp3 depuis ses fichiers
+  - Stocké localement, joué par le service
+  - Identité Dotlyn préservée
+
+#### Settings Améliorés
+- [ ] Section "Sonnerie" avec radio buttons : Système / Custom
+- [ ] Bouton "📂 Choisir un fichier" si Custom sélectionné
+- [ ] Preview du son avant validation
+- [ ] Fallback automatique sur son système si fichier invalide
+
+**Critère de succès** : 100% de fiabilité sur tous les tests (app tuée, mode économie énergie, etc.).
+
+**Tech** : `flutter_foreground_task`, `file_picker`, AudioService étendu.
+
+**⚠️ Trade-off** : Notification persistante visible tant que le timer tourne (comme Chronomètre Android natif).
+
+---
+
+### v0.4 — Monétisation & UX (Post-MVP)
 **Objectif** : Stabiliser le modèle économique et améliorer l'ergonomie.
 
 - [ ] Firebase Analytics (événements : timer_start, timer_complete, settings_changed)
@@ -256,7 +309,7 @@ Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en b
 
 ---
 
-### v0.4 — Multi-timers & Cloud
+### v0.5 — Multi-timers & Cloud
 **Objectif** : Permettre plusieurs timers simultanés et sauvegarder les données.
 
 - [ ] Multi-timers simultanés (max 3)
