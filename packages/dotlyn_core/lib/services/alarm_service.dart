@@ -6,8 +6,7 @@ import 'notification_service.dart';
 // Callback top-level obligatoire pour Android
 @pragma('vm:entry-point')
 Future<void> fireTimerAlarm() async {
-  // Android : ce code s'exécute au réveil
-  // Montrer la notification de fin et laisser la notification gérer le son
+  // Android : ce code s'exécute au réveil, même si l'app est tuée
   await NotificationService.showTimerComplete();
 }
 

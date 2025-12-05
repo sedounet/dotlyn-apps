@@ -13,6 +13,7 @@ class TimerProvider extends ChangeNotifier {
   Timer? _timer;
   String? _errorMessage;
   bool _showCompletionDialog = false;
+  DateTime _startTime = DateTime.now(); // Nouvelle variable d'instance
 
   final TimerService _timerService = TimerService();
   final AudioService _audioService = AudioService();
@@ -24,8 +25,7 @@ class TimerProvider extends ChangeNotifier {
   bool get showCompletionDialog => _showCompletionDialog;
 
   TimerProvider() {
-    _audioService.preloadSound('dingding.mp3');
-    _audioService.loadVibrationSettings();
+    // Son géré par le système via notifications
   }
 
   void start(Duration duration) {
@@ -33,25 +33,26 @@ class TimerProvider extends ChangeNotifier {
     _remaining = duration;
     _status = TimerStatus.running;
     _errorMessage = null;
+    _startTime = DateTime.now(); // Stocker l'heure de départ
 
-    // Affiche la notification timer en cours dès le démarrage
-    NotificationService.showTimerRunning(_remaining);
+    // Programmer l'alarme système
     AlarmService.scheduleTimer(_remaining);
 
-    int tickCount = 0;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remaining.inSeconds > 0) {
-        _remaining = Duration(seconds: _remaining.inSeconds - 1);
-        tickCount++;
-        if (tickCount % 5 == 0) {
-          NotificationService.showTimerRunning(_remaining);
-        }
+    // Supprimer Timer.periodic, utiliser un timer pour l'UI
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      final elapsed = DateTime.now().difference(_startTime);
+      final newRemaining = _duration - elapsed;
+
+      if (newRemaining.inSeconds >= 0) {
+        _remaining = newRemaining;
         notifyListeners();
       } else {
         _timer?.cancel();
-        _onTimerComplete();
+        _status = TimerStatus.idle;
+        notifyListeners();
       }
     });
+
     notifyListeners();
   }
 
@@ -103,7 +104,7 @@ class TimerProvider extends ChangeNotifier {
   void _onTimerComplete() {
     _status = TimerStatus.idle;
     _showCompletionDialog = true;
-    _audioService.playTimerComplete();
+    // Son géré par la notification système uniquement
     AlarmService.cancelTimer();
     // Affiche la notification timer terminé
     NotificationService.showTimerComplete();
@@ -112,14 +113,12 @@ class TimerProvider extends ChangeNotifier {
 
   void dismissCompletionDialog() {
     _showCompletionDialog = false;
-    _audioService.stopSound();
     notifyListeners();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    _audioService.dispose();
     super.dispose();
   }
 }
