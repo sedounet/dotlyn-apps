@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dotlyn_core/services/alarm_service.dart';
-import 'package:dotlyn_core/services/notification_service.dart';
+// import 'package:dotlyn_core/services/notification_service.dart';
 import '../models/timer_state.dart';
 import '../services/timer_service.dart';
-import '../services/audio_service.dart';
+// import '../services/audio_service.dart';
 
 class TimerProvider extends ChangeNotifier {
   TimerStatus _status = TimerStatus.idle;
@@ -16,7 +16,7 @@ class TimerProvider extends ChangeNotifier {
   DateTime _startTime = DateTime.now(); // Nouvelle variable d'instance
 
   final TimerService _timerService = TimerService();
-  final AudioService _audioService = AudioService();
+  // final AudioService _audioService = AudioService(); // Non utilisé - son géré par notifications système
 
   TimerStatus get status => _status;
   Duration get duration => _duration;
@@ -101,15 +101,15 @@ class TimerProvider extends ChangeNotifier {
     }
   }
 
-  void _onTimerComplete() {
-    _status = TimerStatus.idle;
-    _showCompletionDialog = true;
-    // Son géré par la notification système uniquement
-    AlarmService.cancelTimer();
-    // Affiche la notification timer terminé
-    NotificationService.showTimerComplete();
-    notifyListeners();
-  }
+  // void _onTimerComplete() {
+  //   _status = TimerStatus.idle;
+  //   _showCompletionDialog = true;
+  //   // Son géré par la notification système uniquement
+  //   AlarmService.cancelTimer();
+  //   // Affiche la notification timer terminé
+  //   NotificationService.showTimerComplete();
+  //   notifyListeners();
+  // }
 
   void dismissCompletionDialog() {
     _showCompletionDialog = false;
