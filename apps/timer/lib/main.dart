@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:dotlyn_core/services/notification_service.dart';
+import 'services/notification_service.dart';
 import 'screens/timer_screen.dart';
 import 'screens/settings_screen.dart';
 import 'providers/timer_provider.dart';

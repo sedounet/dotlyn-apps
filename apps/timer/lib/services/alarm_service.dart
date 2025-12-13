@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:dotlyn_core/dotlyn_core.dart';
+import 'notification_service.dart';
 
 // Callback top-level obligatoire pour Android
 @pragma('vm:entry-point')
