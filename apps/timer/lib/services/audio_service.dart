@@ -1,16 +1,16 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dotlyn_core/dotlyn_core.dart';
+// import 'package:dotlyn_core/dotlyn_core.dart';
 
 class AudioService {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final VibrationService _vibrationService = VibrationService();
+  // final VibrationService _vibrationService = VibrationService();
 
   /// Charge les settings de vibration au démarrage
   Future<void> loadVibrationSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    final vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
-    _vibrationService.setEnabled(vibrationEnabled);
+    // final prefs = await SharedPreferences.getInstance();
+    // final vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
+    // _vibrationService.setEnabled(vibrationEnabled);
   }
 
   /// Précharge le son pour éviter les lags
@@ -30,7 +30,7 @@ class AudioService {
 
   /// Déclenche une vibration de fin de timer
   Future<void> vibrate() async {
-    await _vibrationService.vibrateTimerComplete();
+    // await _vibrationService.vibrateTimerComplete();
   }
 
   /// Joue le son + vibration de fin selon les settings
@@ -40,20 +40,20 @@ class AudioService {
     final vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
 
     // Mettre à jour l'état de la vibration selon les settings actuels
-    _vibrationService.setEnabled(vibrationEnabled);
+    // _vibrationService.setEnabled(vibrationEnabled);
 
     if (soundEnabled) {
       await playSound('dingding.mp3', loop: true);
     }
     if (vibrationEnabled) {
-      await _vibrationService.vibrateTimerCompleteLoop();
+      // await _vibrationService.vibrateTimerCompleteLoop();
     }
   }
 
   /// Arrête la lecture du son et de la vibration
   void stopSound() {
     _audioPlayer.stop();
-    _vibrationService.cancel();
+    // _vibrationService.cancel();
   }
 
   /// Nettoie les ressources
