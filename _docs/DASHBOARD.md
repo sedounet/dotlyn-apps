@@ -11,6 +11,11 @@
 **Utilité** : Tester le design system Dotlyn  
 📁 [Doc](./apps/design_lab/APP.md)
 
+### 💰 Money Tracker
+**Status** : 🚧 En développement  
+**Version** : -  
+📁 [Doc](./apps/money_tracker/APP.md) • [Pitch](./apps/money_tracker/PITCH.md)
+
 ---
 
 ## ⚰️ Apps Abandonnées
@@ -33,12 +38,13 @@
 
 ## 📊 Vue globale
 
-| App        | Version | Status      | Note                   |
-| ---------- | ------- | ----------- | ---------------------- |
-| Design Lab | -       | ✅ Interne   | Outil de développement |
-| Timer      | 0.2.0   | ⚰️ Abandonné | Code archivé           |
-| Pomodoro   | -       | ⚰️ Abandonné | Supprimé               |
-| Tabata     | -       | ⚰️ Abandonné | Supprimé               |
+| App           | Version | Status      | Note                   |
+| ------------- | ------- | ----------- | ---------------------- |
+| Design Lab    | -       | ✅ Interne   | Outil de développement |
+| Money Tracker | -       | 🚧 En dev    | Gestion comptes perso  |
+| Timer         | 0.2.0   | ⚰️ Abandonné | Code archivé           |
+| Pomodoro      | -       | ⚰️ Abandonné | Supprimé               |
+| Tabata        | -       | ⚰️ Abandonné | Supprimé               |
 
 ---
 
@@ -59,6 +65,6 @@
 
 ---
 
-**Dernière mise à jour** : 2025-12-13  
+**Dernière mise à j2 (Design Lab - outil interne, Money Tracker - en dev
 **Apps actives** : 1 (Design Lab - outil interne)  
 **Apps abandonnées** : 3 (Timer archivé, Pomodoro/Tabata supprimés)
