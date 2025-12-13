@@ -1,8 +1,26 @@
 # Timer — Documentation de développement
 
-> **Version actuelle** : 0.2.0 (Notifications & Alarmes)  
-> **Dernière update** : 2025-11-29  
-> **Status** : 🧪 Phase de test
+> ⚰️ **PROJET ABANDONNÉ**  
+> **Version archivée** : 0.2.0 (Notifications & Alarmes)  
+> **Date d'abandon** : 2025-12-13  
+> **Raison** : Réorientation stratégique - Code conservé pour référence
+
+---
+
+## ⚠️ Notice d'archivage
+
+Ce projet Timer a été abandonné. La base de code est conservée dans `apps/timer/` à titre de référence technique pour de futurs projets similaires.
+
+**Ce qui reste disponible** :
+- Code source complet (v0.2.0)
+- Documentation technique ci-dessous
+- PITCH.md (vision originale)
+- Assets sons
+
+**Ce qui a été supprimé** :
+- Toutes les TODOs et roadmap
+- Fichiers PROMPT_USER.md et PROMPT_AI.md
+- Entrée active dans le Dashboard
 
 ---
 
@@ -18,7 +36,6 @@
   - [v0.3 — Foreground Service](#v03--foreground-service--fiabilité-max-si-v02-instable)
   - [v0.4 — Monétisation & UX](#v04--monétisation--ux-post-mvp)
   - [v0.5 — Multi-timers & Cloud](#v05--multi-timers--cloud)
-- [📋 TODO](#-todo)
 - [🐛 Bugs Connus](#-bugs-connus)
 - [📝 Notes](#-notes)
 
@@ -278,31 +295,6 @@ Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en b
 
 **Tech** : SQLite (sqflite), custom painters pour UI, Shortcuts API (iOS), Intents (Android).
 
-## 📝 TODO
-
-### 🔴 P1 — v0.2 (Notifications & Alarmes - EN COURS)
-
-- [x] Intégration AlarmManager Android
-- [x] Notification "Timer en cours" au démarrage
-- [x] Notification "Timer terminé" avec sonnerie système
-- [x] Permissions Android 12+ (POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM, WAKE_LOCK, RECEIVE_BOOT_COMPLETED)
-- [x] Tests sur émulateur et device réel
-- [ ] Rappel d'app au clic sur notification (à faire)
-- [ ] Sons configurables (à faire)
-- [ ] Page settings : choix du son (à faire)
-
-**Deadline** : À définir  
-**Bloqueurs** : Tests sur device physique requis pour validation finale
-
----
-
-## ✅ Tests
-
-- [x] Test sur device réel Android 15 (Nothing Phone A015)
-- [x] Son en boucle validé
-- [x] Vibration en boucle validée
-- [x] Arrêt simultané son + vibration validé
-
 ---
 
 ## 🐛 Bugs connus
@@ -361,14 +353,9 @@ Architecture hybride AlarmManager + Foreground Service pour sonnerie custom en b
 
 ## 📝 Notes & Idées en vrac
 
-- Tester comportement avec écran éteint pendant 1h+
-- Voir si on peut réutiliser le code notif pour d'autres apps (package partagé ?)
-- Creuser l'API Alarm Manager Android pour fiabilité background
-- Intégration calendrier possible ? (phase 3-4)
-- Mode "strict" Pomodoro avec blocage pause ? (controverse)
-
----
-
+**À améliorer :**
+- Afficher le numéro de version/build (et/ou date) quelque part sur l'écran principal pour identifier rapidement la version installée sur le téléphone.
+ - Ajouter un fallback automatique : si aucune sonnerie d'alarme n'est configurée sur le téléphone, utiliser le son système de notification pour garantir que le timer sonne toujours.
 ## 🔗 Liens
 
 - **Code** : `/apps/timer/`
