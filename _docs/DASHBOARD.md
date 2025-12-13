@@ -38,8 +38,8 @@
 
 ## 📊 Vue globale
 
-| App           | Version | Status       | Note                   |
-| ------------- | ------- | ------------ | ---------------------- |
+| App           | Version | Status      | Note                   |
+| ------------- | ------- | ----------- | ---------------------- |
 | Design Lab    | -       | ✅ Interne   | Outil de développement |
 | Money Tracker | -       | 🚧 En dev    | Gestion comptes perso  |
 | Timer         | 0.2.0   | ⚰️ Abandonné | Code archivé           |
