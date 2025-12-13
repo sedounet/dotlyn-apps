@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:dotlyn_core/services/alarm_service.dart';
 // import 'package:dotlyn_core/services/notification_service.dart';
 import '../models/timer_state.dart';
 import '../services/timer_service.dart';
+import '../services/alarm_service.dart';
 // import '../services/audio_service.dart';
 
 class TimerProvider extends ChangeNotifier {
