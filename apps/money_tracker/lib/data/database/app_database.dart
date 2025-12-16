@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -33,8 +34,13 @@ class Beneficiaries extends Table {
 class Transactions extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get accountId => integer().references(Accounts, #id, onDelete: KeyAction.cascade)();
-  IntColumn get categoryId => integer().references(Categories, #id)();
+  IntColumn get categoryId => integer().nullable().references(Categories, #id)();
   IntColumn get beneficiaryId => integer().nullable().references(Beneficiaries, #id)();
+  IntColumn get accountToId => integer().nullable().references(
+    Accounts,
+    #id,
+    onDelete: KeyAction.cascade,
+  )(); // For transfers
   RealColumn get amount => real()();
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text().nullable()();
@@ -47,12 +53,30 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from == 1) {
+        // Add accountToId for transfers and make categoryId nullable
+        await m.addColumn(transactions, transactions.accountToId);
+        // Note: SQLite doesn't support making existing columns nullable directly
+        // New transactions will use nullable categoryId via Companion.insert
+      }
+    },
+  );
 
   Future<void> seedInitialData() async {
     final categoriesCount = await (select(categories)).get();
-    if (categoriesCount.isNotEmpty) return;
+    if (categoriesCount.isNotEmpty) {
+      debugPrint(
+        '[DB] Seed: Categories already exist (${categoriesCount.length} found), skipping seed.',
+      );
+      return;
+    }
 
+    debugPrint('[DB] Seed: Inserting initial categories...');
     await batch((batch) {
       batch.insertAll(categories, [
         // Revenus
@@ -120,10 +144,29 @@ class AppDatabase extends _$AppDatabase {
         ),
       ]);
     });
+
+    final insertedCount = await (select(categories)).get();
+    debugPrint('[DB] Seed: ${insertedCount.length} categories inserted successfully.');
   }
 
   // À SUPPRIMER EN PHASE 0.1b - Uniquement pour validation UI
   Future<void> seedFakeData() async {
+    // GARDE-FOU: Vérifier si des données fictives existent déjà
+    final existingAccounts = await (select(accounts)).get();
+    final existingBeneficiaries = await (select(beneficiaries)).get();
+    final existingTransactions = await (select(transactions)).get();
+
+    if (existingAccounts.isNotEmpty ||
+        existingBeneficiaries.isNotEmpty ||
+        existingTransactions.isNotEmpty) {
+      debugPrint(
+        '[DB] Seed Fake: Data already exists (${existingAccounts.length} accounts, ${existingBeneficiaries.length} beneficiaries, ${existingTransactions.length} transactions), skipping fake data.',
+      );
+      return;
+    }
+
+    debugPrint('[DB] Seed Fake: Inserting fake data for UI validation...');
+
     // Compte fictif
     final accountId = await into(accounts).insert(
       AccountsCompanion.insert(
@@ -132,6 +175,8 @@ class AppDatabase extends _$AppDatabase {
         initialBalance: const Value(1000.0),
       ),
     );
+
+    debugPrint('[DB] Seed Fake: Account created with ID: $accountId');
 
     // Bénéficiaires fictifs
     final carrefourId = await into(
@@ -144,6 +189,10 @@ class AppDatabase extends _$AppDatabase {
       beneficiaries,
     ).insert(BeneficiariesCompanion.insert(name: 'Pizza Hut'));
 
+    debugPrint(
+      '[DB] Seed Fake: 3 beneficiaries created (IDs: $carrefourId, $employerId, $pizzaHutId)',
+    );
+
     // Récupérer IDs catégories
     final categoriesList = await select(categories).get();
     final salaryCategory = categoriesList.firstWhere((c) => c.name == 'Salaire');
@@ -155,7 +204,7 @@ class AppDatabase extends _$AppDatabase {
       batch.insertAll(transactions, [
         TransactionsCompanion.insert(
           accountId: accountId,
-          categoryId: foodCategory.id,
+          categoryId: Value(foodCategory.id),
           beneficiaryId: Value(carrefourId),
           amount: -45.0,
           date: DateTime.now().subtract(const Duration(days: 1)),
@@ -164,7 +213,7 @@ class AppDatabase extends _$AppDatabase {
         ),
         TransactionsCompanion.insert(
           accountId: accountId,
-          categoryId: salaryCategory.id,
+          categoryId: Value(salaryCategory.id),
           beneficiaryId: Value(employerId),
           amount: 2000.0,
           date: DateTime.now().subtract(const Duration(days: 2)),
@@ -173,7 +222,7 @@ class AppDatabase extends _$AppDatabase {
         ),
         TransactionsCompanion.insert(
           accountId: accountId,
-          categoryId: leisureCategory.id,
+          categoryId: Value(leisureCategory.id),
           beneficiaryId: Value(pizzaHutId),
           amount: -20.0,
           date: DateTime.now().subtract(const Duration(days: 3)),
@@ -182,6 +231,120 @@ class AppDatabase extends _$AppDatabase {
         ),
       ]);
     });
+
+    final insertedTransactions = await (select(transactions)).get();
+    debugPrint(
+      '[DB] Seed Fake: ${insertedTransactions.length} transactions inserted. Fake data seed complete.',
+    );
+  }
+
+  /// Dev helper: delete all tables and reseed initial + fake data (if requested).
+  /// Use only in debug/testing.
+  Future<void> resetToDefaultData({bool includeFakeData = true}) async {
+    debugPrint('[DB] Reset: Starting database reset...');
+
+    await transaction(() async {
+      final txCount = await (select(transactions)).get();
+      final benCount = await (select(beneficiaries)).get();
+      final catCount = await (select(categories)).get();
+      final accCount = await (select(accounts)).get();
+
+      debugPrint(
+        '[DB] Reset: Deleting ${txCount.length} transactions, ${benCount.length} beneficiaries, ${catCount.length} categories, ${accCount.length} accounts...',
+      );
+
+      await delete(transactions).go();
+      await delete(beneficiaries).go();
+      await delete(categories).go();
+      await delete(accounts).go();
+    });
+
+    debugPrint('[DB] Reset: All data deleted. Re-seeding...');
+
+    await seedInitialData();
+    if (includeFakeData) {
+      await seedFakeData();
+    }
+
+    debugPrint('[DB] Reset: Database reset complete.');
+  }
+
+  /// Diagnostic helper: get database statistics
+  Future<Map<String, int>> getDatabaseStats() async {
+    final accountsCount = await (select(accounts)).get();
+    final categoriesCount = await (select(categories)).get();
+    final beneficiariesCount = await (select(beneficiaries)).get();
+    final transactionsCount = await (select(transactions)).get();
+
+    return {
+      'accounts': accountsCount.length,
+      'categories': categoriesCount.length,
+      'beneficiaries': beneficiariesCount.length,
+      'transactions': transactionsCount.length,
+    };
+  }
+
+  /// Diagnostic helper: check for potential data integrity issues
+  Future<List<String>> checkIntegrity() async {
+    final issues = <String>[];
+
+    // Check for orphan transactions (categoryId or beneficiaryId reference deleted records)
+    final allTransactions = await (select(transactions)).get();
+    final allCategories = await (select(categories)).get();
+    final allBeneficiaries = await (select(beneficiaries)).get();
+    final allAccounts = await (select(accounts)).get();
+
+    final categoryIds = allCategories.map((c) => c.id).toSet();
+    final beneficiaryIds = allBeneficiaries.map((b) => b.id).toSet();
+    final accountIds = allAccounts.map((a) => a.id).toSet();
+
+    for (final tx in allTransactions) {
+      if (!accountIds.contains(tx.accountId)) {
+        issues.add('Transaction ${tx.id} references non-existent account ${tx.accountId}');
+      }
+      if (tx.categoryId != null && !categoryIds.contains(tx.categoryId)) {
+        issues.add('Transaction ${tx.id} references non-existent category ${tx.categoryId}');
+      }
+      if (tx.beneficiaryId != null && !beneficiaryIds.contains(tx.beneficiaryId)) {
+        issues.add('Transaction ${tx.id} references non-existent beneficiary ${tx.beneficiaryId}');
+      }
+      if (tx.accountToId != null && !accountIds.contains(tx.accountToId)) {
+        issues.add('Transaction ${tx.id} references non-existent accountTo ${tx.accountToId}');
+      }
+    }
+
+    // Check for duplicate category names
+    final categoryNames = <String, int>{};
+    for (final cat in allCategories) {
+      categoryNames[cat.name] = (categoryNames[cat.name] ?? 0) + 1;
+    }
+    categoryNames.forEach((name, count) {
+      if (count > 1) {
+        issues.add('Duplicate category name: "$name" ($count occurrences)');
+      }
+    });
+
+    // Check for duplicate beneficiary names
+    final beneficiaryNames = <String, int>{};
+    for (final ben in allBeneficiaries) {
+      beneficiaryNames[ben.name] = (beneficiaryNames[ben.name] ?? 0) + 1;
+    }
+    beneficiaryNames.forEach((name, count) {
+      if (count > 1) {
+        issues.add('Duplicate beneficiary name: "$name" ($count occurrences)');
+      }
+    });
+
+    if (issues.isEmpty) {
+      debugPrint('[DB] Integrity check: All checks passed ✓');
+    } else {
+      debugPrint('[DB] Integrity check: ${issues.length} issue(s) found:');
+      for (final issue in issues) {
+        debugPrint('  ⚠ $issue');
+      }
+    }
+
+    return issues;
   }
 }
 

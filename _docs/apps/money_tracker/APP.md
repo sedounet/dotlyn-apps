@@ -53,7 +53,7 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [x] Calcul Solde Réel (transactions validées)
 - [x] Support virements entre comptes (type transfer + accountToId)
 - [x] Calcul Solde Disponible (réel + en attente)
-- [ ] Virements : permettre de sélectionner explicitement compte origine ET destination
+- [x] Virements : permettre de sélectionner explicitement compte origine ET destination
 - [x] Virements : valider l'algorithme de calcul des soldes (voir Notes Techniques)
 
 #### Phase 0.1d - Filtres & Polish (À venir)
@@ -220,9 +220,9 @@ soldeDisponible(X) = initialBalance(X)
 **✅ Règle** : Solde Disponible ≤ Solde Actuel
 
 **⚠️ Points d'attention actuels** :
-1. Le compte source du virement est implicite (compte actif au moment de la création)
-2. Pour éditer un virement, impossible de changer le compte source
-3. Besoin futur : sélecteur explicite "De : Compte A → Vers : Compte B"
+1. Le compte source du virement est désormais sélectionnable explicitement dans le formulaire (création/modification)
+2. Pour éditer un virement, le compte source peut être modifié
+3. Refactor UI à prévoir pour améliorer l’ergonomie si besoin (prochaine version)
 
 **Implémentation actuelle** :
 - `transactionsProvider(accountId)` → transactions WHERE accountId = X

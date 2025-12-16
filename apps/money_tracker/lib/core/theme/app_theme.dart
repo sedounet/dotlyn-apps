@@ -6,30 +6,75 @@ class AppTheme {
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: primaryOrange, brightness: Brightness.light),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primaryOrange,
+      brightness: Brightness.light,
+    ),
     fontFamily: 'Manrope',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      displayMedium: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      displaySmall: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineLarge: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineSmall: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.w600),
+      displayLarge: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineLarge: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineSmall: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.w600,
+      ),
     ),
-    appBarTheme: AppBarTheme(backgroundColor: primaryOrange, foregroundColor: Colors.white),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryOrange,
+      foregroundColor: Colors.white,
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: primaryOrange, brightness: Brightness.dark),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primaryOrange,
+      brightness: Brightness.dark,
+    ),
     fontFamily: 'Manrope',
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      displayMedium: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      displaySmall: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineLarge: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.bold),
-      headlineSmall: TextStyle(fontFamily: 'Satoshi', fontWeight: FontWeight.w600),
+      displayLarge: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineLarge: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.bold,
+      ),
+      headlineSmall: TextStyle(
+        fontFamily: 'Satoshi',
+        fontWeight: FontWeight.w600,
+      ),
     ),
   );
 }

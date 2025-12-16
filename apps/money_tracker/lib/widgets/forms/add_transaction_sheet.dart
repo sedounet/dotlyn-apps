@@ -16,16 +16,28 @@ class AddTransactionSheet extends StatelessWidget {
           ),
           DropdownButtonFormField(
             items: const [
-              DropdownMenuItem(value: 'Catégorie 1', child: Text('Catégorie 1')),
-              DropdownMenuItem(value: 'Catégorie 2', child: Text('Catégorie 2')),
+              DropdownMenuItem(
+                value: 'Catégorie 1',
+                child: Text('Catégorie 1'),
+              ),
+              DropdownMenuItem(
+                value: 'Catégorie 2',
+                child: Text('Catégorie 2'),
+              ),
             ],
             onChanged: (value) {},
             decoration: const InputDecoration(labelText: 'Catégorie'),
           ),
           DropdownButtonFormField(
             items: const [
-              DropdownMenuItem(value: 'Bénéficiaire 1', child: Text('Bénéficiaire 1')),
-              DropdownMenuItem(value: 'Bénéficiaire 2', child: Text('Bénéficiaire 2')),
+              DropdownMenuItem(
+                value: 'Bénéficiaire 1',
+                child: Text('Bénéficiaire 1'),
+              ),
+              DropdownMenuItem(
+                value: 'Bénéficiaire 2',
+                child: Text('Bénéficiaire 2'),
+              ),
             ],
             onChanged: (value) {},
             decoration: const InputDecoration(labelText: 'Bénéficiaire'),
