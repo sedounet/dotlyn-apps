@@ -1,102 +1,230 @@
-# Money Tracker — Instructions IA (Phase 0.1c)
+# NOTE 2025-12-18 : Polish HomeScreen en cours, prompt ci-dessous reste la référence pour la suite du polish. Ne pas supprimer tant que tout n'est pas validé.
+# Money Tracker — Instructions IA (Phase 0.1d - Polish UI/UX)
 
-> **PHASE** : 0.1c - CRUD Opérations (Transactions)  
-> **PRÉREQUIS** : Phase 0.1b complétée (Comptes fonctionnels)
-
-> **STATUT** : COMPLÉTÉ (2025-12-14) — CRUD Transactions, Virements et calculs de soldes implémentés
-
----
-
-> **NOTE** : Certaines améliorations UX (sélection explicite compte origine/destination, swipe-to-validate, indicateur visuel validé/pending, positionnement FAB au-dessus bannière) sont planifiées en Phase 0.1d (Polish).
+> **PHASE** : 0.1d - Polish UI/UX avant release MVP  
+> **PRÉREQUIS** : Phase 0.1c complétée (CRUD Transactions fonctionnel)  
+> **STATUT** : EN ATTENTE D'EXÉCUTION
 
 ---
 
 ## 🎯 OBJECTIF
 
-Implémenter la gestion complète des transactions (create/update/delete) et calculer le solde réel du compte actif à partir de `initialBalance + sum(transactions)`.
+Refondre l'interface utilisateur du HomeScreen pour une expérience optimale avant d'aller plus loin. Réorganiser les éléments du bas vers le haut, améliorer l'ergonomie des boutons d'action, ajouter un système de masquage des montants et préparer les favoris de comptes.
 
-**Livrable** : Ajout/modification/suppression d'opérations fonctionnel + solde réel calculé dynamiquement.
+**Livrable** : HomeScreen refondu + modale de transaction centrée + amélioration des éléments de liste des opérations.
 
 ---
 
 ## 📁 CONTEXTE PROJET
 
 **Localisation** : `apps/money_tracker/`  
-**BDD** : Drift déjà configuré avec tables : Accounts, Categories, Transactions, Beneficiaries  
+**BDD** : Drift (SQLite) avec tables Accounts, Categories, Transactions, Beneficiaries  
 **State** : Riverpod 2.x  
-**UI** : Material 3, thème Dotlyn (orange #E36C2D)
+**UI** : Material 3, respecter STYLEGUIDE Dotlyn (orange #E36C2D, gris anthracite #2C2C2C, Satoshi Heavy Italic pour titres, Manrope Regular pour UI)  
+**Architecture actuelle** :
+- Providers : accounts, transactions, categories, beneficiaries
+- Solde Actuel (validé) et Disponible (validé + pending) calculés dynamiquement
+- TransactionFormSheet : modale bottom sheet pour CRUD transactions
 
-**Table Transactions** (déjà créée) :
-- id, accountId (FK), categoryId (FK), beneficiaryId (FK nullable)
-- amount (double), date, note (nullable), status ('pending' ou 'validated')
+**État actuel HomeScreen** :
+- AppBar avec titre + icône visibilité
+- Bandeau compte actif + solde
+- Liste des transactions
+- 3 FABs en bas à droite (-, swap, +)
+- Bannière pub placeholder en bas
 
 ---
 
 ## 📋 TÂCHES
 
-### 1. Providers Riverpod pour Transactions
-**Fichier** : `apps/money_tracker/lib/providers/transactions_provider.dart` (créer)
+### 1. Refonte Layout HomeScreen (du bas vers le haut)
 
-```dart
-// Provider stream transactions filtrées par accountId
-final transactionsProvider = StreamProvider.autoDispose.family<List<Transaction>, int>((ref, accountId) {
-  final database = ref.watch(databaseProvider);
-  return (database.select(database.transactions)..where((t) => t.accountId.equals(accountId))).watch();
-});
+**Fichier** : `apps/money_tracker/lib/screens/home/home_screen.dart`
 
-// Repository pour CRUD
-final transactionsRepositoryProvider = Provider<TransactionsRepository>((ref) {
-  final database = ref.watch(databaseProvider);
-  return TransactionsRepository(database);
-});
+**Structure cible (du bas vers le haut de l'écran)** :
 
-class TransactionsRepository {
-  final AppDatabase _database;
-  TransactionsRepository(this._database);
-  
-  Future<int> addTransaction({required int accountId, required int categoryId, int? beneficiaryId, required double amount, required DateTime date, String? note, required String status}) { ... }
-  Future<void> updateTransaction({required int id, ...}) { ... }
-  Future<void> deleteTransaction(int id) { ... }
-}
+1. **Bannière pub** (inchangée, tout en bas)
+2. **Boutons d'action** (agrandis, au-dessus de la bannière)
+   - Créer un widget réutilisable `ActionButtonsBar` pour gérer mode main droite/main gauche (setting global à prévoir plus tard)
+   - 3 boutons : Dépense (-), Virement (swap), Revenu (+)
+   - Taille agrandie (56-60px) pour faciliter l'usage
+   - Espacement confortable entre les boutons
+   - **IMPORTANT** : Les positionner AU-DESSUS de la bannière pub (pas en FloatingActionButton)
+
+3. **Bandeau solde compte actif**
+   - Format : `Disponible = XXXX € | Actuel = YYYY € [👁️]`
+   - Solde Disponible : vert si positif, rouge si négatif
+   - Solde Actuel : couleur neutre (gris selon thème Dotlyn)
+   - Bouton œil à droite pour masquer/afficher les montants
+   - **Fonctionnement masquage** :
+     - Par défaut : montants cachés (afficher "***" ou "----")
+     - Clic sur œil : affiche les montants (reste visible tant que l'app est ouverte)
+     - À la prochaine ouverture de l'app : montants cachés à nouveau
+     - Prévoir un setting global pour changer ce comportement (pas dans cette phase)
+   - Style : bandeau légèrement ombré, fond blanc cassé (#F8F8F8)
+
+4. **Phrase tagline** (au-dessus du bandeau solde)
+   - Texte : "Suivi quotidien de vos comptes bancaires" (centré)
+   - Style : Manrope Regular, taille 14-16px, couleur gris anthracite (#2C2C2C)
+
+5. **Grille de 3 comptes favoris** (au-dessus de la tagline)
+   - 3 boutons de comptes favoris (paramétrables dans settings plus tard)
+   - Pour le moment : afficher uniquement le nom du compte
+   - Icône ❤️ (cœur) à côté du nom pour identifier les favoris
+   - Clic sur un compte : ouvre le compte en question (affiche son solde et ses opérations)
+   - Layout : grille 3 colonnes ou 3 boutons horizontaux selon design
+   - **Note** : Choisir les comptes favoris parmi les comptes existants dans la BDD (implémentation du choix dans settings à prévoir plus tard, pour le moment hardcoder les 3 premiers comptes)
+
+6. **Logo de l'app** (tout en haut, centré)
+   - Logo DotLyn centré
+   - Taille adaptée (pas trop grand, ~80-100px)
+
+7. **Liste des opérations** (SUPPRIMÉE pour le moment)
+   - Ne plus afficher la liste des opérations sur le HomeScreen
+   - La liste sera accessible uniquement lors du clic sur un compte (dans AccountScreen ou un écran dédié)
+
+### 2. Amélioration des éléments de liste des opérations
+
+**Fichier** : Créer un widget `TransactionListItem` dans `apps/money_tracker/lib/widgets/transaction_list_item.dart`
+
+**Format cible pour chaque opération** :
+- **Ligne 1** : Note ou désignation de l'opération (ex: "Achat cadeau Noël")
+  - Si pas de note : afficher "Sans note" ou catégorie par défaut
+- **Ligne 2** : Date au format "lun 22 déc 20:23" + montant (vert si positif, rouge si négatif) aligné à droite
+- **Ligne 3** : Solde du compte après cette opération (calculé automatiquement)
+  - Format : "Solde après : XXXX €"
+  - Couleur neutre (gris)
+
+**Interactions** :
+- Clic sur une opération : ouvre la modale de modification (TransactionFormSheet en mode édition)
+- Swipe to delete : conserver le comportement actuel (Dismissible)
+
+### 3. Conversion TransactionFormSheet en Dialog centré
+
+**Fichier** : `apps/money_tracker/lib/widgets/forms/transaction_form_sheet.dart`
+
+**Changements** :
+- **NE PLUS** utiliser `showModalBottomSheet`
+- **UTILISER** `showDialog` pour afficher une modale centrée sur l'écran
+- Fond légèrement ombré derrière (barrierColor avec opacité)
+- Modale centrée avec une largeur max (300-400px selon écran)
+- Bordures arrondies, ombre portée pour effet de profondeur
+
+**Champs à afficher** (dans l'ordre) :
+1. Date (DatePicker)
+2. Montant (TextField numérique)
+3. Type opération : Revenu / Dépense / Virement (radio buttons ou segmented button)
+4. Catégorie (DropdownButtonFormField, filtré par type, optionnel si virement)
+5. Bénéficiaire (DropdownButtonFormField, optionnel)
+6. **Compte d'origine** (pour virements : DropdownButtonFormField de tous les comptes, par défaut = compte actif)
+7. **Compte de destination** (pour virements : DropdownButtonFormField de tous les comptes, requis si type = virement)
+8. Note (TextField, optionnel)
+9. Statut : En attente / Validé (radio buttons ou toggle)
+
+**Précisions virements** :
+- Lors d'un virement, le compte par défaut est celui d'où part le virement (compte actif)
+- Il faut pouvoir choisir le compte de destination dans une liste déroulante de tous les comptes existants
+- Il faut pouvoir choisir le compte d'origine également (par défaut le compte actif bien sûr)
+
+**Validation** :
+- Bouton "Enregistrer" → appelle `transactionsRepository.addTransaction(...)` ou `updateTransaction(...)`
+- Bouton "Annuler" → ferme la modale sans sauvegarder
+
+### 4. Unification des widgets de formulaire
+
+**Objectif** : L'ensemble des opérations (-, +, virement) seront faites sur le même widget (classe TransactionFormSheet) de manière à éviter la duplication de code.
+
+**Implémentation** :
+- Conserver TransactionFormSheet comme widget unique
+- Supprimer `add_transaction_sheet.dart` si encore présent (déjà fait normalement)
+- Le paramètre `defaultType` permet de pré-sélectionner le type d'opération (income, expense, transfer)
+- Les champs compte d'origine/destination ne s'affichent QUE si type = transfer
+
+### 5. Widget ActionButtonsBar réutilisable
+
+**Fichier** : Créer `apps/money_tracker/lib/widgets/action_buttons_bar.dart`
+
+**Fonctionnalités** :
+- Widget qui affiche les 3 boutons d'action (-, swap, +)
+- Accepte un paramètre `alignment` pour gérer mode main droite/main gauche
+  - `alignment: MainAxisAlignment.end` (par défaut, main droite)
+  - `alignment: MainAxisAlignment.start` (main gauche)
+- Possibilité de passer ce paramètre via un setting global (à implémenter plus tard)
+- Pour le moment : hardcoder `MainAxisAlignment.end`
+
+**Design** :
+- Boutons larges et visibles (56-60px de hauteur)
+- Icônes claires (remove, swap_horiz, add)
+- Couleur : respecter thème Dotlyn (orange #E36C2D pour primaire)
+- Espacement confortable entre les boutons (16-20px)
+
+---
+
+## ✅ CRITÈRES DE SUCCÈS
+
+- [ ] HomeScreen refondu avec nouvelle structure (bas → haut)
+- [ ] Boutons d'action agrandis et positionnés AU-DESSUS de la bannière pub
+- [ ] Bandeau solde avec masquage fonctionnel (œil cliquable)
+- [ ] Montants cachés par défaut au démarrage de l'app
+- [ ] Phrase tagline affichée et centrée
+- [ ] Grille de 3 comptes favoris fonctionnelle (clic ouvre le compte)
+- [ ] Logo DotLyn centré en haut
+- [ ] Liste des opérations supprimée du HomeScreen
+- [ ] TransactionListItem avec format amélioré (note, date, montant, solde après)
+- [ ] TransactionFormSheet converti en Dialog centré (pas bottom sheet)
+- [ ] Champs compte d'origine/destination pour virements fonctionnels
+- [ ] ActionButtonsBar widget réutilisable créé
+- [ ] Code lint-free (`flutter analyze`)
+- [ ] Respect du STYLEGUIDE Dotlyn (couleurs, typo, icônes Remix Icon)
+
+---
+
+## ⚠️ POINTS D'ATTENTION
+
+- **Fluidité et rapidité d'utilisation** : Privilégier une UI réactive et légère
+- **Base de données locale rapide** : Drift (SQLite) déjà en place, optimiser les requêtes si besoin
+- **Scalabilité** : Prévoir que le nombre de comptes/transactions peut augmenter
+- **Mot de passe et encryption** : À prévoir rapidement dans une prochaine phase (pas dans 0.1d)
+- **Respect du styleguide** : TOUJOURS utiliser les couleurs Dotlyn, Remix Icon uniquement, polices Satoshi/Manrope
+- **Éviter la duplication de code** : Unifier les widgets de formulaire
+
+---
+
+## 📐 STRUCTURE FICHIERS CIBLES
+
+```
+apps/money_tracker/lib/
+├── screens/
+│   └── home/
+│       └── home_screen.dart (refonte complète)
+├── widgets/
+│   ├── action_buttons_bar.dart (nouveau)
+│   ├── transaction_list_item.dart (nouveau)
+│   └── forms/
+│       └── transaction_form_sheet.dart (convertir en Dialog)
+└── providers/
+    └── ui_state_provider.dart (nouveau, pour gérer état masquage montants)
 ```
 
-### 2. Provider Solde Calculé
-**Fichier** : `apps/money_tracker/lib/providers/accounts_provider.dart` (ajouter)
+---
 
-```dart
-// Provider qui calcule le solde réel : initialBalance + sum(transactions validées)
-final accountBalanceProvider = Provider.family<double, int>((ref, accountId) {
-  final accountsAsync = ref.watch(accountsProvider);
-  final transactionsAsync = ref.watch(transactionsProvider(accountId));
-  
-  final accounts = accountsAsync.value ?? [];
-  final transactions = transactionsAsync.value ?? [];
-  
-  final account = accounts.firstWhere((a) => a.id == accountId, orElse: () => null);
-  if (account == null) return 0.0;
-  
-  final validatedSum = transactions.where((t) => t.status == 'validated').fold<double>(0.0, (sum, t) => sum + t.amount);
-  return account.initialBalance + validatedSum;
-});
-```
+## 🔄 WORKFLOW D'EXÉCUTION
 
-### 3. Formulaire Transaction (Bottom Sheet)
-**Fichier** : `apps/money_tracker/lib/widgets/forms/transaction_form_sheet.dart` (créer)
+1. Créer `ui_state_provider.dart` pour gérer l'état de masquage des montants
+2. Créer `action_buttons_bar.dart` widget réutilisable
+3. Créer `transaction_list_item.dart` widget pour affichage opération
+4. Convertir `TransactionFormSheet` en Dialog centré (showDialog au lieu de showModalBottomSheet)
+5. Refondre `HomeScreen` avec nouvelle structure (bas → haut)
+6. Tester manuellement toutes les fonctionnalités
+7. Exécuter `flutter analyze` pour vérifier lint
+8. Valider le respect du STYLEGUIDE Dotlyn
+9. Mettre à jour `_docs/apps/money_tracker/APP.md` section TODO (déplacer Phase 0.1d en "Complétée")
 
-- Remplacer `add_transaction_sheet.dart` (actuellement statique)
-- Champs :
-  - Montant (TextField numérique, requis)
-  - Type opération : Revenu (+) ou Dépense (-) (radio buttons ou toggle)
-  - Catégorie (DropdownButtonFormField depuis `categoriesProvider`, filtré par type)
-  - Bénéficiaire (DropdownButtonFormField depuis `beneficiariesProvider`, nullable)
-  - Date (DatePicker, défaut = maintenant)
-  - Note (TextField, optionnel)
-  - Statut : En attente / Validé (radio buttons)
-- Mode création / édition selon paramètre `Transaction?`
-- Bouton Enregistrer → appelle `transactionsRepository.addTransaction(...)` ou `updateTransaction(...)`
+---
 
-### 4. Mise à jour Home Screen
-**Fichier** : `apps/money_tracker/lib/screens/home/home_screen.dart` (modifier)
+**Version** : 1.0  
+**Date** : 2025-12-18  
+**Préparé pour** : GPT-4o
 
 **Changements** :
 - Afficher le solde réel calculé via `accountBalanceProvider(activeAccount.id)` au lieu de `initialBalance`

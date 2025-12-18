@@ -56,18 +56,22 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [x] Virements : permettre de sélectionner explicitement compte origine ET destination
 - [x] Virements : valider l'algorithme de calcul des soldes (voir Notes Techniques)
 
-#### Phase 0.1d - Filtres & Polish (À venir)
-- [ ] Filtres date (Jour, Semaine, Mois, Année)
-- [ ] Filtre catégorie multi-select
-- [ ] Bénéficiaires CRUD
-- [ ] Toggle masquage montants
-- [ ] Thème clair/sombre
-- [ ] Modale détail calcul solde
-- [ ] Menu contextuel opération
-- [ ] Swipe comptes
-- [ ] **UX Transactions** : Swipe droite pour valider, swipe gauche pour supprimer
-- [ ] **UX Transactions** : Indicateur visuel statut (coche/couleur pour validé vs pending)
-- [ ] **Layout** : Positionner les FABs au-dessus de la bannière pub (pas dessous)
+#### Phase 0.1d - Filtres & Polish (🟡 En cours — polish UI/UX)
+- [x] Filtres date (Jour, Semaine, Mois, Année)
+- [x] Filtre catégorie multi-select
+- [x] Bénéficiaires CRUD
+- [x] Toggle masquage montants
+- [x] Thème clair/sombre
+- [x] Modale détail calcul solde
+- [x] Menu contextuel opération
+- [x] Swipe comptes
+- [x] **UX Transactions** : Swipe droite pour valider, swipe gauche pour supprimer
+- [x] **UX Transactions** : Indicateur visuel statut (coche/couleur pour validé vs pending)
+- [x] **Layout** : Positionner les FABs au-dessus de la bannière pub (pas dessous)
+- [ ] Polish UI/UX HomeScreen (structure, couleurs, responsive, logo, tagline, favoris, action bar, ad banner) — EN COURS, RESTE À FINALISER
+### Notes
+- Polish HomeScreen en cours : structure générale OK, il reste à finaliser le responsive, les couleurs, et quelques détails UI/UX.
+- Voir PROMPT_AI.md pour la liste complète des tâches polish.
 
 #### Phase 0.1e - Analytics & Pub (À venir)
 - [ ] Firebase Analytics + Crashlytics
@@ -128,9 +132,6 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ### 🟡 P2 — Phases MVP suivantes
 
-- [ ] Phase 0.1b : CRUD Comptes
-- [ ] Phase 0.1c : CRUD Opérations
-- [ ] Phase 0.1d : Filtres & Polish
 - [ ] Phase 0.1e : Analytics & Pub
 - [ ] Phase 0.1f : Onboarding
 
