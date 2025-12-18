@@ -65,7 +65,6 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     setState(() => _isSaving = true);
 
     final repository = ref.read(transactionsRepositoryProvider);
-    final accounts = ref.read(accountsProvider).value ?? [];
     final accountId = _type == 'transfer'
         ? _accountFromId
         : (widget.accountId ?? ref.read(activeAccountProvider)?.id);
@@ -126,184 +125,176 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     final dateFormatter = DateFormat.yMd('fr_FR');
 
     final accountsAsync = ref.watch(accountsProvider);
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 16,
-        right: 16,
-        top: 16,
-      ),
-      child: SingleChildScrollView(
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                isEdit ? 'Modifier l\'opération' : 'Nouvelle opération',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Montant'),
-                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Montant requis' : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String>(
-                    value: _type,
-                    items: const [
-                      DropdownMenuItem(value: 'expense', child: Text('Dépense')),
-                      DropdownMenuItem(value: 'income', child: Text('Revenu')),
-                      DropdownMenuItem(value: 'transfer', child: Text('Virement')),
-                    ],
-                    onChanged: (v) => setState(() {
-                      _type = v ?? 'expense';
-                      // Reset category and accountTo when changing type
-                      if (v == 'transfer') {
-                        _categoryId = null;
-                      } else {
-                        _accountToId = null;
-                      }
-                    }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // Sélection du compte source pour les virements
-              if (_type == 'transfer')
-                accountsAsync.when(
-                  data: (accounts) {
-                    return DropdownButtonFormField<int>(
-                      value: _accountFromId,
-                      items: accounts
-                          .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _accountFromId = v),
-                      decoration: const InputDecoration(labelText: 'Depuis le compte'),
-                      validator: (v) => v == null ? 'Compte source requis' : null,
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (e, s) => Text('Erreur comptes: $e'),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  isEdit ? 'Modifier l\'opération' : 'Nouvelle opération',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-              // Show category selector for income/expense, account selector for transfer
-              if (_type != 'transfer')
-                categoriesAsync.when(
-                  data: (cats) {
-                    final filtered = cats.where((c) => c.type == _type).toList();
-                    return DropdownButtonFormField<int>(
-                      initialValue: _categoryId,
-                      items: filtered
-                          .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _categoryId = v),
-                      decoration: const InputDecoration(labelText: 'Catégorie'),
-                      validator: (v) => v == null ? 'Catégorie requise' : null,
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (e, s) => Text('Erreur catégories: $e'),
-                )
-              else
-                Consumer(
-                  builder: (context, ref, _) {
-                    final accountsAsync = ref.watch(accountsProvider);
-                    final currentAccountId =
-                        widget.accountId ?? ref.read(activeAccountProvider)?.id;
-                    return accountsAsync.when(
-                      data: (accounts) {
-                        final otherAccounts = accounts
-                            .where((a) => a.id != currentAccountId)
-                            .toList();
-                        return DropdownButtonFormField<int>(
-                          initialValue: _accountToId,
-                          items: otherAccounts
-                              .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                              .toList(),
-                          onChanged: (v) => setState(() => _accountToId = v),
-                          decoration: const InputDecoration(labelText: 'Vers le compte'),
-                          validator: (v) => v == null ? 'Compte de destination requis' : null,
-                        );
-                      },
-                      loading: () => const CircularProgressIndicator(),
-                      error: (e, s) => Text('Erreur comptes: $e'),
-                    );
-                  },
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _amountController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(labelText: 'Montant'),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Montant requis' : null,
                 ),
-              const SizedBox(height: 12),
-              beneficiariesAsync.when(
-                data: (ben) {
-                  return DropdownButtonFormField<int?>(
-                    initialValue: _beneficiaryId,
-                    items: [
-                      const DropdownMenuItem(value: null, child: Text('Aucun')),
-                      ...ben.map((b) => DropdownMenuItem(value: b.id, child: Text(b.name))),
-                    ],
-                    onChanged: (v) => setState(() => _beneficiaryId = v),
-                    decoration: const InputDecoration(labelText: 'Bénéficiaire'),
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (e, s) => Text('Erreur bénéficiaires: $e'),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(child: Text('Date: ${dateFormatter.format(_date)}')),
-                  TextButton(
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _date,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: _type,
+                  items: const [
+                    DropdownMenuItem(value: 'expense', child: Text('Dépense')),
+                    DropdownMenuItem(value: 'income', child: Text('Revenu')),
+                    DropdownMenuItem(value: 'transfer', child: Text('Virement')),
+                  ],
+                  onChanged: (v) => setState(() {
+                    _type = v ?? 'expense';
+                    // Reset category and accountTo when changing type
+                    if (v == 'transfer') {
+                      _categoryId = null;
+                    } else {
+                      _accountToId = null;
+                    }
+                  }),
+                ),
+                const SizedBox(height: 12),
+                // Sélection du compte source pour les virements
+                if (_type == 'transfer')
+                  accountsAsync.when(
+                    data: (accounts) {
+                      return DropdownButtonFormField<int>(
+                        value: _accountFromId,
+                        items: accounts
+                            .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
+                            .toList(),
+                        onChanged: (v) => setState(() => _accountFromId = v),
+                        decoration: const InputDecoration(labelText: 'Depuis le compte'),
+                        validator: (v) => v == null ? 'Compte source requis' : null,
                       );
-                      if (picked != null) setState(() => _date = picked);
                     },
-                    child: const Text('Changer'),
+                    loading: () => const CircularProgressIndicator(),
+                    error: (e, s) => Text('Erreur comptes: $e'),
                   ),
-                ],
-              ),
-              TextFormField(
-                controller: _noteController,
-                decoration: const InputDecoration(labelText: 'Note'),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('Validé'),
-                      value: 'validated',
-                      groupValue: _status,
-                      onChanged: (v) => setState(() => _status = v ?? 'validated'),
+                // Show category selector for income/expense, account selector for transfer
+                if (_type != 'transfer')
+                  categoriesAsync.when(
+                    data: (cats) {
+                      final filtered = cats.where((c) => c.type == _type).toList();
+                      return DropdownButtonFormField<int>(
+                        initialValue: _categoryId,
+                        items: filtered
+                            .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
+                            .toList(),
+                        onChanged: (v) => setState(() => _categoryId = v),
+                        decoration: const InputDecoration(labelText: 'Catégorie'),
+                        validator: (v) => v == null ? 'Catégorie requise' : null,
+                      );
+                    },
+                    loading: () => const CircularProgressIndicator(),
+                    error: (e, s) => Text('Erreur catégories: $e'),
+                  )
+                else
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final accountsAsync = ref.watch(accountsProvider);
+                      final currentAccountId =
+                          widget.accountId ?? ref.read(activeAccountProvider)?.id;
+                      return accountsAsync.when(
+                        data: (accounts) {
+                          final otherAccounts = accounts
+                              .where((a) => a.id != currentAccountId)
+                              .toList();
+                          return DropdownButtonFormField<int>(
+                            initialValue: _accountToId,
+                            items: otherAccounts
+                                .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
+                                .toList(),
+                            onChanged: (v) => setState(() => _accountToId = v),
+                            decoration: const InputDecoration(labelText: 'Vers le compte'),
+                            validator: (v) => v == null ? 'Compte de destination requis' : null,
+                          );
+                        },
+                        loading: () => const CircularProgressIndicator(),
+                        error: (e, s) => Text('Erreur comptes: $e'),
+                      );
+                    },
+                  ),
+                const SizedBox(height: 12),
+                beneficiariesAsync.when(
+                  data: (ben) {
+                    return DropdownButtonFormField<int?>(
+                      initialValue: _beneficiaryId,
+                      items: [
+                        const DropdownMenuItem(value: null, child: Text('Aucun')),
+                        ...ben.map((b) => DropdownMenuItem(value: b.id, child: Text(b.name))),
+                      ],
+                      onChanged: (v) => setState(() => _beneficiaryId = v),
+                      decoration: const InputDecoration(labelText: 'Bénéficiaire'),
+                    );
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (e, s) => Text('Erreur bénéficiaires: $e'),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: Text('Date: ${dateFormatter.format(_date)}')),
+                    TextButton(
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _date,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) setState(() => _date = picked);
+                      },
+                      child: const Text('Changer'),
                     ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('En attente'),
-                      value: 'pending',
-                      groupValue: _status,
-                      onChanged: (v) => setState(() => _status = v ?? 'pending'),
+                  ],
+                ),
+                TextFormField(
+                  controller: _noteController,
+                  decoration: const InputDecoration(labelText: 'Note'),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('Validé'),
+                        value: 'validated',
+                        groupValue: _status,
+                        onChanged: (v) => setState(() => _status = v ?? 'validated'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _isSaving ? null : _save,
-                child: _isSaving
-                    ? const CircularProgressIndicator()
-                    : Text(isEdit ? 'Mettre à jour' : 'Créer'),
-              ),
-            ],
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('En attente'),
+                        value: 'pending',
+                        groupValue: _status,
+                        onChanged: (v) => setState(() => _status = v ?? 'pending'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: _isSaving ? null : _save,
+                  child: _isSaving
+                      ? const CircularProgressIndicator()
+                      : Text(isEdit ? 'Mettre à jour' : 'Créer'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

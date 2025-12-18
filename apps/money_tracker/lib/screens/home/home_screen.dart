@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-// drift & AppDatabase not needed directly here
+import '../../widgets/action_buttons_bar.dart';
 import '../../providers/accounts_provider.dart';
+import '../../providers/ui_state_provider.dart';
 import '../../providers/database_provider.dart';
-import '../../providers/transactions_provider.dart';
 import '../../widgets/forms/transaction_form_sheet.dart';
 import '../accounts/accounts_screen.dart';
 import '../settings/settings_screen.dart';
@@ -16,167 +16,182 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accountsAsync = ref.watch(accountsProvider);
     final activeAccount = ref.watch(activeAccountProvider);
+    final isBalanceVisible = ref.watch(balanceVisibilityProvider);
     final currencyFormatter = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
+
+    double? currentBalance;
+    double? availableBalance;
+    if (activeAccount != null) {
+      currentBalance = ref.watch(accountBalanceProvider(activeAccount.id));
+      availableBalance = ref.watch(accountAvailableBalanceProvider(activeAccount.id));
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Money Tracker'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.visibility_off),
-            onPressed: () {}, // TODO: Add functionality
+            icon: Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
+            onPressed: () => ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
           ),
         ],
       ),
-      body: accountsAsync.when(
-        data: (_) => Column(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            // Account Info
+            const Spacer(),
+
+            // Boutons de choix de compte
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child: Row(
+                children: List.generate(3, (index) {
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: GestureDetector(
+                        onTap: () {}, // TODO: Navigate to account details
+                        child: Container(
+                          height: 64,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.orangeAccent, width: 1),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.account_balance_wallet, size: 24),
+                              const SizedBox(height: 4),
+                              Text('Compte ${index + 1}', style: const TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+
+            // Soldes du compte actif sur 2 colonnes + show/hide
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    activeAccount?.name ?? 'Aucun compte',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                  // Disponible
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Disponible',
+                          style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isBalanceVisible
+                              ? currencyFormatter.format(availableBalance ?? 0)
+                              : '***',
+                          style: TextStyle(
+                            color: (availableBalance ?? 0) < 0
+                                ? const Color(0xFFE36C2D)
+                                : const Color(0xFF2C2C2C),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Solde Réel: ${currencyFormatter.format(activeAccount?.initialBalance ?? 0)}',
-                    style: const TextStyle(fontSize: 16),
+                  const SizedBox(width: 32),
+                  // Actuel
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Actuel',
+                          style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isBalanceVisible ? currencyFormatter.format(currentBalance ?? 0) : '***',
+                          style: const TextStyle(
+                            color: Color(0xFF2C2C2C),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Solde Disponible: ${currencyFormatter.format(activeAccount?.initialBalance ?? 0)}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const AccountsScreen()),
-                          );
-                        },
-                        icon: const Icon(Icons.account_balance_wallet),
-                        label: const Text('Changer de compte'),
-                      ),
-                      const SizedBox(width: 12),
-                      if (activeAccount == null) const Text('Créez un compte pour commencer.'),
-                    ],
+                  // Show/hide button
+                  IconButton(
+                    icon: Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () =>
+                        ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
+                    tooltip: 'Afficher/Masquer',
                   ),
                 ],
               ),
             ),
-            // Transactions List
-            Expanded(
-              child: activeAccount == null
-                  ? const Center(child: Text('Créez un compte pour voir les transactions.'))
-                  : ref
-                        .watch(transactionsProvider(activeAccount.id))
-                        .when(
-                          data: (transactions) {
-                            if (transactions.isEmpty) {
-                              return const Center(child: Text('Aucune transaction'));
-                            }
 
-                            final currentBalance = ref.watch(
-                              accountBalanceProvider(activeAccount.id),
-                            );
-                            final availableBalance = ref.watch(
-                              accountAvailableBalanceProvider(activeAccount.id),
-                            );
-
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Solde Actuel: ${currencyFormatter.format(currentBalance)}',
-                                      ),
-                                      Text(
-                                        'Solde Disponible: ${currencyFormatter.format(availableBalance)}',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: transactions.length,
-                                    itemBuilder: (context, index) {
-                                      final transaction = transactions[index];
-                                      return Dismissible(
-                                        key: ValueKey(transaction.id),
-                                        direction: DismissDirection.endToStart,
-                                        onDismissed: (_) async {
-                                          await ref
-                                              .read(transactionsRepositoryProvider)
-                                              .deleteTransaction(transaction.id);
-                                        },
-                                        background: Container(
-                                          color: Colors.red,
-                                          alignment: Alignment.centerRight,
-                                          padding: const EdgeInsets.only(right: 16),
-                                          child: const Icon(Icons.delete, color: Colors.white),
-                                        ),
-                                        child: ListTile(
-                                          leading: Icon(
-                                            transaction.accountToId != null
-                                                ? Icons
-                                                      .swap_horiz // Transfer icon
-                                                : (transaction.amount > 0
-                                                      ? Icons.arrow_downward
-                                                      : Icons.arrow_upward),
-                                            color: transaction.accountToId != null
-                                                ? Colors.blue
-                                                : (transaction.amount > 0
-                                                      ? Colors.green
-                                                      : Colors.red),
-                                          ),
-                                          title: Text(
-                                            transaction.accountToId != null
-                                                ? 'Virement ${transaction.note != null && transaction.note!.isNotEmpty ? '- ${transaction.note}' : ''}'
-                                                : (transaction.note ?? 'Pas de note'),
-                                          ),
-                                          subtitle: Text(transaction.date.toLocal().toString()),
-                                          trailing: Text(
-                                            currencyFormatter.format(transaction.amount.abs()),
-                                            style: TextStyle(
-                                              color: transaction.accountToId != null
-                                                  ? Colors.blue
-                                                  : (transaction.amount > 0
-                                                        ? Colors.green
-                                                        : Colors.red),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onTap: () => showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            builder: (_) =>
-                                                TransactionFormSheet(transaction: transaction),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          loading: () => const Center(child: CircularProgressIndicator()),
-                          error: (e, s) => Center(child: Text('Erreur: $e')),
-                        ),
+            // Boutons +/- virement (ligne propre, alignés à droite)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: FloatingActionButton(
+                      heroTag: 'remove',
+                      onPressed: () => _showTransactionDialog(context, 'expense'),
+                      backgroundColor: const Color(0xFFE36C2D),
+                      child: const Icon(Icons.remove, size: 20),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: FloatingActionButton(
+                      heroTag: 'transfer',
+                      onPressed: () => _showTransactionDialog(context, 'transfer'),
+                      backgroundColor: const Color(0xFFE36C2D),
+                      child: const Icon(Icons.swap_horiz, size: 20),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: FloatingActionButton(
+                      heroTag: 'add',
+                      onPressed: () => _showTransactionDialog(context, 'income'),
+                      backgroundColor: const Color(0xFFE36C2D),
+                      child: const Icon(Icons.add, size: 20),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            // Placeholder for Ad Banner
+
+            // Tagline
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'Suivi quotidien de vos comptes bancaires',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ),
+
+            // Ad Banner Placeholder (tout en bas)
             Container(
               height: 50,
               color: Colors.grey[300],
@@ -184,57 +199,6 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Erreur: $error')),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: 'remove',
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: const TransactionFormSheet(defaultType: 'expense'),
-                ),
-              );
-            },
-            child: const Icon(Icons.remove),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'transfer',
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: const TransactionFormSheet(defaultType: 'transfer'),
-                ),
-              );
-            },
-            child: const Icon(Icons.swap_horiz),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'add',
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: const TransactionFormSheet(defaultType: 'income'),
-                ),
-              );
-            },
-            child: const Icon(Icons.add),
-          ),
-        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -311,6 +275,13 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showTransactionDialog(BuildContext context, String type) {
+    showDialog(
+      context: context,
+      builder: (context) => TransactionFormSheet(defaultType: type),
     );
   }
 }
