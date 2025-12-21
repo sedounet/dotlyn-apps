@@ -11,4 +11,6 @@ Toutes les améliorations demandées ont été implémentées.
 corrctions :
 apres saisie de nouvelle boucle, la boucle affiche scu null en quantit';e (probablement apres retrait de la quantite dans l'ajout de materiaux/ressources
 
+a la fin de la boucle en cours, nous ne pouvosn enregistrer qu'une quantit;e de rsoosurces. il faudrait pouvoir enregistrer plusieurs ressources à la fin d'une boucle (ex: miner des gaufrettes et du beryl dans la même boucle de minage
+
 )

@@ -487,7 +487,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
 
   Future<void> _showCreateResourceDialog() async {
     final nameController = TextEditingController();
-    final unitController = TextEditingController();
+    final unitController = TextEditingController(text: 'SCU');
 
     await showDialog<bool>(
       context: context,
@@ -713,7 +713,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                       );
                       return ListTile(
                         dense: true,
-                        title: Text('${resource.name}: ${res['quantity']} ${resource.unit}'),
+                        title: Text('${resource.name} (${resource.unit})'),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle_outline, size: 20),
                           onPressed: () {
