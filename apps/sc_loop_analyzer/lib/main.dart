@@ -583,15 +583,24 @@ class StatsScreen extends StatelessWidget {
             ],
           ),
           const Divider(),
-          const ListTile(
-            leading: Icon(Icons.bar_chart),
-            title: Text('Minage'),
-            subtitle: Text('Sessions: 12 | Durée moy: 1h | Qté/h: 10'),
-          ),
-          const ListTile(
-            leading: Icon(Icons.bar_chart),
-            title: Text('Salvage'),
-            subtitle: Text('Sessions: 5 | Durée moy: 45min | Qté/h: 7'),
+          const SizedBox(height: 40),
+          const Center(
+            child: Column(
+              children: [
+                Icon(Icons.bar_chart, size: 64, color: Colors.grey),
+                SizedBox(height: 16),
+                Text(
+                  'Statistiques à venir',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Les statistiques seront calculées à partir de vos sessions',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ],
       ),
