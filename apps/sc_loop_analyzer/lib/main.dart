@@ -468,12 +468,11 @@ class HistoryScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Historique des sessions', style: Theme.of(context).textTheme.headlineSmall),
-                  if (kDebugMode)
-                    IconButton(
-                      icon: const Icon(Icons.delete_forever),
-                      onPressed: () => _resetHistory(context, provider),
-                      tooltip: 'Reset historique (debug)',
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_forever),
+                    onPressed: () => _resetHistory(context, provider),
+                    tooltip: 'Reset historique',
+                  ),
                 ],
               ),
               const Divider(),
@@ -576,12 +575,11 @@ class StatsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Statistiques', style: Theme.of(context).textTheme.headlineSmall),
-              if (kDebugMode)
-                IconButton(
-                  icon: const Icon(Icons.delete_forever),
-                  onPressed: () => _resetStats(context),
-                  tooltip: 'Reset stats (debug)',
-                ),
+              IconButton(
+                icon: const Icon(Icons.delete_forever),
+                onPressed: () => _resetStats(context),
+                tooltip: 'Reset stats',
+              ),
             ],
           ),
           const Divider(),
