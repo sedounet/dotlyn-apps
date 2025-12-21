@@ -24,6 +24,11 @@ class ShipProvider extends ChangeNotifier {
     return id;
   }
 
+  Future<void> updateShip(Ship ship) async {
+    await _db.updateShip(ship);
+    await loadShips();
+  }
+
   Future<void> deleteShip(int id) async {
     await _db.deleteShip(id);
     await loadShips();

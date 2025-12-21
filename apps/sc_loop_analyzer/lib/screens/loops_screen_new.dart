@@ -63,6 +63,10 @@ class LoopsScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => _showEditLoopDialog(context, profile),
+                          ),
+                          IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () async {
                               await provider.deleteProfile(profile.id);
@@ -115,10 +119,19 @@ class LoopsScreen extends StatelessWidget {
       MaterialPageRoute(builder: (context) => const AddLoopScreen()),
     );
   }
+
+  void _showEditLoopDialog(BuildContext context, Profile profile) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddLoopScreen(profileToEdit: profile)),
+    );
+  }
 }
 
 class AddLoopScreen extends StatefulWidget {
-  const AddLoopScreen({super.key});
+  final Profile? profileToEdit;
+
+  const AddLoopScreen({super.key, this.profileToEdit});
 
   @override
   State<AddLoopScreen> createState() => _AddLoopScreenState();
@@ -134,7 +147,36 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
   ];
   int? _selectedGameplayTypeId;
   int? _selectedShipId;
-  final List<Map<String, dynamic>> _selectedResources = []; // {resourceId, quantity}
+  final List<Map<String, dynamic>> _selectedResources = []; // {resourceId}
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.profileToEdit != null) {
+      _nameController.text = widget.profileToEdit!.name;
+      _descriptionController.text = widget.profileToEdit!.description;
+      _selectedGameplayTypeId = widget.profileToEdit!.gameplayTypeId;
+      _selectedShipId = widget.profileToEdit!.shipId;
+
+      // Charger les étapes
+      _stepControllers.clear();
+      for (var step in widget.profileToEdit!.steps) {
+        _stepControllers.add(TextEditingController(text: step));
+      }
+
+      // Charger les ressources
+      _loadProfileResources();
+    }
+  }
+
+  Future<void> _loadProfileResources() async {
+    if (widget.profileToEdit != null) {
+      final resources = await DatabaseService().getProfileResources(widget.profileToEdit!.id);
+      setState(() {
+        _selectedResources.addAll(resources.map((r) => {'resourceId': r.resourceId}));
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -206,6 +248,73 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     );
   }
 
+  Future<void> _showEditGameplayTypeDialog(GameplayType type) async {
+    final nameController = TextEditingController(text: type.name);
+    final descController = TextEditingController(text: type.description);
+
+    await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Modifier le type de gameplay'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+                controller: nameController, decoration: const InputDecoration(labelText: 'Nom')),
+            const SizedBox(height: 8),
+            TextField(
+                controller: descController,
+                decoration: const InputDecoration(labelText: 'Description')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+            onPressed: () async {
+              if (nameController.text.isNotEmpty && context.mounted) {
+                final provider = Provider.of<GameplayTypeProvider>(context, listen: false);
+                await provider.updateType(GameplayType(
+                  id: type.id,
+                  name: nameController.text,
+                  description: descController.text,
+                  loopIds: type.loopIds,
+                ));
+                setState(() {});
+                if (context.mounted) Navigator.pop(context, true);
+              }
+            },
+            child: const Text('Modifier'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteGameplayType(int id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la suppression'),
+        content: const Text('Voulez-vous vraiment supprimer ce type de gameplay ?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final provider = Provider.of<GameplayTypeProvider>(context, listen: false);
+      await provider.deleteType(id);
+      setState(() {
+        _selectedGameplayTypeId = null;
+      });
+    }
+  }
+
   Future<void> _showAddShipDialog() async {
     final nameController = TextEditingController();
     final typeController = TextEditingController();
@@ -251,9 +360,74 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     );
   }
 
+  Future<void> _showEditShipDialog(Ship ship) async {
+    final nameController = TextEditingController(text: ship.name);
+    final typeController = TextEditingController(text: ship.type);
+
+    await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Modifier le vaisseau'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+                controller: nameController, decoration: const InputDecoration(labelText: 'Nom')),
+            const SizedBox(height: 8),
+            TextField(
+                controller: typeController, decoration: const InputDecoration(labelText: 'Type')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+            onPressed: () async {
+              if (nameController.text.isNotEmpty && context.mounted) {
+                final provider = Provider.of<ShipProvider>(context, listen: false);
+                await provider.updateShip(Ship(
+                  id: ship.id,
+                  name: nameController.text,
+                  type: typeController.text,
+                  notes: ship.notes,
+                ));
+                setState(() {});
+                if (context.mounted) Navigator.pop(context, true);
+              }
+            },
+            child: const Text('Modifier'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteShip(int id) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la suppression'),
+        content: const Text('Voulez-vous vraiment supprimer ce vaisseau ?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final provider = Provider.of<ShipProvider>(context, listen: false);
+      await provider.deleteShip(id);
+      setState(() {
+        _selectedShipId = null;
+      });
+    }
+  }
+
   Future<void> _showAddResourceDialog() async {
     int? selectedResourceId;
-    final quantityController = TextEditingController();
 
     await showDialog<bool>(
       context: context,
@@ -285,12 +459,6 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: quantityController,
-                      decoration: const InputDecoration(labelText: 'Quantité'),
-                      keyboardType: TextInputType.number,
-                    ),
                   ],
                 );
               },
@@ -301,11 +469,10 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
           TextButton(
             onPressed: () {
-              if (selectedResourceId != null && quantityController.text.isNotEmpty) {
+              if (selectedResourceId != null) {
                 setState(() {
                   _selectedResources.add({
                     'resourceId': selectedResourceId,
-                    'quantity': double.tryParse(quantityController.text) ?? 0,
                   });
                 });
                 Navigator.pop(context, true);
@@ -380,7 +547,25 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     );
 
     final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final profileId = await provider.addProfile(profile);
+    int? profileId;
+
+    // Check if we're editing or creating
+    if (widget.profileToEdit != null) {
+      // Update existing profile
+      final updatedProfile = Profile(
+        id: widget.profileToEdit!.id,
+        name: _nameController.text,
+        description: _descriptionController.text,
+        steps: steps,
+        gameplayTypeId: _selectedGameplayTypeId,
+        shipId: _selectedShipId,
+      );
+      await provider.updateProfile(updatedProfile);
+      profileId = widget.profileToEdit!.id;
+    } else {
+      // Create new profile
+      profileId = await provider.addProfile(profile);
+    }
 
     // Save resources if any
     if (_selectedResources.isNotEmpty && profileId != null) {
@@ -390,7 +575,8 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     if (mounted) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Boucle créée !')),
+        SnackBar(
+            content: Text(widget.profileToEdit != null ? 'Boucle modifiée !' : 'Boucle créée !')),
       );
     }
   }
@@ -398,7 +584,9 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nouvelle boucle')),
+      appBar: AppBar(
+        title: Text(widget.profileToEdit != null ? 'Modifier la boucle' : 'Nouvelle boucle'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -430,6 +618,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                     Expanded(
                       child: DropdownButtonFormField<int>(
                         decoration: const InputDecoration(labelText: 'Gameplay'),
+                        value: _selectedGameplayTypeId,
                         items: provider.types
                             .map((type) => DropdownMenuItem(value: type.id, child: Text(type.name)))
                             .toList(),
@@ -441,6 +630,19 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                       onPressed: _showAddGameplayTypeDialog,
                       tooltip: 'Créer un type',
                     ),
+                    if (_selectedGameplayTypeId != null) ...[
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showEditGameplayTypeDialog(
+                            provider.types.firstWhere((t) => t.id == _selectedGameplayTypeId)),
+                        tooltip: 'Modifier',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => _deleteGameplayType(_selectedGameplayTypeId!),
+                        tooltip: 'Supprimer',
+                      ),
+                    ],
                   ],
                 );
               },
@@ -455,6 +657,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                     Expanded(
                       child: DropdownButtonFormField<int>(
                         decoration: const InputDecoration(labelText: 'Vaisseau'),
+                        value: _selectedShipId,
                         items: provider.ships
                             .map((ship) => DropdownMenuItem(value: ship.id, child: Text(ship.name)))
                             .toList(),
@@ -466,6 +669,19 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                       onPressed: _showAddShipDialog,
                       tooltip: 'Créer un vaisseau',
                     ),
+                    if (_selectedShipId != null) ...[
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showEditShipDialog(
+                            provider.ships.firstWhere((s) => s.id == _selectedShipId)),
+                        tooltip: 'Modifier',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => _deleteShip(_selectedShipId!),
+                        tooltip: 'Supprimer',
+                      ),
+                    ],
                   ],
                 );
               },
@@ -554,7 +770,8 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _saveBoucle,
-                child: const Text('Enregistrer la boucle'),
+                child: Text(
+                    widget.profileToEdit != null ? 'Modifier la boucle' : 'Enregistrer la boucle'),
               ),
             ),
           ],

@@ -24,6 +24,11 @@ class GameplayTypeProvider extends ChangeNotifier {
     return id;
   }
 
+  Future<void> updateType(GameplayType type) async {
+    await _db.updateGameplayType(type);
+    await loadTypes();
+  }
+
   Future<void> deleteType(int id) async {
     await _db.deleteGameplayType(id);
     await loadTypes();

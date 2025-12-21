@@ -134,6 +134,19 @@ class DatabaseService {
     return await db.delete('gameplay_types', where: 'id = ?', whereArgs: [id]);
   }
 
+  Future<int> updateGameplayType(GameplayType type) async {
+    final db = await database;
+    return await db.update(
+      'gameplay_types',
+      {
+        'name': type.name,
+        'description': type.description,
+      },
+      where: 'id = ?',
+      whereArgs: [type.id],
+    );
+  }
+
   // CRUD Ships
   Future<int> insertShip(Ship ship) async {
     final db = await database;
@@ -160,6 +173,20 @@ class DatabaseService {
   Future<int> deleteShip(int id) async {
     final db = await database;
     return await db.delete('ships', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateShip(Ship ship) async {
+    final db = await database;
+    return await db.update(
+      'ships',
+      {
+        'name': ship.name,
+        'type': ship.type,
+        'notes': ship.notes,
+      },
+      where: 'id = ?',
+      whereArgs: [ship.id],
+    );
   }
 
   // CRUD Profiles
