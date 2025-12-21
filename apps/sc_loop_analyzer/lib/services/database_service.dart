@@ -315,7 +315,7 @@ class DatabaseService {
       await db.insert('profile_resources', {
         'profile_id': profileId,
         'resource_id': res['resourceId'],
-        'quantity': res['quantity'],
+        'quantity': 0, // Not used anymore, but required by the table schema
       });
     }
   }
