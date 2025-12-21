@@ -1,0 +1,24 @@
+name: sc_loop_analyzer
+version: 0.1.0
+publish_to: "none"
+description: >
+  Application Flutter Windows pour analyser et chronométrer les boucles de travail dans Star Citizen.
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite_common_ffi: ^2.3.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  intl: ^0.18.1
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  fl_chart: ^0.65.0
+  csv: ^5.1.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+flutter:
+  uses-material-design: true
