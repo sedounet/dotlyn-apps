@@ -6,9 +6,11 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import '../../data/database/app_database.dart';
 import '../../providers/accounts_provider.dart';
 import '../../providers/favorite_accounts_provider.dart';
+import '../../providers/transactions_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../widgets/forms/transaction_form_sheet.dart';
+import '../../widgets/transaction_list_item.dart';
 import '../accounts/accounts_screen.dart';
 import '../settings/settings_screen.dart';
 import '../beneficiaries/beneficiaries_screen.dart';
@@ -218,6 +220,10 @@ class HomeScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ),
+
+            // Liste des dernières transactions
+            if (activeAccount != null)
+              Expanded(child: _TransactionsList(accountId: activeAccount.id)),
 
             // Ad Banner Placeholder (tout en bas)
             Container(
@@ -444,6 +450,112 @@ class _FavoriteAccountButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _TransactionsList extends ConsumerWidget {
+  final int accountId;
+
+  const _TransactionsList({required this.accountId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactionsAsync = ref.watch(transactionsProvider(accountId));
+
+    return transactionsAsync.when(
+      data: (transactions) {
+        if (transactions.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Aucune opération',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          );
+        }
+
+        // Calculate balance after each transaction
+        double runningBalance = ref.watch(accountBalanceProvider(accountId)) ?? 0;
+        
+        return ListView.builder(
+          itemCount: transactions.length,
+          itemBuilder: (context, index) {
+            final transaction = transactions[index];
+            final balanceAfter = runningBalance;
+            runningBalance -= transaction.amount;
+
+            return TransactionListItem(
+              transaction: transaction,
+              balanceAfter: balanceAfter,
+              onEdit: () => _editTransaction(context, transaction),
+              onDelete: () => _deleteTransaction(context, ref, transaction),
+              onValidate: () => _validateTransaction(ref, transaction),
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Erreur: $error')),
+    );
+  }
+
+  void _editTransaction(BuildContext context, Transaction transaction) {
+    showDialog(
+      context: context,
+      builder: (context) => TransactionFormSheet(transaction: transaction),
+    );
+  }
+
+  Future<void> _deleteTransaction(
+    BuildContext context,
+    WidgetRef ref,
+    Transaction transaction,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmation'),
+        content: const Text('Voulez-vous vraiment supprimer cette opération ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      final repo = ref.read(transactionsRepositoryProvider);
+      await repo.deleteTransaction(transaction.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Opération supprimée')),
+        );
+      }
+    }
+  }
+
+  Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
+    final repo = ref.read(transactionsRepositoryProvider);
+    await repo.updateTransaction(
+      id: transaction.id,
+      accountId: transaction.accountId,
+      categoryId: transaction.categoryId,
+      beneficiaryId: transaction.beneficiaryId,
+      accountToId: transaction.accountToId,
+      amount: transaction.amount,
+      date: transaction.date,
+      note: transaction.note,
+      status: 'validated',
     );
   }
 }
