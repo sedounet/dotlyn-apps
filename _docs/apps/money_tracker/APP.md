@@ -1,8 +1,8 @@
 # Money Tracker — Documentation de développement
 
-> **Status** : 🚧 En développement (Phase 0.1a)  
+> **Status** : 🚧 En développement (Phase 0.1b — CRUD Comptes)  
 > **Version actuelle** : -  
-> **Dernière mise à jour** : 2025-12-26
+> **Dernière mise à jour** : 2025-12-14
 
 ---
 
@@ -31,13 +31,13 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - Analytics : Firebase Analytics + Crashlytics
 - Ads : Google AdMob (bannière)
 
-#### Phase 0.1a - Fondations (En cours)
-- [ ] Setup projet + Drift
-- [ ] Schemas BDD
-- [ ] UI statique données fictives
-- [ ] Navigation basique
-- [ ] Thème Dotlyn
-- [ ] Validation manuelle
+#### Phase 0.1a - Fondations (✅ Complétée)
+- [x] Setup projet + Drift
+- [x] Schemas BDD (accounts, categories, transactions, beneficiaries)
+- [x] UI statique avec données fictives
+- [x] Navigation basique
+- [x] Thème Dotlyn
+- [x] Validation manuelle : Interface fonctionnelle (persistence pas encore active)
 
 #### Phase 0.1b - CRUD Comptes (À venir)
 - [ ] Providers Riverpod accounts
@@ -45,23 +45,33 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Compte actif en state
 - [ ] Home affiche solde dynamique
 
-#### Phase 0.1c - CRUD Opérations (À venir)
-- [ ] Providers Riverpod transactions
-- [ ] Bottom sheet ajout opération fonctionnel
-- [ ] Liste opérations scroll infini
-- [ ] Modification/suppression opérations
-- [ ] Calcul Solde Réel (transactions validées)
-- [ ] Calcul Solde Disponible (réel + en attente)
+#### Phase 0.1c - CRUD Opérations (Complétée)
+- [x] Providers Riverpod transactions
+- [x] Bottom sheet ajout opération fonctionnel
+- [x] Liste opérations dynamique (filtrée par compte actif)
+- [x] Modification/suppression opérations
+- [x] Calcul Solde Réel (transactions validées)
+- [x] Support virements entre comptes (type transfer + accountToId)
+- [x] Calcul Solde Disponible (réel + en attente)
+- [x] Virements : permettre de sélectionner explicitement compte origine ET destination
+- [x] Virements : valider l'algorithme de calcul des soldes (voir Notes Techniques)
 
-#### Phase 0.1d - Filtres & Polish (À venir)
-- [ ] Filtres date (Jour, Semaine, Mois, Année)
-- [ ] Filtre catégorie multi-select
-- [ ] Bénéficiaires CRUD
-- [ ] Toggle masquage montants
-- [ ] Thème clair/sombre
-- [ ] Modale détail calcul solde
-- [ ] Menu contextuel opération
-- [ ] Swipe comptes
+#### Phase 0.1d - Filtres & Polish (🟡 En cours — polish UI/UX)
+- [x] Filtres date (Jour, Semaine, Mois, Année)
+- [x] Filtre catégorie multi-select
+- [x] Bénéficiaires CRUD
+- [x] Toggle masquage montants
+- [x] Thème clair/sombre
+- [x] Modale détail calcul solde
+- [x] Menu contextuel opération
+- [x] Swipe comptes
+- [x] **UX Transactions** : Swipe droite pour valider, swipe gauche pour supprimer
+- [x] **UX Transactions** : Indicateur visuel statut (coche/couleur pour validé vs pending)
+- [x] **Layout** : Positionner les FABs au-dessus de la bannière pub (pas dessous)
+- [ ] Polish UI/UX HomeScreen (structure, couleurs, responsive, logo, tagline, favoris, action bar, ad banner) — EN COURS, RESTE À FINALISER
+### Notes
+- Polish HomeScreen en cours : structure générale OK, il reste à finaliser le responsive, les couleurs, et quelques détails UI/UX.
+- Voir PROMPT_AI.md pour la liste complète des tâches polish.
 
 #### Phase 0.1e - Analytics & Pub (À venir)
 - [ ] Firebase Analytics + Crashlytics
@@ -110,42 +120,24 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ## 📋 TODO
 
-### 🔴 P1 — Quick Wins Phase 0.1a (~2h) → [PROMPT_AI.md](PROMPT_AI.md)
+### 🔴 P1 — Phase 0.1b (En cours)
 
-**Corrections critiques UX + Performance** :
-- [ ] Safe area mobile (15min) — Wrapper SafeArea pour éviter zone système
-- [ ] Retirer radio buttons liste comptes (10min) — Remplacer par ListTile simple
-- [ ] Performance démarrage (1h) — Supprimer splash screen + lazy load providers
-- [ ] Menu contextuel opérations (1h) — Long press → Éditer/Valider/Supprimer
+- [x] Démarrer phase 0.1b : CRUD Comptes
+- [x] Providers Riverpod pour accounts
+- [x] Interface ajout/modification comptes fonctionnelle
+- [x] Suppression compte + confirmation
+- [x] Home affiche le compte actif + solde réel
+- [x] Valider création / modification / suppression (manuelle)
+- [x] Ajout option dev : réinitialiser la DB (supprime + reseed)
 
-**Impact** : App plus rapide, UX propre, actions accessibles  
-**Livrable** : Version améliorée utilisable immédiatement
+### 🟡 P2 — Phases MVP suivantes
 
----
-
-### 🟡 P2 — Features Avancées Phase 0.1a+ (~5h)
-
-**Extensions fonctionnelles** :
-- [ ] Types de paiement (2h) — Carte/Virement/Prélèvement/Chèque + numéro chèque
-- [ ] Système favoris comptes (2h) — Boutons home assignables avec confirmation
-- [ ] Écran Settings (1h) — Page centralisation paramètres (thème, masquage, locale)
-
-**Impact** : Confort utilisateur, meilleure organisation  
-**Note** : Peut être reporté en v0.2 si pas critique
-
----
-
-### 🟢 P3 — Phases MVP suivantes
-
-- [ ] Phase 0.1b : CRUD Comptes
-- [ ] Phase 0.1c : CRUD Opérations
-- [ ] Phase 0.1d : Filtres & Polish
 - [ ] Phase 0.1e : Analytics & Pub
 - [ ] Phase 0.1f : Onboarding
 
-### 🔵 P4 — Versions futures
+### 🔵 P3 — Versions futures
 
-- [ ] v0.2 : Prélèvements automatiques + Features avancées Phase 0.1a+ (si reportées)
+- [ ] v0.2 : Prélèvements automatiques
 - [ ] v0.3 : Import/Export + Sécurité
 - [ ] v0.4 : Graphiques + Analytics
 
@@ -160,8 +152,84 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 ## 📝 Notes Techniques
 
 ### Terminologie Soldes
-- **Solde Réel** = Ce qui est sur le compte bancaire à l'instant T
-- **Solde Disponible** = Réel - opérations "En attente"
+- **Solde Actuel** = Ce qui est effectivement sur le compte bancaire (uniquement les opérations validées)
+- **Solde Disponible** = Solde incluant aussi les opérations "en attente" 
+  - Formule : `initialBalance + sum(TOUTES transactions validées ET pending)`
+  - **Important** : Solde Disponible ≤ Solde Actuel (car les pending sont généralement des dépenses négatives)
+
+### Algorithme Calcul Solde avec Virements
+
+**Structure de données** :
+- Transaction avec `accountId` (compte source), `accountToId` (compte destination pour virements)
+- Type détecté : `accountToId != null` → virement, sinon income/expense basé sur signe
+
+**Calcul Solde Actuel d'un compte X** (uniquement validées) :
+```
+soldeActuel(X) = initialBalance(X) 
+               + Σ transactions WHERE accountId=X AND status='validated' (signées: +revenu, -dépense, -virement)
+               + Σ transactions WHERE accountToId=X AND status='validated' (abs: +crédit virement entrant)
+```
+
+**Calcul Solde Disponible d'un compte X** (validées + pending) :
+```
+soldeDisponible(X) = initialBalance(X)
+                   + Σ transactions WHERE accountId=X (TOUTES: validées + pending)
+                   + Σ transactions WHERE accountToId=X (TOUTES: validées + pending, en abs)
+```
+
+**Exemple concret** :
+- Compte A : initialBalance = 1000€
+- Compte B : initialBalance = 500€
+- Transaction 1 : accountId=A, amount=+200 (revenu validé)
+- Transaction 2 : accountId=A, amount=-50 (dépense validée)
+- Transaction 3 : accountId=A, amount=-30 (dépense PENDING)
+- **Transaction 4 : accountId=A, accountToId=B, amount=-100 (virement A→B validé)**
+
+**Solde Actuel A** :
+```
+= 1000 (initial)
+  + 200 (transaction 1 validée)
+  - 50  (transaction 2 validée)
+  - 100 (transaction 4 validée, virement sortant)
+= 1050€
+```
+
+**Solde Disponible A** :
+```  
+= 1000 (initial)
+  + 200 (transaction 1)
+  - 50  (transaction 2)
+  - 30  (transaction 3 PENDING !)
+  - 100 (transaction 4 virement sortant)
+= 1020€
+```
+
+**Solde Actuel B** :
+```
+= 500 (initial)
+  + 100 (transaction 4 validée, virement entrant)
+= 600€
+```
+
+**Solde Disponible B** :
+```
+= 500 (initial)
+  + 100 (transaction 4, virement entrant)
+= 600€
+```
+
+**✅ Règle** : Solde Disponible ≤ Solde Actuel
+
+**⚠️ Points d'attention actuels** :
+1. Le compte source du virement est désormais sélectionnable explicitement dans le formulaire (création/modification)
+2. Pour éditer un virement, le compte source peut être modifié
+3. Refactor UI à prévoir pour améliorer l’ergonomie si besoin (prochaine version)
+
+**Implémentation actuelle** :
+- `transactionsProvider(accountId)` → transactions WHERE accountId = X
+- `incomingTransfersProvider(accountId)` → transactions WHERE accountToId = X  
+- `accountBalanceProvider` → Solde Actuel (status='validated' uniquement)
+- `accountAvailableBalanceProvider` → Solde Disponible (TOUTES les transactions)
 
 ### Statuts Opération
 - **En attente** = Saisi mais pas encore débité par banque
@@ -173,7 +241,7 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - **Détaillé** : 15 catégories (détail complet courses/restaurants, essence...)
 
 ### Données Fictives Phase 0.1a
-**À SUPPRIMER en phase 0.1b** :
+**Supprimé en phase 0.1b** :
 - 1 compte "Compte Courant" (1000€)
 - 3 bénéficiaires (Carrefour, Employeur, Pizza Hut)
 - 3 transactions (Courses -45€, Salaire +2000€, Resto -20€)

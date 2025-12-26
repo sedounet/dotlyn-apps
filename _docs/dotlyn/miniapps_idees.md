@@ -218,44 +218,44 @@ Voici une liste de mini-apps faisables rapidement en Flutter, avec description, 
 - **Audience** : 1 (niche) → 5 (très large public)
 - **Score** : Somme pondérée (Usage × 2 + Audience × 2 - Complexité)
 
-| #   | App                           | Complexité | Usage/jour | Audience | Score | Priorité |
-| --- | ----------------------------- | ---------- | ---------- | -------- | ----- | -------- |
-| 17  | Calculatrice simple           | 1          | 4          | 5        | 17    | ⭐⭐⭐      |
+| #   | App                           | Complexité | Usage/jour | Audience | Score | Priorité  |
+| --- | ----------------------------- | ---------- | ---------- | -------- | ----- | --------- |
+| 17  | Calculatrice simple           | 1          | 4          | 5        | 17    | ⭐⭐⭐       |
 | 6   | Chronomètre/Minuteur          | 1          | 5          | 5        | 19    | ⚠️ REPORTÉ |
-| 34  | Générateur décisions          | 1          | 3          | 4        | 13    | ⭐⭐       |
-| 28  | Compteur de jours             | 2          | 3          | 4        | 12    | ⭐⭐       |
-| 2   | Liste de courses              | 2          | 4          | 5        | 16    | ⭐⭐⭐      |
-| 3   | Gestionnaire de tâches        | 2          | 5          | 5        | 18    | ⭐⭐⭐      |
-| 4   | Carnet de notes rapide        | 2          | 4          | 5        | 16    | ⭐⭐⭐      |
-| 5   | Convertisseur d'unités        | 2          | 3          | 5        | 14    | ⭐⭐⭐      |
-| 7   | Journal d'humeur              | 2          | 2          | 3        | 8     | ⭐        |
-| 14  | Suivi d'eau bue               | 2          | 4          | 4        | 14    | ⭐⭐       |
-| 26  | Pomodoro Focus                | 2          | 4          | 4        | 14    | ⭐⭐⭐      |
-| 27  | Journal de gratitude          | 2          | 2          | 3        | 8     | ⭐⭐       |
-| 8   | Gestionnaire de dépenses      | 3          | 3          | 5        | 13    | ⭐⭐       |
-| 10  | Suivi d'habitudes             | 3          | 3          | 4        | 11    | ⭐⭐       |
-| 13  | Bloc-notes vocal              | 3          | 3          | 4        | 11    | ⭐⭐       |
-| 16  | Mini agenda                   | 3          | 4          | 5        | 15    | ⭐⭐⭐      |
-| 18  | Gestionnaire de recettes      | 3          | 2          | 4        | 9     | ⭐⭐       |
-| 30  | Suivi jeûne intermittent      | 3          | 3          | 3        | 9     | ⭐⭐       |
-| 32  | Suivi de médicaments          | 3          | 4          | 3        | 11    | ⭐⭐       |
-| 35  | Tracker sommeil simple        | 3          | 2          | 4        | 9     | ⭐⭐       |
-| 36  | Gestionnaire abonnements      | 3          | 2          | 5        | 11    | ⭐⭐⭐      |
-| 1   | Compteur de pas               | 3          | 2          | 4        | 9     | ⭐⭐       |
-| 9   | Lecteur de QR codes           | 3          | 2          | 4        | 9     | ⭐⭐       |
-| 15  | Gestionnaire de livres lus    | 3          | 1          | 3        | 5     | ⭐        |
-| 21  | Bibliothèque personnelle      | 3          | 2          | 3        | 7     | ⭐⭐       |
-| 22  | Suivi des prêts               | 3          | 2          | 3        | 7     | ⭐⭐       |
-| 25  | Suivi de plantes              | 3          | 2          | 3        | 7     | ⭐⭐       |
-| 31  | Gestionnaire souhaits         | 3          | 2          | 4        | 9     | ⭐⭐       |
-| 11  | Carnet d'adresses             | 4          | 2          | 4        | 8     | ⭐        |
-| 12  | Gestionnaire de mots de passe | 4          | 2          | 4        | 8     | ⭐⭐       |
-| 19  | Suivi de séries TV            | 4          | 3          | 4        | 10    | ⭐⭐       |
-| 20  | Suivi de films                | 4          | 2          | 4        | 8     | ⭐⭐       |
-| 29  | Suivi véhicule                | 4          | 1          | 3        | 6     | ⭐        |
-| 33  | Carnet de voyage              | 4          | 1          | 3        | 6     | ⭐        |
-| 23  | Inventaire maison             | 5          | 1          | 3        | 4     | ⭐        |
-| 24  | Mini météo locale             | 5          | 3          | 5        | 11    | ⭐⭐       |
+| 34  | Générateur décisions          | 1          | 3          | 4        | 13    | ⭐⭐        |
+| 28  | Compteur de jours             | 2          | 3          | 4        | 12    | ⭐⭐        |
+| 2   | Liste de courses              | 2          | 4          | 5        | 16    | ⭐⭐⭐       |
+| 3   | Gestionnaire de tâches        | 2          | 5          | 5        | 18    | ⭐⭐⭐       |
+| 4   | Carnet de notes rapide        | 2          | 4          | 5        | 16    | ⭐⭐⭐       |
+| 5   | Convertisseur d'unités        | 2          | 3          | 5        | 14    | ⭐⭐⭐       |
+| 7   | Journal d'humeur              | 2          | 2          | 3        | 8     | ⭐         |
+| 14  | Suivi d'eau bue               | 2          | 4          | 4        | 14    | ⭐⭐        |
+| 26  | Pomodoro Focus                | 2          | 4          | 4        | 14    | ⭐⭐⭐       |
+| 27  | Journal de gratitude          | 2          | 2          | 3        | 8     | ⭐⭐        |
+| 8   | Gestionnaire de dépenses      | 3          | 3          | 5        | 13    | ⭐⭐        |
+| 10  | Suivi d'habitudes             | 3          | 3          | 4        | 11    | ⭐⭐        |
+| 13  | Bloc-notes vocal              | 3          | 3          | 4        | 11    | ⭐⭐        |
+| 16  | Mini agenda                   | 3          | 4          | 5        | 15    | ⭐⭐⭐       |
+| 18  | Gestionnaire de recettes      | 3          | 2          | 4        | 9     | ⭐⭐        |
+| 30  | Suivi jeûne intermittent      | 3          | 3          | 3        | 9     | ⭐⭐        |
+| 32  | Suivi de médicaments          | 3          | 4          | 3        | 11    | ⭐⭐        |
+| 35  | Tracker sommeil simple        | 3          | 2          | 4        | 9     | ⭐⭐        |
+| 36  | Gestionnaire abonnements      | 3          | 2          | 5        | 11    | ⭐⭐⭐       |
+| 1   | Compteur de pas               | 3          | 2          | 4        | 9     | ⭐⭐        |
+| 9   | Lecteur de QR codes           | 3          | 2          | 4        | 9     | ⭐⭐        |
+| 15  | Gestionnaire de livres lus    | 3          | 1          | 3        | 5     | ⭐         |
+| 21  | Bibliothèque personnelle      | 3          | 2          | 3        | 7     | ⭐⭐        |
+| 22  | Suivi des prêts               | 3          | 2          | 3        | 7     | ⭐⭐        |
+| 25  | Suivi de plantes              | 3          | 2          | 3        | 7     | ⭐⭐        |
+| 31  | Gestionnaire souhaits         | 3          | 2          | 4        | 9     | ⭐⭐        |
+| 11  | Carnet d'adresses             | 4          | 2          | 4        | 8     | ⭐         |
+| 12  | Gestionnaire de mots de passe | 4          | 2          | 4        | 8     | ⭐⭐        |
+| 19  | Suivi de séries TV            | 4          | 3          | 4        | 10    | ⭐⭐        |
+| 20  | Suivi de films                | 4          | 2          | 4        | 8     | ⭐⭐        |
+| 29  | Suivi véhicule                | 4          | 1          | 3        | 6     | ⭐         |
+| 33  | Carnet de voyage              | 4          | 1          | 3        | 6     | ⭐         |
+| 23  | Inventaire maison             | 5          | 1          | 3        | 4     | ⭐         |
+| 24  | Mini météo locale             | 5          | 3          | 5        | 11    | ⭐⭐        |
 
 ---
 
