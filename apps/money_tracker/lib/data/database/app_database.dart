@@ -91,12 +91,10 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(accounts, accounts.defaultPaymentMethod);
       }
       if (from <= 3) {
-        // v4: Add id column to FavoriteAccounts (it will be auto-populated)
-        // Note: This is a migration step - existing FavoriteAccounts rows won't have an id
-        // We'll need to recreate the table to add the auto-increment id
-        // For now, we'll just mark the schema version change
+        // v4: Create FavoriteAccounts and AppSettings tables
+        await m.createTable(favoriteAccounts);
+        await m.createTable(appSettings);
       }
-      // v3 & v4: FavoriteAccounts and AppSettings tables are created automatically in new installs
     },
   );
 
