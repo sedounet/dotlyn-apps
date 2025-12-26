@@ -59,10 +59,13 @@ class HomeScreen extends ConsumerWidget {
                         final accountMap = {for (var a in accounts) a.id: a};
                         return Row(
                           children: List.generate(3, (index) {
-                            final fav = favorites.firstWhere(
-                              (f) => f.buttonIndex == index,
-                              orElse: () => null as dynamic,
-                            );
+                            // Find favorite for this button index (safe)
+                            FavoriteAccount? fav;
+                            try {
+                              fav = favorites.firstWhere((f) => f.buttonIndex == index);
+                            } catch (e) {
+                              fav = null;
+                            }
                             final account = fav != null ? accountMap[fav.accountId] : null;
 
                             return Expanded(
@@ -71,10 +74,13 @@ class HomeScreen extends ConsumerWidget {
                                 child: _FavoriteAccountButton(
                                   index: index,
                                   account: account,
-                                  onTap: account != null
-                                      ? () => ref.read(activeAccountIdProvider.notifier).state =
-                                            account.id
-                                      : null,
+                                  onTap: () => _handleFavoriteButtonTap(
+                                    context,
+                                    ref,
+                                    index,
+                                    account,
+                                    accounts,
+                                  ),
                                 ),
                               ),
                             );
@@ -306,6 +312,87 @@ class HomeScreen extends ConsumerWidget {
       builder: (context) => TransactionFormSheet(defaultType: type),
     );
   }
+
+  static void _handleFavoriteButtonTap(
+    BuildContext context,
+    WidgetRef ref,
+    int buttonIndex,
+    Account? currentAccount,
+    List<Account> allAccounts,
+  ) {
+    if (currentAccount != null) {
+      // Bouton avec compte assigné → activer ce compte
+      ref.read(activeAccountIdProvider.notifier).state = currentAccount.id;
+    } else {
+      // Bouton vide → ouvrir sélection de compte
+      _showAccountSelectionDialog(context, ref, buttonIndex, allAccounts);
+    }
+  }
+
+  static Future<void> _showAccountSelectionDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int buttonIndex,
+    List<Account> accounts,
+  ) async {
+    final selected = await showDialog<Account>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Assigner au bouton ${buttonIndex + 1}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: accounts.length,
+            itemBuilder: (context, index) {
+              final account = accounts[index];
+              return ListTile(
+                leading: const Icon(Icons.account_balance_wallet),
+                title: Text(account.name),
+                subtitle: Text(account.type),
+                onTap: () => Navigator.of(context).pop(account),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Annuler')),
+        ],
+      ),
+    );
+
+    if (selected != null && context.mounted) {
+      // Demander confirmation
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirmation'),
+          content: Text(
+            'Voulez-vous assigner le compte "${selected.name}" au bouton ${buttonIndex + 1} ?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Non')),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Oui'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true && context.mounted) {
+        // Assigner le favori
+        final repo = ref.read(favoriteAccountsRepositoryProvider);
+        await repo.assignFavorite(buttonIndex: buttonIndex, accountId: selected.id);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${selected.name} assigné au bouton ${buttonIndex + 1}')),
+          );
+        }
+      }
+    }
+  }
 }
 
 class _FavoriteAccountButton extends StatelessWidget {
@@ -317,16 +404,19 @@ class _FavoriteAccountButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isActive = onTap != null;
+    final hasAccount = account != null;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 64,
         decoration: BoxDecoration(
-          border: Border.all(color: isActive ? DotlynColors.primary : Colors.grey[300]!, width: 2),
+          border: Border.all(
+            color: hasAccount ? DotlynColors.primary : Colors.grey[300]!,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(8),
-          color: isActive ? DotlynColors.primary.withOpacity(0.05) : Colors.grey[50],
+          color: hasAccount ? DotlynColors.primary.withOpacity(0.05) : Colors.grey[50],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -334,15 +424,15 @@ class _FavoriteAccountButton extends StatelessWidget {
             Icon(
               Icons.account_balance_wallet,
               size: 24,
-              color: isActive ? DotlynColors.primary : Colors.grey[400],
+              color: hasAccount ? DotlynColors.primary : Colors.grey[400],
             ),
             const SizedBox(height: 4),
-            if (account != null)
+            if (hasAccount)
               Flexible(
                 child: Text(
                   account!.name,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: DotlynColors.secondary,
