@@ -1,8 +1,8 @@
 # Money Tracker — Documentation de développement
 
-> **Status** : 🚧 En développement (Phase 0.1b — CRUD Comptes)  
-> **Version actuelle** : -  
-> **Dernière mise à jour** : 2025-12-14
+> **Status** : � En développement (Phase 0.1e COMPLETE — Méthodes de paiement & Favoris)  
+> **Version actuelle** : v0.1e  
+> **Dernière mise à jour** : 2025-12-26
 
 ---
 
@@ -120,19 +120,27 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ## 📋 TODO
 
-### 🔴 P1 — Phase 0.1b (En cours)
+### 🔴 P1 — Phase 0.1e (Terminée ✅)
 
-- [x] Démarrer phase 0.1b : CRUD Comptes
-- [x] Providers Riverpod pour accounts
-- [x] Interface ajout/modification comptes fonctionnelle
-- [x] Suppression compte + confirmation
-- [x] Home affiche le compte actif + solde réel
-- [x] Valider création / modification / suppression (manuelle)
-- [x] Ajout option dev : réinitialiser la DB (supprime + reseed)
+Méthodes de paiement, comptes favoris, et settings utilisateur
+
+**Travail effectué** :
+- [x] Enum PaymentMethod (Carte, Virement, Prélèvement, Chèque, Espèces)
+- [x] Columns transactions : paymentMethod + checkNumber (optionnel)
+- [x] UI transaction_form_sheet : dropdown paiement + field chèque conditionnel
+- [x] Table FavoriteAccounts (buttonIndex + accountId)
+- [x] FavoriteAccountsRepository : assignFavorite, removeFavorite, clearAll
+- [x] Home screen : 3 boutons dynamiques affichant favoris (cliquables pour activer compte)
+- [x] Table AppSettings (key-value store)
+- [x] AppSettingsRepository : setSetting, getSetting, deleteSetting
+- [x] SettingsScreen : toggles dark mode, masquage soldes + locale selector
+- [x] Migration BDD v3→v4 (nouvelles colonnes + FavoriteAccounts refactorisée)
+
+**Commit** : f766116 — "[money_tracker] feat: implement Phase 2 (payment methods, favorites, settings)"
 
 ### 🟡 P2 — Phases MVP suivantes
 
-- [ ] Phase 0.1e : Analytics & Pub
+- [ ] Phase 0.1b: Polish HomeScreen (à finaliser)
 - [ ] Phase 0.1f : Onboarding
 
 ### 🔵 P3 — Versions futures
