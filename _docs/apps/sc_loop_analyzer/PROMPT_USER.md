@@ -8,9 +8,8 @@ Créer une application Flutter Windows pour chronométrer et analyser les boucle
 
 Toutes les améliorations demandées ont été implémentées.
 
-corrctions :
-apres saisie de nouvelle boucle, la boucle affiche scu null en quantit';e (probablement apres retrait de la quantite dans l'ajout de materiaux/ressources
+corrections/amelioration :
+afficher la descriprion a droite de la boucle ecran selectin boucle  et un petit plus pour afficher les etapes (une modale?)
 
-a la fin de la boucle en cours, nous ne pouvosn enregistrer qu'une quantit;e de rsoosurces. il faudrait pouvoir enregistrer plusieurs ressources à la fin d'une boucle (ex: miner des gaufrettes et du beryl dans la même boucle de minage
 
 )

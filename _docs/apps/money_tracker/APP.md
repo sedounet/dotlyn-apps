@@ -2,7 +2,7 @@
 
 > **Status** : 🚧 En développement (Phase 0.1a)  
 > **Version actuelle** : -  
-> **Dernière mise à jour** : 2025-12-13
+> **Dernière mise à jour** : 2025-12-26
 
 ---
 
@@ -32,11 +32,11 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - Ads : Google AdMob (bannière)
 
 #### Phase 0.1a - Fondations (En cours)
-- [x] Setup projet + Drift
-- [x] Schemas BDD (accounts, categories, transactions, beneficiaries)
-- [x] UI statique avec données fictives
-- [x] Navigation basique
-- [x] Thème Dotlyn
+- [ ] Setup projet + Drift
+- [ ] Schemas BDD
+- [ ] UI statique données fictives
+- [ ] Navigation basique
+- [ ] Thème Dotlyn
 - [ ] Validation manuelle
 
 #### Phase 0.1b - CRUD Comptes (À venir)
@@ -110,13 +110,32 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ## 📋 TODO
 
-### 🔴 P1 — Phase 0.1a (En cours)
+### 🔴 P1 — Quick Wins Phase 0.1a (~2h) → [PROMPT_AI.md](PROMPT_AI.md)
 
-- [ ] Valider phase 0.1a manuellement
-- [ ] Commit phase 0.1a
-- [ ] Générer PROMPT_AI phase 0.1b
+**Corrections critiques UX + Performance** :
+- [ ] Safe area mobile (15min) — Wrapper SafeArea pour éviter zone système
+- [ ] Retirer radio buttons liste comptes (10min) — Remplacer par ListTile simple
+- [ ] Performance démarrage (1h) — Supprimer splash screen + lazy load providers
+- [ ] Menu contextuel opérations (1h) — Long press → Éditer/Valider/Supprimer
 
-### 🟡 P2 — Phases MVP suivantes
+**Impact** : App plus rapide, UX propre, actions accessibles  
+**Livrable** : Version améliorée utilisable immédiatement
+
+---
+
+### 🟡 P2 — Features Avancées Phase 0.1a+ (~5h)
+
+**Extensions fonctionnelles** :
+- [ ] Types de paiement (2h) — Carte/Virement/Prélèvement/Chèque + numéro chèque
+- [ ] Système favoris comptes (2h) — Boutons home assignables avec confirmation
+- [ ] Écran Settings (1h) — Page centralisation paramètres (thème, masquage, locale)
+
+**Impact** : Confort utilisateur, meilleure organisation  
+**Note** : Peut être reporté en v0.2 si pas critique
+
+---
+
+### 🟢 P3 — Phases MVP suivantes
 
 - [ ] Phase 0.1b : CRUD Comptes
 - [ ] Phase 0.1c : CRUD Opérations
@@ -124,9 +143,9 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Phase 0.1e : Analytics & Pub
 - [ ] Phase 0.1f : Onboarding
 
-### 🔵 P3 — Versions futures
+### 🔵 P4 — Versions futures
 
-- [ ] v0.2 : Prélèvements automatiques
+- [ ] v0.2 : Prélèvements automatiques + Features avancées Phase 0.1a+ (si reportées)
 - [ ] v0.3 : Import/Export + Sécurité
 - [ ] v0.4 : Graphiques + Analytics
 
