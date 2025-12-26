@@ -8,11 +8,11 @@
 
 ## 📋 Résumé des Tâches
 
-| # | Feature | Temps | Priorité |
-|---|---------|-------|----------|
-| 1 | Types de paiement (Enum + BDD + UI) | 2h | 🟡 |
-| 2 | Système favoris comptes (Boutons home) | 2h | 🟡 |
-| 3 | Écran Settings (Fondation) | 1h | 🟡 |
+| #   | Feature                                | Temps | Priorité |
+| --- | -------------------------------------- | ----- | -------- |
+| 1   | Types de paiement (Enum + BDD + UI)    | 2h    | 🟡        |
+| 2   | Système favoris comptes (Boutons home) | 2h    | 🟡        |
+| 3   | Écran Settings (Fondation)             | 1h    | 🟡        |
 
 ---
 

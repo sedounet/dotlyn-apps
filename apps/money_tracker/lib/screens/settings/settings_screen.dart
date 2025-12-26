@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/database_provider.dart';
+import '../../providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -212,7 +213,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ],
 
-                // General settings placeholder
+                // General settings
                 const SizedBox(height: 16),
                 Card(
                   child: Padding(
@@ -221,14 +222,107 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Paramètres généraux', style: Theme.of(context).textTheme.titleLarge),
-                        const SizedBox(height: 12),
-                        const Text('À venir dans les prochaines versions...'),
+                        const SizedBox(height: 16),
+                        _DarkModeToggle(),
+                        const SizedBox(height: 16),
+                        _HideBalanceToggle(),
+                        const SizedBox(height: 16),
+                        _LocaleSelector(),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
+    );
+  }
+}
+
+class _DarkModeToggle extends ConsumerWidget {
+  const _DarkModeToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.darkModeKey));
+
+    return settingAsync.when(
+      data: (value) {
+        final isDark = value == 'true';
+        return ListTile(
+          title: const Text('Mode sombre'),
+          trailing: Switch(
+            value: isDark,
+            onChanged: (val) async {
+              final repo = ref.read(appSettingsRepositoryProvider);
+              await repo.setSetting(AppSettingsRepository.darkModeKey, val.toString());
+            },
+          ),
+        );
+      },
+      loading: () =>
+          const ListTile(title: Text('Mode sombre'), trailing: CircularProgressIndicator()),
+      error: (e, s) => ListTile(title: const Text('Mode sombre'), subtitle: Text('Erreur: $e')),
+    );
+  }
+}
+
+class _HideBalanceToggle extends ConsumerWidget {
+  const _HideBalanceToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.hideBalance));
+
+    return settingAsync.when(
+      data: (value) {
+        final isHidden = value == 'true';
+        return ListTile(
+          title: const Text('Masquer les soldes'),
+          subtitle: const Text('Afficher les soldes des comptes comme masqués'),
+          trailing: Switch(
+            value: isHidden,
+            onChanged: (val) async {
+              final repo = ref.read(appSettingsRepositoryProvider);
+              await repo.setSetting(AppSettingsRepository.hideBalance, val.toString());
+            },
+          ),
+        );
+      },
+      loading: () =>
+          const ListTile(title: Text('Masquer les soldes'), trailing: CircularProgressIndicator()),
+      error: (e, s) =>
+          ListTile(title: const Text('Masquer les soldes'), subtitle: Text('Erreur: $e')),
+    );
+  }
+}
+
+class _LocaleSelector extends ConsumerWidget {
+  const _LocaleSelector();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.locale));
+
+    return settingAsync.when(
+      data: (value) {
+        final locale = value ?? 'fr_FR';
+        return DropdownButtonFormField<String>(
+          value: locale,
+          items: const [
+            DropdownMenuItem(value: 'fr_FR', child: Text('Français')),
+            DropdownMenuItem(value: 'en_US', child: Text('English')),
+          ],
+          onChanged: (val) async {
+            if (val != null) {
+              final repo = ref.read(appSettingsRepositoryProvider);
+              await repo.setSetting(AppSettingsRepository.locale, val);
+            }
+          },
+          decoration: const InputDecoration(labelText: 'Langue', border: OutlineInputBorder()),
+        );
+      },
+      loading: () => const CircularProgressIndicator(),
+      error: (e, s) => Text('Erreur: $e'),
     );
   }
 }

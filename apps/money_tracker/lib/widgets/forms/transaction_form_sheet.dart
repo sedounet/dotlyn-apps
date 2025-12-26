@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/database/app_database.dart';
+import '../../models/payment_method.dart';
 import '../../providers/transactions_provider.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/beneficiaries_provider.dart';
@@ -29,6 +30,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
   DateTime _date = DateTime.now();
   String _status = 'validated';
   String _type = 'expense'; // 'income', 'expense', or 'transfer'
+  PaymentMethod _paymentMethod = PaymentMethod.card;
+  String? _checkNumber;
   var _isSaving = false;
 
   @override
@@ -45,6 +48,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     _accountFromId = widget.accountId ?? t?.accountId;
     _date = t?.date ?? DateTime.now();
     _status = t?.status ?? 'validated';
+    _paymentMethod = PaymentMethod.fromString(t?.paymentMethod ?? 'card');
+    _checkNumber = t?.checkNumber;
     // Detect type: transfer if accountToId is set, otherwise income/expense based on amount
     if (t != null && t.accountToId != null) {
       _type = 'transfer';
@@ -92,6 +97,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
           date: _date,
           note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
           status: _status,
+          paymentMethod: _paymentMethod,
+          checkNumber: _checkNumber?.trim().isEmpty ?? true ? null : _checkNumber?.trim(),
         );
       } else {
         await repository.updateTransaction(
@@ -104,6 +111,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
           date: _date,
           note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
           status: _status,
+          paymentMethod: _paymentMethod,
+          checkNumber: _checkNumber?.trim().isEmpty ?? true ? null : _checkNumber?.trim(),
         );
       }
 
@@ -243,6 +252,37 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   loading: () => const CircularProgressIndicator(),
                   error: (e, s) => Text('Erreur bénéficiaires: $e'),
                 ),
+                const SizedBox(height: 12),
+                // Payment method selector
+                DropdownButtonFormField<PaymentMethod>(
+                  value: _paymentMethod,
+                  items: PaymentMethod.values
+                      .map((m) => DropdownMenuItem(value: m, child: Text(m.label)))
+                      .toList(),
+                  onChanged: (v) => setState(() {
+                    _paymentMethod = v ?? PaymentMethod.card;
+                    // Clear check number if not check payment
+                    if (v != PaymentMethod.check) {
+                      _checkNumber = null;
+                    }
+                  }),
+                  decoration: const InputDecoration(labelText: 'Méthode de paiement'),
+                ),
+                const SizedBox(height: 12),
+                // Check number field (only visible for check payments)
+                if (_paymentMethod == PaymentMethod.check)
+                  TextFormField(
+                    initialValue: _checkNumber,
+                    decoration: const InputDecoration(labelText: 'Numéro de chèque'),
+                    validator: (v) {
+                      if (_paymentMethod == PaymentMethod.check &&
+                          (v == null || v.trim().isEmpty)) {
+                        return 'Numéro requis pour les chèques';
+                      }
+                      return null;
+                    },
+                    onChanged: (v) => setState(() => _checkNumber = v),
+                  ),
                 const SizedBox(height: 12),
                 Row(
                   children: [

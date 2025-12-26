@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
+import '../../data/database/app_database.dart';
 import '../../providers/accounts_provider.dart';
+import '../../providers/favorite_accounts_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../widgets/forms/transaction_form_sheet.dart';
@@ -43,36 +45,56 @@ class HomeScreen extends ConsumerWidget {
           children: [
             const Spacer(),
 
-            // Boutons de choix de compte
+            // Boutons de choix de compte (comptes favoris)
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: List.generate(3, (index) {
-                  return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: GestureDetector(
-                        onTap: () {}, // TODO: Navigate to account details
-                        child: Container(
-                          height: 64,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.orangeAccent, width: 1),
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.account_balance_wallet, size: 24),
-                              const SizedBox(height: 4),
-                              Text('Compte ${index + 1}', style: const TextStyle(fontSize: 12)),
-                            ],
-                          ),
-                        ),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final favoritesAsync = ref.watch(favoriteAccountsProvider);
+                  final accountsAsync = ref.watch(accountsProvider);
+
+                  return favoritesAsync.when(
+                    data: (favorites) => accountsAsync.when(
+                      data: (accounts) {
+                        final accountMap = {for (var a in accounts) a.id: a};
+                        return Row(
+                          children: List.generate(3, (index) {
+                            final fav = favorites.firstWhere(
+                              (f) => f.buttonIndex == index,
+                              orElse: () => null as dynamic,
+                            );
+                            final account = fav != null ? accountMap[fav.accountId] : null;
+
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: _FavoriteAccountButton(
+                                  index: index,
+                                  account: account,
+                                  onTap: account != null
+                                      ? () => ref.read(activeAccountIdProvider.notifier).state =
+                                            account.id
+                                      : null,
+                                ),
+                              ),
+                            );
+                          }),
+                        );
+                      },
+                      loading: () => const SizedBox(
+                        height: 64,
+                        child: Center(child: CircularProgressIndicator()),
                       ),
+                      error: (e, s) =>
+                          SizedBox(height: 64, child: Center(child: Text('Erreur: $e'))),
                     ),
+                    loading: () => const SizedBox(
+                      height: 64,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (e, s) => SizedBox(height: 64, child: Center(child: Text('Erreur: $e'))),
                   );
-                }),
+                },
               ),
             ),
 
@@ -282,6 +304,56 @@ class HomeScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => TransactionFormSheet(defaultType: type),
+    );
+  }
+}
+
+class _FavoriteAccountButton extends StatelessWidget {
+  final int index;
+  final Account? account;
+  final VoidCallback? onTap;
+
+  const _FavoriteAccountButton({required this.index, required this.account, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = onTap != null;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          border: Border.all(color: isActive ? DotlynColors.primary : Colors.grey[300]!, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          color: isActive ? DotlynColors.primary.withOpacity(0.05) : Colors.grey[50],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.account_balance_wallet,
+              size: 24,
+              color: isActive ? DotlynColors.primary : Colors.grey[400],
+            ),
+            const SizedBox(height: 4),
+            if (account != null)
+              Flexible(
+                child: Text(
+                  account!.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: DotlynColors.secondary,
+                  ),
+                ),
+              )
+            else
+              Text('Vide', style: TextStyle(fontSize: 11, color: Colors.grey[400])),
+          ],
+        ),
+      ),
     );
   }
 }
