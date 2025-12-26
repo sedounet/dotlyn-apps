@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../widgets/action_buttons_bar.dart';
+import 'package:dotlyn_ui/dotlyn_ui.dart';
 import '../../providers/accounts_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/database_provider.dart';
@@ -98,8 +98,8 @@ class HomeScreen extends ConsumerWidget {
                               : '***',
                           style: TextStyle(
                             color: (availableBalance ?? 0) < 0
-                                ? const Color(0xFFE36C2D)
-                                : const Color(0xFF2C2C2C),
+                                ? DotlynColors.primary
+                                : DotlynColors.secondary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -121,7 +121,7 @@ class HomeScreen extends ConsumerWidget {
                         Text(
                           isBalanceVisible ? currencyFormatter.format(currentBalance ?? 0) : '***',
                           style: const TextStyle(
-                            color: Color(0xFF2C2C2C),
+                            color: DotlynColors.secondary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -152,7 +152,7 @@ class HomeScreen extends ConsumerWidget {
                     child: FloatingActionButton(
                       heroTag: 'remove',
                       onPressed: () => _showTransactionDialog(context, 'expense'),
-                      backgroundColor: const Color(0xFFE36C2D),
+                      backgroundColor: DotlynColors.primary,
                       child: const Icon(Icons.remove, size: 20),
                     ),
                   ),
@@ -163,7 +163,7 @@ class HomeScreen extends ConsumerWidget {
                     child: FloatingActionButton(
                       heroTag: 'transfer',
                       onPressed: () => _showTransactionDialog(context, 'transfer'),
-                      backgroundColor: const Color(0xFFE36C2D),
+                      backgroundColor: DotlynColors.primary,
                       child: const Icon(Icons.swap_horiz, size: 20),
                     ),
                   ),
@@ -174,7 +174,7 @@ class HomeScreen extends ConsumerWidget {
                     child: FloatingActionButton(
                       heroTag: 'add',
                       onPressed: () => _showTransactionDialog(context, 'income'),
-                      backgroundColor: const Color(0xFFE36C2D),
+                      backgroundColor: DotlynColors.primary,
                       child: const Icon(Icons.add, size: 20),
                     ),
                   ),

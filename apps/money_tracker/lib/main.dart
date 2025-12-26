@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dotlyn_ui/dotlyn_ui.dart';
 
-import 'core/theme/app_theme.dart';
 import 'providers/database_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'screens/home/home_screen.dart';
@@ -50,8 +50,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Money Tracker',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: DotlynTheme.lightTheme,
+      darkTheme: DotlynTheme.darkTheme,
       home: const HomeScreen(),
     );
   }

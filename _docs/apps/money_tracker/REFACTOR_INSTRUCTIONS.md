@@ -8,17 +8,17 @@
 
 ## 📋 Résumé des Tâches
 
-| # | Tâche | Fichier | Priorité |
-|---|-------|---------|----------|
-| 1 | Supprimer thème local dupliqué | `lib/core/theme/app_theme.dart` | 🔴 |
-| 2 | Utiliser DotlynTheme dans main | `lib/main.dart` | 🔴 |
-| 3 | Remplacer couleurs hardcodées | `lib/screens/home/home_screen.dart` | 🔴 |
-| 4 | Supprimer import inutilisé | `lib/screens/home/home_screen.dart` | 🟡 |
-| 5 | Fix BuildContext async gap | `lib/screens/home/home_screen.dart` | 🟡 |
-| 6 | Supprimer fichier doublon | `lib/widgets/forms/add_transaction_sheet.dart` | 🟡 |
-| 7 | Fix super.key pattern | `lib/widgets/action_buttons_bar.dart` | 🟢 |
-| 8 | Fix super.key pattern | `lib/widgets/transaction_list_item.dart` | 🟢 |
-| 9 | Fix RadioListTile deprecated | `lib/widgets/forms/transaction_form_sheet.dart` | 🟢 |
+| #   | Tâche                          | Fichier                                         | Priorité |
+| --- | ------------------------------ | ----------------------------------------------- | -------- |
+| 1   | Supprimer thème local dupliqué | `lib/core/theme/app_theme.dart`                 | 🔴        |
+| 2   | Utiliser DotlynTheme dans main | `lib/main.dart`                                 | 🔴        |
+| 3   | Remplacer couleurs hardcodées  | `lib/screens/home/home_screen.dart`             | 🔴        |
+| 4   | Supprimer import inutilisé     | `lib/screens/home/home_screen.dart`             | 🟡        |
+| 5   | Fix BuildContext async gap     | `lib/screens/home/home_screen.dart`             | 🟡        |
+| 6   | Supprimer fichier doublon      | `lib/widgets/forms/add_transaction_sheet.dart`  | 🟡        |
+| 7   | Fix super.key pattern          | `lib/widgets/action_buttons_bar.dart`           | 🟢        |
+| 8   | Fix super.key pattern          | `lib/widgets/transaction_list_item.dart`        | 🟢        |
+| 9   | Fix RadioListTile deprecated   | `lib/widgets/forms/transaction_form_sheet.dart` | 🟢        |
 
 ---
 
@@ -100,14 +100,14 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 
 **Remplacements à effectuer** :
 
-| Ligne | AVANT | APRÈS |
-|-------|-------|-------|
-| 101 | `const Color(0xFFE36C2D)` | `DotlynColors.primary` |
-| 102 | `const Color(0xFF2C2C2C)` | `DotlynColors.secondary` |
-| 124 | `Color(0xFF2C2C2C)` | `DotlynColors.secondary` |
-| 155 | `const Color(0xFFE36C2D)` | `DotlynColors.primary` |
-| 166 | `const Color(0xFFE36C2D)` | `DotlynColors.primary` |
-| 177 | `const Color(0xFFE36C2D)` | `DotlynColors.primary` |
+| Ligne | AVANT                     | APRÈS                    |
+| ----- | ------------------------- | ------------------------ |
+| 101   | `const Color(0xFFE36C2D)` | `DotlynColors.primary`   |
+| 102   | `const Color(0xFF2C2C2C)` | `DotlynColors.secondary` |
+| 124   | `Color(0xFF2C2C2C)`       | `DotlynColors.secondary` |
+| 155   | `const Color(0xFFE36C2D)` | `DotlynColors.primary`   |
+| 166   | `const Color(0xFFE36C2D)` | `DotlynColors.primary`   |
+| 177   | `const Color(0xFFE36C2D)` | `DotlynColors.primary`   |
 
 **Note** : Retirer `const` devant les couleurs car `DotlynColors.primary` est déjà const.
 

@@ -6,11 +6,11 @@ class ActionButtonsBar extends StatelessWidget {
   final VoidCallback onRemove;
 
   const ActionButtonsBar({
-    Key? key,
+    super.key,
     required this.onAdd,
     required this.onTransfer,
     required this.onRemove,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
