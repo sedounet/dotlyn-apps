@@ -12,6 +12,7 @@ import '../../providers/database_provider.dart';
 import '../../widgets/forms/transaction_form_sheet.dart';
 import '../../widgets/transaction_list_item.dart';
 import '../accounts/accounts_screen.dart';
+import '../accounts/account_transactions_screen.dart';
 import '../settings/settings_screen.dart';
 import '../beneficiaries/beneficiaries_screen.dart';
 
@@ -327,8 +328,11 @@ class HomeScreen extends ConsumerWidget {
     List<Account> allAccounts,
   ) {
     if (currentAccount != null) {
-      // Bouton avec compte assigné → activer ce compte
-      ref.read(activeAccountIdProvider.notifier).state = currentAccount.id;
+      // Bouton avec compte assigné → ouvrir l'écran des transactions
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => AccountTransactionsScreen(account: currentAccount)),
+      );
     } else {
       // Bouton vide → ouvrir sélection de compte
       _showAccountSelectionDialog(context, ref, buttonIndex, allAccounts);
@@ -469,17 +473,14 @@ class _TransactionsList extends ConsumerWidget {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Aucune opération',
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: Text('Aucune opération', style: TextStyle(color: Colors.grey)),
             ),
           );
         }
 
         // Calculate balance after each transaction
         double runningBalance = ref.watch(accountBalanceProvider(accountId)) ?? 0;
-        
+
         return ListView.builder(
           itemCount: transactions.length,
           itemBuilder: (context, index) {
@@ -520,10 +521,7 @@ class _TransactionsList extends ConsumerWidget {
         title: const Text('Confirmation'),
         content: const Text('Voulez-vous vraiment supprimer cette opération ?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -537,9 +535,9 @@ class _TransactionsList extends ConsumerWidget {
       final repo = ref.read(transactionsRepositoryProvider);
       await repo.deleteTransaction(transaction.id);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Opération supprimée')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Opération supprimée')));
       }
     }
   }
