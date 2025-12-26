@@ -544,6 +544,7 @@ class _TransactionsList extends ConsumerWidget {
 
   Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
     final repo = ref.read(transactionsRepositoryProvider);
+    final newStatus = transaction.status == 'pending' ? 'validated' : 'pending';
     await repo.updateTransaction(
       id: transaction.id,
       accountId: transaction.accountId,
@@ -553,7 +554,7 @@ class _TransactionsList extends ConsumerWidget {
       amount: transaction.amount,
       date: transaction.date,
       note: transaction.note,
-      status: 'validated',
+      status: newStatus,
     );
   }
 }

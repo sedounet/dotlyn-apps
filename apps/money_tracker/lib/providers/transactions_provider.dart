@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' show Value, OrderingTerm, OrderingMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/database/app_database.dart';
@@ -10,9 +10,10 @@ final transactionsProvider = StreamProvider.autoDispose.family<List<Transaction>
   accountId,
 ) {
   final database = ref.watch(databaseProvider);
-  return (database.select(
-    database.transactions,
-  )..where((t) => t.accountId.equals(accountId))).watch();
+  return (database.select(database.transactions)
+        ..where((t) => t.accountId.equals(accountId))
+        ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]))
+      .watch();
 });
 
 final transactionsRepositoryProvider = Provider<TransactionsRepository>((ref) {

@@ -1,7 +1,7 @@
 # Money Tracker — Documentation de développement
 
-> **Status** : � En développement (Phase 0.1e COMPLETE — Méthodes de paiement & Favoris)  
-> **Version actuelle** : v0.1e  
+> **Status** : 🟡 En développement (Phase 2+ — Refonte UX transactions & favoris)  
+> **Version actuelle** : v0.1e+ (Phase 2+)  
 > **Dernière mise à jour** : 2025-12-26
 
 ---
@@ -120,23 +120,37 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ## 📋 TODO
 
-### 🔴 P1 — Phase 0.1e (Terminée ✅)
+### 🔴 P1 — Phase 2+ (En cours — Refonte UX)
 
-Méthodes de paiement, comptes favoris, et settings utilisateur
+**Contexte** : Suite feedback utilisateur (PROMPT_USER_ARCHIVE.md), amélioration ergonomie et gestion transactions
 
 **Travail effectué** :
-- [x] Enum PaymentMethod (Carte, Virement, Prélèvement, Chèque, Espèces)
-- [x] Columns transactions : paymentMethod + checkNumber (optionnel)
-- [x] UI transaction_form_sheet : dropdown paiement + field chèque conditionnel
-- [x] Table FavoriteAccounts (buttonIndex + accountId)
-- [x] FavoriteAccountsRepository : assignFavorite, removeFavorite, clearAll
-- [x] Home screen : 3 boutons dynamiques affichant favoris (cliquables pour activer compte)
-- [x] Table AppSettings (key-value store)
-- [x] AppSettingsRepository : setSetting, getSetting, deleteSetting
-- [x] SettingsScreen : toggles dark mode, masquage soldes + locale selector
-- [x] Migration BDD v3→v4 (nouvelles colonnes + FavoriteAccounts refactorisée)
+- [x] **Migration BDD v3→v4** : Correction bug création tables FavoriteAccounts et AppSettings
+- [x] **Boutons favoris** : Logique assignment complète (vide → sélection compte → confirmation → assignation)
+- [x] **Navigation favoris** : Clic bouton favori → ouvre écran transactions du compte
+- [x] **Liste transactions home** : Affichage transactions compte actif avec menu contextuel
+- [x] **Menu contextuel transaction** : Éditer / Supprimer (avec confirmation) / Valider-Dévalider
+- [x] **Toggle validation** : Bouton bascule entre "Valider" (vert) et "Dévalider" (orange) selon statut
+- [x] **Indicateurs visuels** : Point orange pour "en attente", texte grisé
+- [x] **Écran transactions compte** : AccountTransactionsScreen avec soldes + liste complète + FAB ajout
+- [x] **Refonte liste comptes** : Suppression radio buttons, ajout icône édition, navigation vers transactions au tap
+- [x] **Tri transactions** : Plus récentes en haut (orderBy date DESC)
+- [x] **Statut par défaut** : "En attente" au lieu de "Validé" pour nouvelles opérations
+- [x] **Validation virements** : Avertissement si moins de 2 comptes disponibles
+- [x] **Catégorie optionnelle** : Plus obligatoire lors création/édition transaction
 
-**Commit** : f766116 — "[money_tracker] feat: implement Phase 2 (payment methods, favorites, settings)"
+**Reste à faire** :
+- [ ] Tests complets flux utilisateur (création, édition, suppression, validation toggle)
+- [ ] Polish UI : Optimiser splash screen (actuellement 3-4s)
+- [ ] Polish UI : Vérifier SafeArea pour bannière pub (ne doit pas chevaucher navigation)
+- [ ] Polish UI : Compacter/réduire certains éléments d'interface (à planifier)
+
+**Commits** :
+- `ce8559e` — Fix migration v3→v4 tables creation
+- `69d15b3` — Implement favorite buttons assignment logic
+- `28b6989` — Add transaction context menu (edit/delete/validate)
+- `a9d1d6f` — Remove radio buttons, add edit icon, open transactions screen
+- (pending) — Add transaction validation toggle + sort DESC + default pending + optional category
 
 ### 🟡 P2 — Phases MVP suivantes
 

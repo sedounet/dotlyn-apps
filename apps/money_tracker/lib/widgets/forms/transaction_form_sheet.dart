@@ -28,7 +28,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
   int? _accountToId; // For transfers
   int? _accountFromId; // For explicit source account in transfers
   DateTime _date = DateTime.now();
-  String _status = 'validated';
+  String _status = 'pending';
   String _type = 'expense'; // 'income', 'expense', or 'transfer'
   PaymentMethod _paymentMethod = PaymentMethod.card;
   String? _checkNumber;
@@ -47,7 +47,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     _accountToId = t?.accountToId;
     _accountFromId = widget.accountId ?? t?.accountId;
     _date = t?.date ?? DateTime.now();
-    _status = t?.status ?? 'validated';
+    _status = t?.status ?? 'pending';
     _paymentMethod = PaymentMethod.fromString(t?.paymentMethod ?? 'card');
     _checkNumber = t?.checkNumber;
     // Detect type: transfer if accountToId is set, otherwise income/expense based on amount
@@ -67,6 +67,33 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Validation for transfers: need at least 2 accounts
+    if (_type == 'transfer') {
+      final accountsAsync = ref.read(accountsProvider);
+      await accountsAsync.when(
+        data: (accounts) async {
+          if (accounts.length < 2) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Vous devez avoir au moins 2 comptes pour effectuer un virement'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+            return;
+          }
+        },
+        loading: () async {},
+        error: (e, s) async {},
+      );
+
+      // Exit early if validation failed
+      final accounts = await ref.read(accountsProvider.future);
+      if (accounts.length < 2) {
+        return;
+      }
+    }
+
     setState(() => _isSaving = true);
 
     final repository = ref.read(transactionsRepositoryProvider);
@@ -203,8 +230,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                             .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
                             .toList(),
                         onChanged: (v) => setState(() => _categoryId = v),
-                        decoration: const InputDecoration(labelText: 'Catégorie'),
-                        validator: (v) => v == null ? 'Catégorie requise' : null,
+                        decoration: const InputDecoration(labelText: 'Catégorie (optionnelle)'),
                       );
                     },
                     loading: () => const CircularProgressIndicator(),

@@ -91,15 +91,17 @@ class TransactionListItem extends StatelessWidget {
                   label: const Text('Éditer'),
                 ),
               const SizedBox(height: 8),
-              if (onValidate != null && transaction.status == 'pending')
+              if (onValidate != null)
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
                     onValidate!();
                   },
-                  icon: const Icon(Icons.check_circle),
-                  label: const Text('Valider'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  icon: Icon(transaction.status == 'pending' ? Icons.check_circle : Icons.cancel),
+                  label: Text(transaction.status == 'pending' ? 'Valider' : 'Dévalider'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: transaction.status == 'pending' ? Colors.green : Colors.orange,
+                  ),
                 ),
               const SizedBox(height: 8),
               if (onDelete != null)
