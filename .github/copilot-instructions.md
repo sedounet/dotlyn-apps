@@ -291,37 +291,16 @@ melos run build:runner
 
 ### 6. Styleguide Dotlyn
 
-**TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` :
-- **Couleurs** : 
-  - Primaire : Orange terre cuite `#E36C2D` (via `DotlynColors.primary`)
-  - Primaire Bright : `#FF9A6C` (via `DotlynColors.primaryBright` - mode sombre uniquement)
-  - Secondaire : Gris anthracite `#2C2C2C` (via `DotlynColors.secondary`)
-  - Accent : Bleu acier `#3A6EA5` (via `DotlynColors.accent`)
-  - Toutes couleurs dans `packages/dotlyn_ui/lib/theme/colors.dart`
-- **Typo** : 
-  - Titres/Logo : Satoshi (Heavy Italic pour logo)
-  - UI/Texte : Manrope (Regular)
-- **Icônes** : 
-  - **App Icons / Launcher** : Remix Icon uniquement (pictogrammes logo)
-  - **UI interne** : Material Icons (Flutter natif - `Icons.add`, `Icons.edit`, etc.)
-- **Contraste** : WCAG AA minimum (4.5:1 pour texte)
+**TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` (source unique de vérité) :
+- **Couleurs** : Orange terre cuite (#E36C2D), Gris anthracite (#2C2C2C), Bleu acier (#3A6EA5)
+  - Utiliser via `DotlynColors.*` de `packages/dotlyn_ui/lib/theme/colors.dart`
+- **Typo** : Satoshi (titres/logo) + Manrope (UI/texte)
+- **Icônes** : Remix Icon (app icons/launcher), Material Icons (UI interne Flutter)
+- **Contraste** : WCAG AA minimum
 
-**Utilisation couleurs** :
-```dart
-// Importer dotlyn_ui
-import 'package:dotlyn_ui/dotlyn_ui.dart';
+**Usage** : `import 'package:dotlyn_ui/dotlyn_ui.dart';` puis `DotlynColors.primary`
 
-// Accéder aux couleurs
-color: DotlynColors.primary,       // Orange standard (light mode)
-color: DotlynColors.primaryBright, // Orange lumineux (dark mode auto)
-color: DotlynColors.primaryLight,  // Hover/actif
-color: DotlynColors.success,       // Feedback positif
-color: DotlynColors.grey600,       // Texte secondaire
-
-// Préférer le thème dynamique
-color: Theme.of(context).colorScheme.primary,  // S'adapte automatiquement
-color: Theme.of(context).colorScheme.error,
-```
+---
 
 ---
 
