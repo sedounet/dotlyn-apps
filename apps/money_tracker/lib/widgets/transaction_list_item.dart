@@ -20,7 +20,11 @@ class TransactionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormatter = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
+    final theme = Theme.of(context);
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'fr_FR',
+      symbol: '€',
+    );
     final isPositive = transaction.amount > 0;
     final isPending = transaction.status == 'pending';
 
@@ -30,7 +34,9 @@ class TransactionListItem extends StatelessWidget {
         children: [
           Icon(
             isPositive ? Icons.arrow_downward : Icons.arrow_upward,
-            color: isPositive ? Colors.green : Colors.red,
+            color: isPositive
+                ? theme.colorScheme.tertiary
+                : theme.colorScheme.error,
           ),
           if (isPending)
             Positioned(
@@ -39,7 +45,10 @@ class TransactionListItem extends StatelessWidget {
               child: Container(
                 width: 8,
                 height: 8,
-                decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
         ],
@@ -47,7 +56,9 @@ class TransactionListItem extends StatelessWidget {
       title: Text(
         transaction.note?.isNotEmpty == true ? transaction.note! : 'Sans note',
         style: TextStyle(
-          color: isPending ? Colors.grey : null,
+          color: isPending
+              ? theme.colorScheme.onSurface.withOpacity(0.5)
+              : null,
           fontStyle: isPending ? FontStyle.italic : null,
         ),
       ),
@@ -58,7 +69,9 @@ class TransactionListItem extends StatelessWidget {
       trailing: Text(
         currencyFormatter.format(transaction.amount.abs()),
         style: TextStyle(
-          color: isPositive ? Colors.green : Colors.red,
+          color: isPositive
+              ? theme.colorScheme.tertiary
+              : theme.colorScheme.error,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -97,11 +110,20 @@ class TransactionListItem extends StatelessWidget {
                     Navigator.pop(context);
                     onValidate!();
                   },
-                  icon: Icon(transaction.status == 'pending' ? Icons.check_circle : Icons.cancel),
-                  label: Text(transaction.status == 'pending' ? 'Valider' : 'Dévalider'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: transaction.status == 'pending' ? Colors.green : Colors.orange,
+                  icon: Icon(
+                    transaction.status == 'pending'
+                        ? Icons.check_circle
+                        : Icons.cancel,
                   ),
+                  label: Text(
+                    transaction.status == 'pending' ? 'Valider' : 'Dévalider',
+                  ),
+                  style: transaction.status == 'pending'
+                      ? ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.tertiary,
+                          foregroundColor: theme.colorScheme.onTertiary,
+                        )
+                      : null,
                 ),
               const SizedBox(height: 8),
               if (onDelete != null)
@@ -112,10 +134,16 @@ class TransactionListItem extends StatelessWidget {
                   },
                   icon: const Icon(Icons.delete),
                   label: const Text('Supprimer'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.error,
+                    foregroundColor: theme.colorScheme.onError,
+                  ),
                 ),
               const SizedBox(height: 8),
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Annuler'),
+              ),
             ],
           ),
         ),

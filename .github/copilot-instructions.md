@@ -294,13 +294,16 @@ melos run build:runner
 **TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` :
 - **Couleurs** : 
   - Primaire : Orange terre cuite `#E36C2D` (via `DotlynColors.primary`)
+  - Primaire Bright : `#FF9A6C` (via `DotlynColors.primaryBright` - mode sombre uniquement)
   - Secondaire : Gris anthracite `#2C2C2C` (via `DotlynColors.secondary`)
   - Accent : Bleu acier `#3A6EA5` (via `DotlynColors.accent`)
   - Toutes couleurs dans `packages/dotlyn_ui/lib/theme/colors.dart`
 - **Typo** : 
   - Titres/Logo : Satoshi (Heavy Italic pour logo)
   - UI/Texte : Manrope (Regular)
-- **Icônes** : Remix Icon uniquement
+- **Icônes** : 
+  - **App Icons / Launcher** : Remix Icon uniquement (pictogrammes logo)
+  - **UI interne** : Material Icons (Flutter natif - `Icons.add`, `Icons.edit`, etc.)
 - **Contraste** : WCAG AA minimum (4.5:1 pour texte)
 
 **Utilisation couleurs** :
@@ -309,10 +312,15 @@ melos run build:runner
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 
 // Accéder aux couleurs
-color: DotlynColors.primary,
+color: DotlynColors.primary,       // Orange standard (light mode)
+color: DotlynColors.primaryBright, // Orange lumineux (dark mode auto)
 color: DotlynColors.primaryLight,  // Hover/actif
 color: DotlynColors.success,       // Feedback positif
 color: DotlynColors.grey600,       // Texte secondaire
+
+// Préférer le thème dynamique
+color: Theme.of(context).colorScheme.primary,  // S'adapte automatiquement
+color: Theme.of(context).colorScheme.error,
 ```
 
 ---
