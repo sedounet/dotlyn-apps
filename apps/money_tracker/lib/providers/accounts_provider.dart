@@ -70,7 +70,11 @@ class AccountsRepository {
     return _database
         .into(_database.accounts)
         .insert(
-          AccountsCompanion.insert(name: name, type: type, initialBalance: Value(initialBalance)),
+          AccountsCompanion.insert(
+            name: name,
+            type: type,
+            initialBalance: Value(initialBalance),
+          ),
         );
   }
 
@@ -80,7 +84,9 @@ class AccountsRepository {
     required String type,
     required double initialBalance,
   }) {
-    return (_database.update(_database.accounts)..where((tbl) => tbl.id.equals(id))).write(
+    return (_database.update(
+      _database.accounts,
+    )..where((tbl) => tbl.id.equals(id))).write(
       AccountsCompanion(
         name: Value(name),
         type: Value(type),
@@ -90,27 +96,29 @@ class AccountsRepository {
   }
 
   Future<void> deleteAccount(int id) {
-    return (_database.delete(_database.accounts)..where((tbl) => tbl.id.equals(id))).go();
+    return (_database.delete(
+      _database.accounts,
+    )..where((tbl) => tbl.id.equals(id))).go();
   }
 }
 
 // Provider pour récupérer les virements ENTRANTS (où ce compte est la destination)
-final incomingTransfersProvider = StreamProvider.autoDispose.family<List<Transaction>, int>((
-  ref,
-  accountId,
-) {
-  final database = ref.watch(databaseProvider);
-  return (database.select(
-    database.transactions,
-  )..where((t) => t.accountToId.equals(accountId))).watch();
-});
+final incomingTransfersProvider = StreamProvider.autoDispose
+    .family<List<Transaction>, int>((ref, accountId) {
+      final database = ref.watch(databaseProvider);
+      return (database.select(
+        database.transactions,
+      )..where((t) => t.accountToId.equals(accountId))).watch();
+    });
 
 // Provider qui calcule le solde actuel : initialBalance + sum(transactions where status='validated')
 // Inclut uniquement les opérations validées (virements sortants et entrants)
 final accountBalanceProvider = Provider.family<double, int>((ref, accountId) {
   final accountsAsync = ref.watch(accountsProvider);
   final transactionsAsync = ref.watch(transactionsProvider(accountId));
-  final incomingTransfersAsync = ref.watch(incomingTransfersProvider(accountId));
+  final incomingTransfersAsync = ref.watch(
+    incomingTransfersProvider(accountId),
+  );
 
   final accounts = accountsAsync.value ?? [];
   final transactions = transactionsAsync.value ?? [];
@@ -141,10 +149,15 @@ final accountBalanceProvider = Provider.family<double, int>((ref, accountId) {
 
 // Provider qui calcule le solde disponible : Solde actuel + opérations en attente
 // Solde Disponible ≤ Solde Actuel (car pending sont généralement des dépenses négatives)
-final accountAvailableBalanceProvider = Provider.family<double, int>((ref, accountId) {
+final accountAvailableBalanceProvider = Provider.family<double, int>((
+  ref,
+  accountId,
+) {
   final accountsAsync = ref.watch(accountsProvider);
   final transactionsAsync = ref.watch(transactionsProvider(accountId));
-  final incomingTransfersAsync = ref.watch(incomingTransfersProvider(accountId));
+  final incomingTransfersAsync = ref.watch(
+    incomingTransfersProvider(accountId),
+  );
 
   final accounts = accountsAsync.value ?? [];
   final transactions = transactionsAsync.value ?? [];
@@ -159,7 +172,10 @@ final accountAvailableBalanceProvider = Provider.family<double, int>((ref, accou
   if (account == null) return 0.0;
 
   // Somme de TOUTES les transactions (validées + en attente)
-  final allTransactionsSum = transactions.fold<double>(0.0, (sum, t) => sum + t.amount);
+  final allTransactionsSum = transactions.fold<double>(
+    0.0,
+    (sum, t) => sum + t.amount,
+  );
 
   // Somme de TOUS les virements entrants (validés + en attente)
   final allIncomingTransfersSum = incomingTransfers.fold<double>(
@@ -167,5 +183,7 @@ final accountAvailableBalanceProvider = Provider.family<double, int>((ref, accou
     (sum, t) => sum + t.amount.abs(),
   );
 
-  return account.initialBalance + allTransactionsSum + allIncomingTransfersSum; // Solde disponible
+  return account.initialBalance +
+      allTransactionsSum +
+      allIncomingTransfersSum; // Solde disponible
 });

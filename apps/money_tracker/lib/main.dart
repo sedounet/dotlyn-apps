@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 
 import 'providers/database_provider.dart';
+import 'providers/theme_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'screens/home/home_screen.dart';
 
@@ -28,7 +29,9 @@ void main() async {
   final transactions = await database.select(database.transactions).get();
 
   debugPrint('[DB] Startup state:');
-  debugPrint('  - Accounts: ${accounts.length} (${accounts.map((a) => a.name).toList()})');
+  debugPrint(
+    '  - Accounts: ${accounts.length} (${accounts.map((a) => a.name).toList()})',
+  );
   debugPrint('  - Categories: ${categories.length}');
   debugPrint(
     '  - Beneficiaries: ${beneficiaries.length} (${beneficiaries.map((b) => b.name).toList()})',
@@ -43,15 +46,18 @@ void main() async {
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp(
       title: 'Money Tracker',
       theme: DotlynTheme.lightTheme,
       darkTheme: DotlynTheme.darkTheme,
+      themeMode: themeMode,
       home: const HomeScreen(),
     );
   }

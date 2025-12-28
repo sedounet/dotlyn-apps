@@ -79,6 +79,7 @@ class TransactionListItem extends StatelessWidget {
   }
 
   void _showActionMenu(BuildContext context) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -90,7 +91,7 @@ class TransactionListItem extends StatelessWidget {
             children: [
               Text(
                 'Actions',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

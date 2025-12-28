@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:dotlyn_ui/dotlyn_ui.dart';
+
 import '../../data/database/app_database.dart';
 import '../../providers/accounts_provider.dart';
 import '../../providers/favorite_accounts_provider.dart';
 import '../../providers/transactions_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/database_provider.dart';
-import '../../widgets/forms/transaction_form_sheet.dart';
-import '../../widgets/transaction_list_item.dart';
+import '../../providers/theme_provider.dart';
+import '../../widgets/widgets.dart';
 import '../accounts/accounts_screen.dart';
 import '../accounts/account_transactions_screen.dart';
 import '../settings/settings_screen.dart';
@@ -23,194 +22,42 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeAccount = ref.watch(activeAccountProvider);
     final isBalanceVisible = ref.watch(balanceVisibilityProvider);
-    final currencyFormatter = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
 
     double? currentBalance;
     double? availableBalance;
     if (activeAccount != null) {
       currentBalance = ref.watch(accountBalanceProvider(activeAccount.id));
-      availableBalance = ref.watch(accountAvailableBalanceProvider(activeAccount.id));
+      availableBalance = ref.watch(
+        accountAvailableBalanceProvider(activeAccount.id),
+      );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Money Tracker'),
-        actions: [
-          IconButton(
-            icon: Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
-            onPressed: () => ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(context, ref, isBalanceVisible),
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
             const Spacer(),
 
-            // Boutons de choix de compte (comptes favoris)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final favoritesAsync = ref.watch(favoriteAccountsProvider);
-                  final accountsAsync = ref.watch(accountsProvider);
+            // Boutons de comptes favoris
+            _FavoriteAccountsSection(),
 
-                  return favoritesAsync.when(
-                    data: (favorites) => accountsAsync.when(
-                      data: (accounts) {
-                        final accountMap = {for (var a in accounts) a.id: a};
-                        return Row(
-                          children: List.generate(3, (index) {
-                            // Find favorite for this button index (safe)
-                            FavoriteAccount? fav;
-                            try {
-                              fav = favorites.firstWhere((f) => f.buttonIndex == index);
-                            } catch (e) {
-                              fav = null;
-                            }
-                            final account = fav != null ? accountMap[fav.accountId] : null;
-
-                            return Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: _FavoriteAccountButton(
-                                  index: index,
-                                  account: account,
-                                  onTap: () => _handleFavoriteButtonTap(
-                                    context,
-                                    ref,
-                                    index,
-                                    account,
-                                    accounts,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        );
-                      },
-                      loading: () => const SizedBox(
-                        height: 64,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                      error: (e, s) =>
-                          SizedBox(height: 64, child: Center(child: Text('Erreur: $e'))),
-                    ),
-                    loading: () => const SizedBox(
-                      height: 64,
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                    error: (e, s) => SizedBox(height: 64, child: Center(child: Text('Erreur: $e'))),
-                  );
-                },
-              ),
+            // Soldes
+            BalanceRow(
+              availableBalance: availableBalance,
+              currentBalance: currentBalance,
+              isVisible: isBalanceVisible,
+              onToggleVisibility: () => ref
+                  .read(balanceVisibilityProvider.notifier)
+                  .toggleVisibility(),
             ),
 
-            // Soldes du compte actif sur 2 colonnes + show/hide
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Disponible
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Disponible',
-                          style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          isBalanceVisible
-                              ? currencyFormatter.format(availableBalance ?? 0)
-                              : '***',
-                          style: TextStyle(
-                            color: (availableBalance ?? 0) < 0
-                                ? DotlynColors.primary
-                                : DotlynColors.secondary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 32),
-                  // Actuel
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Actuel',
-                          style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          isBalanceVisible ? currencyFormatter.format(currentBalance ?? 0) : '***',
-                          style: const TextStyle(
-                            color: DotlynColors.secondary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Show/hide button
-                  IconButton(
-                    icon: Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () =>
-                        ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
-                    tooltip: 'Afficher/Masquer',
-                  ),
-                ],
-              ),
-            ),
-
-            // Boutons +/- virement (ligne propre, alignés à droite)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: FloatingActionButton(
-                      heroTag: 'remove',
-                      onPressed: () => _showTransactionDialog(context, 'expense'),
-                      backgroundColor: DotlynColors.primary,
-                      child: const Icon(Icons.remove, size: 20),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: FloatingActionButton(
-                      heroTag: 'transfer',
-                      onPressed: () => _showTransactionDialog(context, 'transfer'),
-                      backgroundColor: DotlynColors.primary,
-                      child: const Icon(Icons.swap_horiz, size: 20),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: FloatingActionButton(
-                      heroTag: 'add',
-                      onPressed: () => _showTransactionDialog(context, 'income'),
-                      backgroundColor: DotlynColors.primary,
-                      child: const Icon(Icons.add, size: 20),
-                    ),
-                  ),
-                ],
-              ),
+            // Boutons d'action (+/- virement)
+            ActionButtonsRow(
+              onIncome: () => _showTransactionDialog(context, 'income'),
+              onExpense: () => _showTransactionDialog(context, 'expense'),
+              onTransfer: () => _showTransactionDialog(context, 'transfer'),
             ),
 
             // Tagline
@@ -226,90 +73,90 @@ class HomeScreen extends ConsumerWidget {
             if (activeAccount != null)
               Expanded(child: _TransactionsList(accountId: activeAccount.id)),
 
-            // Ad Banner Placeholder (tout en bas)
-            Container(
-              height: 50,
-              color: Colors.grey[300],
-              child: const Center(child: Text('Ad Banner Placeholder')),
-            ),
+            // Ad Banner Placeholder
+            _AdBannerPlaceholder(),
           ],
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: const Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
-            ),
-            ListTile(title: const Text('Accueil'), onTap: () => Navigator.pop(context)),
-            ListTile(
-              title: const Text('Mes Comptes'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountsScreen()));
-              },
-            ),
-            ListTile(title: const Text('Catégories'), onTap: () => Navigator.pop(context)),
-            ListTile(
-              title: const Text('Bénéficiaires'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BeneficiariesScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Paramètres'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
-              },
-            ),
-            if (kDebugMode)
-              ListTile(
-                title: const Text('Reset DB (dev)'),
-                subtitle: const Text('Supprime et reseed la DB pour tests'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final confirmed =
-                      await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Réinitialiser la base de données'),
-                          content: const Text(
-                            'Confirmer la suppression de toutes les données et reseed ?',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text('Annuler'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      ) ??
-                      false;
-                  if (!confirmed) return;
+      drawer: _buildDrawer(context, ref),
+    );
+  }
 
-                  final db = ref.read(databaseProvider);
-                  final messenger = ScaffoldMessenger.of(context);
-                  messenger.showSnackBar(
-                    const SnackBar(content: Text('Réinitialisation en cours...')),
-                  );
-                  await db.resetToDefaultData(includeFakeData: true);
-                  messenger.showSnackBar(const SnackBar(content: Text('Base réinitialisée')));
-                },
-              ),
-            ListTile(title: const Text('À propos'), onTap: () => Navigator.pop(context)),
-          ],
+  AppBar _buildAppBar(
+    BuildContext context,
+    WidgetRef ref,
+    bool isBalanceVisible,
+  ) {
+    return AppBar(
+      title: const Text('Money Tracker'),
+      actions: [
+        IconButton(
+          icon: Icon(
+            isBalanceVisible ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () =>
+              ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
         ),
-      ),
+        IconButton(
+          icon: Icon(
+            ref.watch(themeModeProvider) == ThemeMode.light
+                ? Icons.dark_mode
+                : Icons.light_mode,
+          ),
+          onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+          tooltip: 'Basculer thème',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, WidgetRef ref) {
+    return AppDrawer(
+      headerTitle: 'Menu',
+      items: [
+        DrawerMenuItemData(icon: Icons.home, title: 'Accueil', onTap: () {}),
+        DrawerMenuItemData(
+          icon: Icons.account_balance_wallet,
+          title: 'Mes Comptes',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AccountsScreen()),
+          ),
+        ),
+        DrawerMenuItemData(
+          icon: Icons.category,
+          title: 'Catégories',
+          onTap: () {}, // TODO: Implement
+        ),
+        DrawerMenuItemData(
+          icon: Icons.people,
+          title: 'Bénéficiaires',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const BeneficiariesScreen()),
+          ),
+        ),
+        DrawerMenuItemData(
+          icon: Icons.settings,
+          title: 'Paramètres',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SettingsScreen()),
+          ),
+        ),
+        if (kDebugMode)
+          DrawerMenuItemData(
+            icon: Icons.bug_report,
+            title: 'Reset DB (dev)',
+            iconColor: Colors.orange,
+            onTap: () => _resetDatabase(context, ref),
+          ),
+        DrawerMenuItemData(
+          icon: Icons.info_outline,
+          title: 'À propos',
+          onTap: () {}, // TODO: Implement
+        ),
+      ],
     );
   }
 
@@ -320,7 +167,69 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  static void _handleFavoriteButtonTap(
+  Future<void> _resetDatabase(BuildContext context, WidgetRef ref) async {
+    final confirmed = await ConfirmDialog.show(
+      context: context,
+      title: 'Réinitialiser la base de données',
+      content: 'Confirmer la suppression de toutes les données et reseed ?',
+      confirmText: 'OK',
+      isDangerous: true,
+    );
+
+    if (!confirmed || !context.mounted) return;
+
+    final db = ref.read(databaseProvider);
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Réinitialisation en cours...')),
+    );
+    await db.resetToDefaultData(includeFakeData: true);
+    messenger.showSnackBar(const SnackBar(content: Text('Base réinitialisée')));
+  }
+}
+
+/// Section des comptes favoris avec gestion async
+class _FavoriteAccountsSection extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoritesAsync = ref.watch(favoriteAccountsProvider);
+    final accountsAsync = ref.watch(accountsProvider);
+
+    return favoritesAsync.when(
+      data: (favorites) => accountsAsync.when(
+        data: (accounts) {
+          final accountMap = {for (var a in accounts) a.id: a};
+          final favoriteAccounts = List.generate(3, (index) {
+            try {
+              final fav = favorites.firstWhere((f) => f.buttonIndex == index);
+              return accountMap[fav.accountId];
+            } catch (e) {
+              return null;
+            }
+          });
+
+          return FavoriteAccountsRow(
+            accounts: favoriteAccounts,
+            onTap: (index, account) => _handleFavoriteButtonTap(
+              context,
+              ref,
+              index,
+              account,
+              accounts,
+            ),
+          );
+        },
+        loading: () => const LoadingPlaceholder(height: 64),
+        error: (e, s) =>
+            const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
+      ),
+      loading: () => const LoadingPlaceholder(height: 64),
+      error: (e, s) =>
+          const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
+    );
+  }
+
+  void _handleFavoriteButtonTap(
     BuildContext context,
     WidgetRef ref,
     int buttonIndex,
@@ -328,136 +237,58 @@ class HomeScreen extends ConsumerWidget {
     List<Account> allAccounts,
   ) {
     if (currentAccount != null) {
-      // Bouton avec compte assigné → ouvrir l'écran des transactions
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => AccountTransactionsScreen(account: currentAccount)),
+        MaterialPageRoute(
+          builder: (_) => AccountTransactionsScreen(account: currentAccount),
+        ),
       );
     } else {
-      // Bouton vide → ouvrir sélection de compte
       _showAccountSelectionDialog(context, ref, buttonIndex, allAccounts);
     }
   }
 
-  static Future<void> _showAccountSelectionDialog(
+  Future<void> _showAccountSelectionDialog(
     BuildContext context,
     WidgetRef ref,
     int buttonIndex,
     List<Account> accounts,
   ) async {
-    final selected = await showDialog<Account>(
+    final selected = await AccountSelectionDialog.show(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Assigner au bouton ${buttonIndex + 1}'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: accounts.length,
-            itemBuilder: (context, index) {
-              final account = accounts[index];
-              return ListTile(
-                leading: const Icon(Icons.account_balance_wallet),
-                title: Text(account.name),
-                subtitle: Text(account.type),
-                onTap: () => Navigator.of(context).pop(account),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Annuler')),
-        ],
-      ),
+      title: 'Assigner au bouton ${buttonIndex + 1}',
+      accounts: accounts,
     );
 
-    if (selected != null && context.mounted) {
-      // Demander confirmation
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Confirmation'),
+    if (selected == null || !context.mounted) return;
+
+    final confirmed = await ConfirmDialog.show(
+      context: context,
+      title: 'Confirmation',
+      content:
+          'Voulez-vous assigner le compte "${selected.name}" au bouton ${buttonIndex + 1} ?',
+      confirmText: 'Oui',
+      cancelText: 'Non',
+    );
+
+    if (!confirmed || !context.mounted) return;
+
+    final repo = ref.read(favoriteAccountsRepositoryProvider);
+    await repo.assignFavorite(buttonIndex: buttonIndex, accountId: selected.id);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
           content: Text(
-            'Voulez-vous assigner le compte "${selected.name}" au bouton ${buttonIndex + 1} ?',
+            '${selected.name} assigné au bouton ${buttonIndex + 1}',
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Non')),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Oui'),
-            ),
-          ],
         ),
       );
-
-      if (confirmed == true && context.mounted) {
-        // Assigner le favori
-        final repo = ref.read(favoriteAccountsRepositoryProvider);
-        await repo.assignFavorite(buttonIndex: buttonIndex, accountId: selected.id);
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${selected.name} assigné au bouton ${buttonIndex + 1}')),
-          );
-        }
-      }
     }
   }
 }
 
-class _FavoriteAccountButton extends StatelessWidget {
-  final int index;
-  final Account? account;
-  final VoidCallback? onTap;
-
-  const _FavoriteAccountButton({required this.index, required this.account, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final hasAccount = account != null;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 64,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: hasAccount ? DotlynColors.primary : Colors.grey[300]!,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(8),
-          color: hasAccount ? DotlynColors.primary.withOpacity(0.05) : Colors.grey[50],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.account_balance_wallet,
-              size: 24,
-              color: hasAccount ? DotlynColors.primary : Colors.grey[400],
-            ),
-            const SizedBox(height: 4),
-            if (hasAccount)
-              Flexible(
-                child: Text(
-                  account!.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: DotlynColors.secondary,
-                  ),
-                ),
-              )
-            else
-              Text('Vide', style: TextStyle(fontSize: 11, color: Colors.grey[400])),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
+/// Liste des transactions avec gestion async
 class _TransactionsList extends ConsumerWidget {
   final int accountId;
 
@@ -467,19 +298,18 @@ class _TransactionsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionsAsync = ref.watch(transactionsProvider(accountId));
 
-    return transactionsAsync.when(
-      data: (transactions) {
+    return AsyncValueWidget<List<Transaction>>(
+      asyncValue: transactionsAsync,
+      builder: (transactions) {
         if (transactions.isEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Aucune opération', style: TextStyle(color: Colors.grey)),
-            ),
+          return const EmptyListWidget(
+            message: 'Aucune opération',
+            icon: Icons.receipt_long,
           );
         }
 
-        // Calculate balance after each transaction
-        double runningBalance = ref.watch(accountBalanceProvider(accountId)) ?? 0;
+        double runningBalance =
+            ref.watch(accountBalanceProvider(accountId)) ?? 0;
 
         return ListView.builder(
           itemCount: transactions.length,
@@ -498,8 +328,6 @@ class _TransactionsList extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Erreur: $error')),
     );
   }
 
@@ -515,34 +343,29 @@ class _TransactionsList extends ConsumerWidget {
     WidgetRef ref,
     Transaction transaction,
   ) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await ConfirmDialog.show(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmation'),
-        content: const Text('Voulez-vous vraiment supprimer cette opération ?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
+      title: 'Confirmation',
+      content: 'Voulez-vous vraiment supprimer cette opération ?',
+      confirmText: 'Supprimer',
+      isDangerous: true,
     );
 
-    if (confirmed == true) {
-      final repo = ref.read(transactionsRepositoryProvider);
-      await repo.deleteTransaction(transaction.id);
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Opération supprimée')));
-      }
+    if (!confirmed) return;
+
+    final repo = ref.read(transactionsRepositoryProvider);
+    await repo.deleteTransaction(transaction.id);
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Opération supprimée')));
     }
   }
 
-  Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
+  Future<void> _validateTransaction(
+    WidgetRef ref,
+    Transaction transaction,
+  ) async {
     final repo = ref.read(transactionsRepositoryProvider);
     final newStatus = transaction.status == 'pending' ? 'validated' : 'pending';
     await repo.updateTransaction(
@@ -555,6 +378,24 @@ class _TransactionsList extends ConsumerWidget {
       date: transaction.date,
       note: transaction.note,
       status: newStatus,
+    );
+  }
+}
+
+/// Placeholder pour bannière publicitaire
+class _AdBannerPlaceholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      height: 50,
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: Center(
+        child: Text(
+          'Ad Banner Placeholder',
+          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+        ),
+      ),
     );
   }
 }

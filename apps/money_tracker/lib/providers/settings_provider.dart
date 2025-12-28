@@ -5,7 +5,9 @@ import '../data/database/app_database.dart';
 import 'database_provider.dart';
 
 // Watch all settings
-final appSettingsProvider = StreamProvider.autoDispose<Map<String, String?>>((ref) {
+final appSettingsProvider = StreamProvider.autoDispose<Map<String, String?>>((
+  ref,
+) {
   final database = ref.watch(databaseProvider);
   final stream = database.select(database.appSettings).watch();
   return stream.map((settings) {
@@ -14,7 +16,10 @@ final appSettingsProvider = StreamProvider.autoDispose<Map<String, String?>>((re
 });
 
 /// Get a single setting value by key
-final appSettingProvider = StreamProvider.autoDispose.family<String?, String>((ref, key) {
+final appSettingProvider = StreamProvider.autoDispose.family<String?, String>((
+  ref,
+  key,
+) {
   final database = ref.watch(databaseProvider);
   final stream = (database.select(
     database.appSettings,
@@ -53,9 +58,9 @@ class AppSettingsRepository {
 
     if (existing != null && value != null) {
       // Update existing
-      await (_database.update(
-        _database.appSettings,
-      )..where((s) => s.key.equals(key))).write(AppSettingsCompanion(value: Value(value)));
+      await (_database.update(_database.appSettings)
+            ..where((s) => s.key.equals(key)))
+          .write(AppSettingsCompanion(value: Value(value)));
     } else if (value != null) {
       // Insert new
       await _database
@@ -63,13 +68,17 @@ class AppSettingsRepository {
           .insert(AppSettingsCompanion.insert(key: key, value: value));
     } else if (existing != null) {
       // Delete if value is null and setting exists
-      await (_database.delete(_database.appSettings)..where((s) => s.key.equals(key))).go();
+      await (_database.delete(
+        _database.appSettings,
+      )..where((s) => s.key.equals(key))).go();
     }
   }
 
   /// Delete a setting
   Future<void> deleteSetting(String key) {
-    return (_database.delete(_database.appSettings)..where((s) => s.key.equals(key))).go();
+    return (_database.delete(
+      _database.appSettings,
+    )..where((s) => s.key.equals(key))).go();
   }
 
   /// Clear all settings

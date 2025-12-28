@@ -10,7 +10,11 @@ import 'account_transactions_screen.dart';
 class AccountsScreen extends ConsumerWidget {
   const AccountsScreen({super.key});
 
-  Future<void> _showAccountForm(BuildContext context, WidgetRef ref, {Account? account}) {
+  Future<void> _showAccountForm(
+    BuildContext context,
+    WidgetRef ref, {
+    Account? account,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -21,7 +25,9 @@ class AccountsScreen extends ConsumerWidget {
   void _navigateToTransactions(BuildContext context, Account account) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => AccountTransactionsScreen(account: account)),
+      MaterialPageRoute(
+        builder: (_) => AccountTransactionsScreen(account: account),
+      ),
     );
   }
 
@@ -49,7 +55,8 @@ class AccountsScreen extends ConsumerWidget {
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.edit_outlined),
-                  onPressed: () => _showAccountForm(context, ref, account: account),
+                  onPressed: () =>
+                      _showAccountForm(context, ref, account: account),
                   tooltip: 'Éditer',
                 ),
                 onTap: () => _navigateToTransactions(context, account),
@@ -71,5 +78,6 @@ class AccountsScreen extends ConsumerWidget {
 }
 
 extension on String {
-  String capitalize() => isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  String capitalize() =>
+      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
 }

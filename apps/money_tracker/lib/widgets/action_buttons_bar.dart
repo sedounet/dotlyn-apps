@@ -31,7 +31,11 @@ class ActionButtonsBar extends StatelessWidget {
             child: const Icon(Icons.swap_horiz),
           ),
           const SizedBox(width: 16),
-          FloatingActionButton(heroTag: 'add', onPressed: onAdd, child: const Icon(Icons.add)),
+          FloatingActionButton(
+            heroTag: 'add',
+            onPressed: onAdd,
+            child: const Icon(Icons.add),
+          ),
         ],
       ),
     );

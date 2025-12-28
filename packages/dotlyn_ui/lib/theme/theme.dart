@@ -42,36 +42,25 @@ class DotlynTheme {
 
       // Typographie
       textTheme: TextTheme(
-        displayLarge: DotlynTypography.displayLarge
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        displayMedium: DotlynTypography.displayMedium
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        displaySmall: DotlynTypography.displaySmall
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        headlineLarge: DotlynTypography.headlineLarge
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        headlineMedium: DotlynTypography.headlineMedium
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        headlineSmall: DotlynTypography.headlineSmall
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        titleLarge: DotlynTypography.titleLarge
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        titleMedium: DotlynTypography.titleMedium
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        titleSmall: DotlynTypography.titleSmall
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        bodyLarge: DotlynTypography.bodyLarge
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        bodyMedium: DotlynTypography.bodyMedium
-            .copyWith(color: DotlynColors.textSecondaryLight),
-        bodySmall: DotlynTypography.bodySmall
-            .copyWith(color: DotlynColors.textSecondaryLight),
-        labelLarge: DotlynTypography.labelLarge
-            .copyWith(color: DotlynColors.textPrimaryLight),
-        labelMedium: DotlynTypography.labelMedium
-            .copyWith(color: DotlynColors.textSecondaryLight),
-        labelSmall: DotlynTypography.labelSmall
-            .copyWith(color: DotlynColors.textSecondaryLight),
+        displayLarge: DotlynTypography.displayLarge.copyWith(color: DotlynColors.textPrimaryLight),
+        displayMedium:
+            DotlynTypography.displayMedium.copyWith(color: DotlynColors.textPrimaryLight),
+        displaySmall: DotlynTypography.displaySmall.copyWith(color: DotlynColors.textPrimaryLight),
+        headlineLarge:
+            DotlynTypography.headlineLarge.copyWith(color: DotlynColors.textPrimaryLight),
+        headlineMedium:
+            DotlynTypography.headlineMedium.copyWith(color: DotlynColors.textPrimaryLight),
+        headlineSmall:
+            DotlynTypography.headlineSmall.copyWith(color: DotlynColors.textPrimaryLight),
+        titleLarge: DotlynTypography.titleLarge.copyWith(color: DotlynColors.textPrimaryLight),
+        titleMedium: DotlynTypography.titleMedium.copyWith(color: DotlynColors.textPrimaryLight),
+        titleSmall: DotlynTypography.titleSmall.copyWith(color: DotlynColors.textPrimaryLight),
+        bodyLarge: DotlynTypography.bodyLarge.copyWith(color: DotlynColors.textPrimaryLight),
+        bodyMedium: DotlynTypography.bodyMedium.copyWith(color: DotlynColors.textSecondaryLight),
+        bodySmall: DotlynTypography.bodySmall.copyWith(color: DotlynColors.textSecondaryLight),
+        labelLarge: DotlynTypography.labelLarge.copyWith(color: DotlynColors.textPrimaryLight),
+        labelMedium: DotlynTypography.labelMedium.copyWith(color: DotlynColors.textSecondaryLight),
+        labelSmall: DotlynTypography.labelSmall.copyWith(color: DotlynColors.textSecondaryLight),
       ),
 
       // AppBar
@@ -169,8 +158,7 @@ class DotlynTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: DotlynColors.error, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         labelStyle: TextStyle(color: DotlynColors.textSecondaryLight),
         hintStyle: TextStyle(color: DotlynColors.textDisabledLight),
       ),
@@ -218,8 +206,7 @@ class DotlynTheme {
 
       // ColorScheme complet pour dark mode
       colorScheme: ColorScheme.dark(
-        primary: DotlynColors
-            .primaryBright, // Utiliser bright pour meilleure visibilité
+        primary: DotlynColors.primaryBright, // Utiliser bright pour meilleure visibilité
         onPrimary: DotlynColors.secondary,
         primaryContainer: DotlynColors.primaryDark,
         onPrimaryContainer: DotlynColors.primaryLight,
@@ -249,36 +236,22 @@ class DotlynTheme {
 
       // Typographie
       textTheme: TextTheme(
-        displayLarge: DotlynTypography.displayLarge
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        displayMedium: DotlynTypography.displayMedium
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        displaySmall: DotlynTypography.displaySmall
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        headlineLarge: DotlynTypography.headlineLarge
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        headlineMedium: DotlynTypography.headlineMedium
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        headlineSmall: DotlynTypography.headlineSmall
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        titleLarge: DotlynTypography.titleLarge
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        titleMedium: DotlynTypography.titleMedium
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        titleSmall: DotlynTypography.titleSmall
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        bodyLarge: DotlynTypography.bodyLarge
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        bodyMedium: DotlynTypography.bodyMedium
-            .copyWith(color: DotlynColors.textSecondaryDark),
-        bodySmall: DotlynTypography.bodySmall
-            .copyWith(color: DotlynColors.textSecondaryDark),
-        labelLarge: DotlynTypography.labelLarge
-            .copyWith(color: DotlynColors.textPrimaryDark),
-        labelMedium: DotlynTypography.labelMedium
-            .copyWith(color: DotlynColors.textSecondaryDark),
-        labelSmall: DotlynTypography.labelSmall
-            .copyWith(color: DotlynColors.textSecondaryDark),
+        displayLarge: DotlynTypography.displayLarge.copyWith(color: DotlynColors.textPrimaryDark),
+        displayMedium: DotlynTypography.displayMedium.copyWith(color: DotlynColors.textPrimaryDark),
+        displaySmall: DotlynTypography.displaySmall.copyWith(color: DotlynColors.textPrimaryDark),
+        headlineLarge: DotlynTypography.headlineLarge.copyWith(color: DotlynColors.textPrimaryDark),
+        headlineMedium:
+            DotlynTypography.headlineMedium.copyWith(color: DotlynColors.textPrimaryDark),
+        headlineSmall: DotlynTypography.headlineSmall.copyWith(color: DotlynColors.textPrimaryDark),
+        titleLarge: DotlynTypography.titleLarge.copyWith(color: DotlynColors.textPrimaryDark),
+        titleMedium: DotlynTypography.titleMedium.copyWith(color: DotlynColors.textPrimaryDark),
+        titleSmall: DotlynTypography.titleSmall.copyWith(color: DotlynColors.textPrimaryDark),
+        bodyLarge: DotlynTypography.bodyLarge.copyWith(color: DotlynColors.textPrimaryDark),
+        bodyMedium: DotlynTypography.bodyMedium.copyWith(color: DotlynColors.textSecondaryDark),
+        bodySmall: DotlynTypography.bodySmall.copyWith(color: DotlynColors.textSecondaryDark),
+        labelLarge: DotlynTypography.labelLarge.copyWith(color: DotlynColors.textPrimaryDark),
+        labelMedium: DotlynTypography.labelMedium.copyWith(color: DotlynColors.textSecondaryDark),
+        labelSmall: DotlynTypography.labelSmall.copyWith(color: DotlynColors.textSecondaryDark),
       ),
 
       // AppBar
@@ -366,8 +339,7 @@ class DotlynTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:
-              const BorderSide(color: DotlynColors.primaryBright, width: 2),
+          borderSide: const BorderSide(color: DotlynColors.primaryBright, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -375,11 +347,9 @@ class DotlynTheme {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:
-              const BorderSide(color: DotlynColors.errorLight, width: 2),
+          borderSide: const BorderSide(color: DotlynColors.errorLight, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         labelStyle: TextStyle(color: DotlynColors.textSecondaryDark),
         hintStyle: TextStyle(color: DotlynColors.textDisabledDark),
       ),

@@ -15,8 +15,8 @@ Palette inspirée du croquis (orange terre cuite) avec une base sobre et contras
 
 ### Couleurs de base
 
-| Usage          | Nom                    | Code Hex  | Description                             |
-| -------------- | ---------------------- | --------- | --------------------------------------- |
+| Usage          | Nom                    | Code Hex | Description                             |
+| -------------- | ---------------------- | -------- | --------------------------------------- |
 | Primaire       | **Orange Terre Cuite** | `E36C2D` | Identité principale, chaleur et énergie |
 | Secondaire     | **Gris Anthracite**    | `2C2C2C` | Texte, contraste, stabilité             |
 | Tertiaire      | **Blanc Cassé**        | `F8F8F8` | Fond clair, pureté, sobriété            |
@@ -50,8 +50,8 @@ Palette inspirée du croquis (orange terre cuite) avec une base sobre et contras
 
 ### Couleurs sémantiques (feedback utilisateur)
 
-| Type    | Couleur | Code Hex  | Variantes                                              |
-| ------- | ------- | --------- | ------------------------------------------------------ |
+| Type    | Couleur | Code Hex | Variantes                                           |
+| ------- | ------- | -------- | --------------------------------------------------- |
 | Success | Vert    | `4CAF50` | Light: `81C784`, Dark: `388E3C`, Lightest: `E8F5E9` |
 | Warning | Ambre   | `FFC107` | Light: `FFD54F`, Dark: `FFA000`, Lightest: `FFF8E1` |
 | Error   | Rouge   | `F44336` | Light: `E57373`, Dark: `D32F2F`, Lightest: `FFEBEE` |
