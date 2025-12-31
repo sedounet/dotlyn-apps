@@ -6,3 +6,9 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   ref.onDispose(() => database.close());
   return database;
 });
+
+// Provider qui seed les données en arrière-plan (appelé explicitement si besoin)
+final databaseSeederProvider = FutureProvider<void>((ref) async {
+  final database = ref.watch(databaseProvider);
+  await database.seedInitialData();
+});

@@ -14,8 +14,7 @@ class Accounts extends Table {
   TextColumn get type => text()(); // 'current', 'savings', 'other'
   RealColumn get initialBalance => real().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  TextColumn get defaultPaymentMethod =>
-      text().withDefault(const Constant('card'))();
+  TextColumn get defaultPaymentMethod => text().withDefault(const Constant('card'))();
 }
 
 class Categories extends Table {
@@ -36,8 +35,7 @@ class Beneficiaries extends Table {
 class FavoriteAccounts extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get buttonIndex => integer().unique()();
-  IntColumn get accountId =>
-      integer().references(Accounts, #id, onDelete: KeyAction.cascade)();
+  IntColumn get accountId => integer().references(Accounts, #id, onDelete: KeyAction.cascade)();
 }
 
 class AppSettings extends Table {
@@ -50,12 +48,9 @@ class AppSettings extends Table {
 
 class Transactions extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get accountId =>
-      integer().references(Accounts, #id, onDelete: KeyAction.cascade)();
-  IntColumn get categoryId =>
-      integer().nullable().references(Categories, #id)();
-  IntColumn get beneficiaryId =>
-      integer().nullable().references(Beneficiaries, #id)();
+  IntColumn get accountId => integer().references(Accounts, #id, onDelete: KeyAction.cascade)();
+  IntColumn get categoryId => integer().nullable().references(Categories, #id)();
+  IntColumn get beneficiaryId => integer().nullable().references(Beneficiaries, #id)();
   IntColumn get accountToId => integer().nullable().references(
     Accounts,
     #id,
@@ -71,14 +66,7 @@ class Transactions extends Table {
 }
 
 @DriftDatabase(
-  tables: [
-    Accounts,
-    Categories,
-    Transactions,
-    Beneficiaries,
-    FavoriteAccounts,
-    AppSettings,
-  ],
+  tables: [Accounts, Categories, Transactions, Beneficiaries, FavoriteAccounts, AppSettings],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -111,12 +99,12 @@ class AppDatabase extends _$AppDatabase {
   );
 
   Future<void> seedInitialData() async {
-    final categoriesCount = await (select(categories)).get();
-    if (categoriesCount.isNotEmpty) {
-      debugPrint(
-        '[DB] Seed: Categories already exist (${categoriesCount.length} found), skipping seed.',
-      );
-      return;
+    // Check with count() instead of get() - much faster
+    final count = await (selectOnly(categories)..addColumns([categories.id.count()])).getSingle();
+    final categoriesCount = count.read(categories.id.count()) ?? 0;
+
+    if (categoriesCount > 0) {
+      return; // Categories already seeded, skip silently
     }
 
     debugPrint('[DB] Seed: Inserting initial categories...');
@@ -188,10 +176,7 @@ class AppDatabase extends _$AppDatabase {
       ]);
     });
 
-    final insertedCount = await (select(categories)).get();
-    debugPrint(
-      '[DB] Seed: ${insertedCount.length} categories inserted successfully.',
-    );
+    debugPrint('[DB] Seed: Categories inserted successfully.');
   }
 
   // À SUPPRIMER EN PHASE 0.1b - Uniquement pour validation UI
@@ -240,15 +225,9 @@ class AppDatabase extends _$AppDatabase {
 
     // Récupérer IDs catégories
     final categoriesList = await select(categories).get();
-    final salaryCategory = categoriesList.firstWhere(
-      (c) => c.name == 'Salaire',
-    );
-    final foodCategory = categoriesList.firstWhere(
-      (c) => c.name == 'Alimentaire',
-    );
-    final leisureCategory = categoriesList.firstWhere(
-      (c) => c.name == 'Loisirs',
-    );
+    final salaryCategory = categoriesList.firstWhere((c) => c.name == 'Salaire');
+    final foodCategory = categoriesList.firstWhere((c) => c.name == 'Alimentaire');
+    final leisureCategory = categoriesList.firstWhere((c) => c.name == 'Loisirs');
 
     // Transactions fictives
     await batch((batch) {
@@ -351,25 +330,16 @@ class AppDatabase extends _$AppDatabase {
 
     for (final tx in allTransactions) {
       if (!accountIds.contains(tx.accountId)) {
-        issues.add(
-          'Transaction ${tx.id} references non-existent account ${tx.accountId}',
-        );
+        issues.add('Transaction ${tx.id} references non-existent account ${tx.accountId}');
       }
       if (tx.categoryId != null && !categoryIds.contains(tx.categoryId)) {
-        issues.add(
-          'Transaction ${tx.id} references non-existent category ${tx.categoryId}',
-        );
+        issues.add('Transaction ${tx.id} references non-existent category ${tx.categoryId}');
       }
-      if (tx.beneficiaryId != null &&
-          !beneficiaryIds.contains(tx.beneficiaryId)) {
-        issues.add(
-          'Transaction ${tx.id} references non-existent beneficiary ${tx.beneficiaryId}',
-        );
+      if (tx.beneficiaryId != null && !beneficiaryIds.contains(tx.beneficiaryId)) {
+        issues.add('Transaction ${tx.id} references non-existent beneficiary ${tx.beneficiaryId}');
       }
       if (tx.accountToId != null && !accountIds.contains(tx.accountToId)) {
-        issues.add(
-          'Transaction ${tx.id} references non-existent accountTo ${tx.accountToId}',
-        );
+        issues.add('Transaction ${tx.id} references non-existent accountTo ${tx.accountToId}');
       }
     }
 

@@ -16,16 +16,10 @@ class TransactionFormSheet extends ConsumerStatefulWidget {
   final Transaction? transaction;
   final int? accountId; // optional override
   final String? defaultType; // 'income' or 'expense' - used for quick add
-  const TransactionFormSheet({
-    super.key,
-    this.transaction,
-    this.accountId,
-    this.defaultType,
-  });
+  const TransactionFormSheet({super.key, this.transaction, this.accountId, this.defaultType});
 
   @override
-  ConsumerState<TransactionFormSheet> createState() =>
-      _TransactionFormSheetState();
+  ConsumerState<TransactionFormSheet> createState() => _TransactionFormSheetState();
 }
 
 class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
@@ -63,9 +57,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     if (t != null && t.accountToId != null) {
       _type = 'transfer';
     } else {
-      _type = t != null
-          ? (t.amount > 0 ? 'income' : 'expense')
-          : (widget.defaultType ?? 'expense');
+      _type = t != null ? (t.amount > 0 ? 'income' : 'expense') : (widget.defaultType ?? 'expense');
     }
   }
 
@@ -87,9 +79,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
           if (accounts.length < 2) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                  'Vous devez avoir au moins 2 comptes pour effectuer un virement',
-                ),
+                content: Text('Vous devez avoir au moins 2 comptes pour effectuer un virement'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -124,8 +114,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
       return;
     }
 
-    final amount =
-        double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
+    final amount = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
     final signedAmount = _type == 'income'
         ? amount.abs()
         : (_type == 'transfer' ? -amount.abs() : -amount.abs());
@@ -139,43 +128,31 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
           accountToId: _type == 'transfer' ? _accountToId : null,
           amount: signedAmount,
           date: _date,
-          note: _noteController.text.trim().isEmpty
-              ? null
-              : _noteController.text.trim(),
+          note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
           status: _status,
           paymentMethod: _paymentMethod,
-          checkNumber: _checkNumber?.trim().isEmpty ?? true
-              ? null
-              : _checkNumber?.trim(),
+          checkNumber: _checkNumber?.trim().isEmpty ?? true ? null : _checkNumber?.trim(),
         );
       } else {
         await repository.updateTransaction(
           id: widget.transaction!.id,
           accountId: accountId,
-          categoryId: _type == 'transfer'
-              ? null
-              : (_categoryId ?? widget.transaction!.categoryId),
+          categoryId: _type == 'transfer' ? null : (_categoryId ?? widget.transaction!.categoryId),
           beneficiaryId: _beneficiaryId ?? widget.transaction!.beneficiaryId,
           accountToId: _type == 'transfer' ? _accountToId : null,
           amount: signedAmount,
           date: _date,
-          note: _noteController.text.trim().isEmpty
-              ? null
-              : _noteController.text.trim(),
+          note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
           status: _status,
           paymentMethod: _paymentMethod,
-          checkNumber: _checkNumber?.trim().isEmpty ?? true
-              ? null
-              : _checkNumber?.trim(),
+          checkNumber: _checkNumber?.trim().isEmpty ?? true ? null : _checkNumber?.trim(),
         );
       }
 
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -205,11 +182,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
-                AmountFormField(
-                  controller: _amountController,
-                  label: 'Montant',
-                  required: true,
-                ),
+                AmountFormField(controller: _amountController, label: 'Montant', required: true),
                 const SizedBox(height: 12),
                 DropdownFormFieldCustom<String>(
                   value: _type,
@@ -217,10 +190,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   items: const [
                     DropdownMenuItem(value: 'expense', child: Text('Dépense')),
                     DropdownMenuItem(value: 'income', child: Text('Revenu')),
-                    DropdownMenuItem(
-                      value: 'transfer',
-                      child: Text('Virement'),
-                    ),
+                    DropdownMenuItem(value: 'transfer', child: Text('Virement')),
                   ],
                   onChanged: (v) => setState(() {
                     _type = v ?? 'expense';
@@ -240,57 +210,23 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                       return DropdownButtonFormField<int>(
                         initialValue: _accountFromId,
                         items: accounts
-                            .map(
-                              (a) => DropdownMenuItem(
-                                value: a.id,
-                                child: Text(a.name),
-                              ),
-                            )
+                            .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
                             .toList(),
                         onChanged: (v) => setState(() => _accountFromId = v),
-                        decoration: const InputDecoration(
-                          labelText: 'Depuis le compte',
-                        ),
-                        validator: (v) =>
-                            v == null ? 'Compte source requis' : null,
+                        decoration: const InputDecoration(labelText: 'Depuis le compte'),
+                        validator: (v) => v == null ? 'Compte source requis' : null,
                       );
                     },
                     loading: () => const CircularProgressIndicator(),
                     error: (e, s) => Text('Erreur comptes: $e'),
                   ),
-                // Show category selector for income/expense, account selector for transfer
-                if (_type != 'transfer')
-                  categoriesAsync.when(
-                    data: (cats) {
-                      final filtered = cats
-                          .where((c) => c.type == _type)
-                          .toList();
-                      return DropdownButtonFormField<int>(
-                        initialValue: _categoryId,
-                        items: filtered
-                            .map(
-                              (c) => DropdownMenuItem(
-                                value: c.id,
-                                child: Text(c.name),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) => setState(() => _categoryId = v),
-                        decoration: const InputDecoration(
-                          labelText: 'Catégorie (optionnelle)',
-                        ),
-                      );
-                    },
-                    loading: () => const CircularProgressIndicator(),
-                    error: (e, s) => Text('Erreur catégories: $e'),
-                  )
-                else
+                // Show account selector for transfer (required)
+                if (_type == 'transfer')
                   Consumer(
                     builder: (context, ref, _) {
                       final accountsAsync = ref.watch(accountsProvider);
                       final currentAccountId =
-                          widget.accountId ??
-                          ref.read(activeAccountProvider)?.id;
+                          widget.accountId ?? ref.read(activeAccountProvider)?.id;
                       return accountsAsync.when(
                         data: (accounts) {
                           final otherAccounts = accounts
@@ -299,20 +235,11 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                           return DropdownButtonFormField<int>(
                             initialValue: _accountToId,
                             items: otherAccounts
-                                .map(
-                                  (a) => DropdownMenuItem(
-                                    value: a.id,
-                                    child: Text(a.name),
-                                  ),
-                                )
+                                .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
                                 .toList(),
                             onChanged: (v) => setState(() => _accountToId = v),
-                            decoration: const InputDecoration(
-                              labelText: 'Vers le compte',
-                            ),
-                            validator: (v) => v == null
-                                ? 'Compte de destination requis'
-                                : null,
+                            decoration: const InputDecoration(labelText: 'Vers le compte'),
+                            validator: (v) => v == null ? 'Compte de destination requis' : null,
                           );
                         },
                         loading: () => const CircularProgressIndicator(),
@@ -321,30 +248,71 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                     },
                   ),
                 const SizedBox(height: 12),
-                beneficiariesAsync.when(
-                  data: (ben) {
-                    return DropdownButtonFormField<int?>(
-                      initialValue: _beneficiaryId,
-                      items: [
-                        const DropdownMenuItem(
-                          value: null,
-                          child: Text('Aucun'),
-                        ),
-                        ...ben.map(
-                          (b) => DropdownMenuItem(
-                            value: b.id,
-                            child: Text(b.name),
+                // Advanced options: Category & Beneficiary (collapsed by default)
+                Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    title: const Text('Options avancées'),
+                    subtitle: Text(
+                      'Catégorie et bénéficiaire',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    initiallyExpanded: _categoryId != null || _beneficiaryId != null,
+                    children: [
+                      // Category selector (only for income/expense)
+                      if (_type != 'transfer')
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: categoriesAsync.when(
+                            data: (cats) {
+                              final filtered = cats.where((c) => c.type == _type).toList();
+                              return DropdownButtonFormField<int?>(
+                                initialValue: _categoryId,
+                                items: [
+                                  const DropdownMenuItem(
+                                    value: null,
+                                    child: Text('Aucune catégorie'),
+                                  ),
+                                  ...filtered.map(
+                                    (c) => DropdownMenuItem(value: c.id, child: Text(c.name)),
+                                  ),
+                                ],
+                                onChanged: (v) => setState(() => _categoryId = v),
+                                decoration: const InputDecoration(labelText: 'Catégorie'),
+                              );
+                            },
+                            loading: () => const CircularProgressIndicator(),
+                            error: (e, s) => Text('Erreur catégories: $e'),
                           ),
                         ),
-                      ],
-                      onChanged: (v) => setState(() => _beneficiaryId = v),
-                      decoration: const InputDecoration(
-                        labelText: 'Bénéficiaire',
+                      const SizedBox(height: 12),
+                      // Beneficiary selector
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: beneficiariesAsync.when(
+                          data: (ben) {
+                            return DropdownButtonFormField<int?>(
+                              initialValue: _beneficiaryId,
+                              items: [
+                                const DropdownMenuItem(
+                                  value: null,
+                                  child: Text('Aucun bénéficiaire'),
+                                ),
+                                ...ben.map(
+                                  (b) => DropdownMenuItem(value: b.id, child: Text(b.name)),
+                                ),
+                              ],
+                              onChanged: (v) => setState(() => _beneficiaryId = v),
+                              decoration: const InputDecoration(labelText: 'Bénéficiaire'),
+                            );
+                          },
+                          loading: () => const CircularProgressIndicator(),
+                          error: (e, s) => Text('Erreur bénéficiaires: $e'),
+                        ),
                       ),
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (e, s) => Text('Erreur bénéficiaires: $e'),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 // Payment method selector
@@ -352,9 +320,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   value: _paymentMethod,
                   label: 'Méthode de paiement',
                   items: PaymentMethod.values
-                      .map(
-                        (m) => DropdownMenuItem(value: m, child: Text(m.label)),
-                      )
+                      .map((m) => DropdownMenuItem(value: m, child: Text(m.label)))
                       .toList(),
                   onChanged: (v) => setState(() {
                     _paymentMethod = v ?? PaymentMethod.card;
@@ -394,10 +360,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   label: 'Statut',
                   items: const [
                     DropdownMenuItem(value: 'validated', child: Text('Validé')),
-                    DropdownMenuItem(
-                      value: 'pending',
-                      child: Text('En attente'),
-                    ),
+                    DropdownMenuItem(value: 'pending', child: Text('En attente')),
                   ],
                   onChanged: (v) => setState(() => _status = v ?? 'validated'),
                 ),

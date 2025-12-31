@@ -56,7 +56,7 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [x] Virements : permettre de sélectionner explicitement compte origine ET destination
 - [x] Virements : valider l'algorithme de calcul des soldes (voir Notes Techniques)
 
-#### Phase 0.1d - Filtres & Polish (🟡 En cours — polish UI/UX)
+#### Phase 0.1d - Filtres & Polish (✅ Complétée - 2025-12-30)
 - [x] Filtres date (Jour, Semaine, Mois, Année)
 - [x] Filtre catégorie multi-select
 - [x] Bénéficiaires CRUD
@@ -68,10 +68,93 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [x] **UX Transactions** : Swipe droite pour valider, swipe gauche pour supprimer
 - [x] **UX Transactions** : Indicateur visuel statut (coche/couleur pour validé vs pending)
 - [x] **Layout** : Positionner les FABs au-dessus de la bannière pub (pas dessous)
-- [ ] Polish UI/UX HomeScreen (structure, couleurs, responsive, logo, tagline, favoris, action bar, ad banner) — EN COURS, RESTE À FINALISER
-### Notes
-- Polish HomeScreen en cours : structure générale OK, il reste à finaliser le responsive, les couleurs, et quelques détails UI/UX.
-- Voir PROMPT_AI.md pour la liste complète des tâches polish.
+- [x] **Refactoring Code** (2025-12-30) :
+  - Phase 1 - Quick Wins : ActionFab, ConfirmDialog, BalanceRow, CurrencyUtils, suppression legacy
+  - Phase 2 - Form Components : 4 form fields réutilisables (Amount, Date, Text, Dropdown)
+  - Phase 3 - Utils & Extensions : StatRow, EmptyListWidget, string_extensions
+  - Résultat : ~150 lignes supprimées, 16 composants réutilisables, 87% duplication éliminée, 0 issues flutter analyze
+- [x] **Performance** : Optimisation démarrage (suppression debug queries, checkIntegrity, debugPrint) → 3-4s → <1s estimé
+
+#### Phase 0.1e - Analytics & Pub (� Prochaine session)
+- [ ] Firebase Analytics + Crashlytics setup
+- [ ] Events tracking basiques (app_open, transaction_created, account_created)
+- [ ] AdMob bannière bottom
+- [ ] Flag isFirstLaunch pour Analytics
+
+#### Phase 0.1f - UX Lean & Polish (🔴 Prochaine session - PRIORITÉ UI/UX)
+**Philosophie** : Ultra-lean MVP, focus expérience essentielle
+- [ ] **Polish UI/UX complet** : Home screen propre et agréable
+- [ ] **Simplifier forms** : Catégorie/bénéficiaire optionnels/masqués
+- [ ] **Alléger navigation** : Retirer accès catégories/bénéficiaires du drawer
+- [ ] **SafeArea** : Vérification bannière pub ne chevauche pas navigation
+- [ ] **Animations** : Transitions smooth, feedback visuel
+- [ ] **Tests device réel** : Installation et validation sur téléphone
+
+**Principe** : Garder infra technique (tables, champs) mais masquer complexité UI. Réintroduire features après validation usage réel.
+
+### v0.1 MVP — Périmètre Final Lean
+
+**Features actives** :
+- ✅ Multi-comptes (création, édition, sélection)
+- ✅ Double solde (Réel / Disponible)
+- ✅ Opérations : montant, date, note, statut (En attente / Validé)
+- ✅ Catégories : Seed par défaut en BDD, optionnel/caché en UI
+- ✅ Bénéficiaires : Structure BDD, optionnel/caché en UI
+- ✅ Filtres date basiques
+- ✅ Settings : thème, masquage montants
+- ✅ Analytics dès début
+
+**Features retirées temporairement** :
+- ❌ Onboarding profils catégories (pas de valeur prouvée)
+- ❌ Écran gestion catégories (pas utilisé en MVP)
+- ❌ Écran gestion bénéficiaires (pas utilisé en MVP)
+- ❌ Filtres catégories avancés (complexité inutile)
+- ❌ Types de paiement (nice-to-have, pas core)
+
+**À réintroduire en v0.2+ selon feedback** :
+- Catégories personnalisées (si besoin exprimé)
+- Bénéficiaires actifs (si usage identifié)
+- Types paiement (si demandé)
+- Onboarding guidé (si users perdus)
+
+### v0.2 — Features Data-Driven (selon feedback beta)
+**Objectif** : Ajouter ce qui manque VRAIMENT aux users
+
+**Candidats à réintroduire** :
+- Catégories personnalisées (création/édition/suppression)
+- Bénéficiaires actifs (CRUD complet visible)
+- Types de paiement (Carte/Virement/Chèque/Espèces)
+- Onboarding guidé (si confusion constatée)
+- Prélèvements automatiques / Opérations récurrentes
+- Solde prévisionnel
+- [ ] Firebase Analytics + Crashlytics setup
+- [ ] Events tracking basiques (app_open, transaction_created, account_created)
+- [ ] AdMob bannière bottom
+- [ ] Flag isFirstLaunch pour Analytics
+
+**Phase 0.1f - UX Lean & Polish** :
+- [ ] Simplifier transaction_form_sheet : masquer/rendre optionnel catégorie & bénéficiaire
+- [ ] Retirer navigation vers écrans catégories/bénéficiaires du drawer
+- [ ] Polish UI home : alléger, focus actions essentielles
+- [ ] SafeArea vérification (bannière pub)
+- [ ] Tests rapides flux utilisateur
+
+**Objectif** : MVP utilisable, lean, sans superflu → Beta test
+
+### 🟡 P2 — Post-Beta (selon feedback)
+
+- [ ] Réintroduire catégories SI besoin exprimé
+- [ ] Réintroduire bénéficiaires SI usage identifié
+- [ ] Onboarding guidé SI users perdus
+- [ ] Types paiement SI demandé
+- [ ] Polish splash screen
+- [ ] Tests complets
+- UI recherche rapide (1-2 clics)
+
+---
+
+## 📋 TODO
+Analytics & Onboarding (Prochaines phases)
 
 #### Phase 0.1e - Analytics & Pub (À venir)
 - [ ] Firebase Analytics + Crashlytics
@@ -83,78 +166,11 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Choix profil catégories (Simple/Standard/Détaillé)
 - [ ] Seed catégories selon profil
 
-**Features MVP complètes** :
-- ✅ Multi-comptes (illimité, focus 2-3)
-- ✅ Double solde (Réel / Disponible)
-- ✅ Opérations : montant, catégorie, bénéficiaire, date, note, statut (En attente / Validé)
-- ✅ Catégories prédéfinies (10 catégories Standard)
-- ✅ Filtres date et catégorie
-- ✅ Settings : thème, masquage montants, locale FR
-- ✅ Analytics dès début
-
-### v0.2 — Prélèvements Automatiques
-**Objectif** : Solde prévisionnel avec récurrences
-
-**Features** :
-- Opérations récurrentes (mensuel, hebdo, annuel)
-- Jour de référence par compte
-- Solde Disponible amélioré (avec prélèvements futurs)
-- Gestion catégories (ajout/modif/suppression)
-
-### v0.3 — Sécurité & Data
-**Features** :
-- Import CSV bancaire
-- Export CSV
-- Backup cloud (rewarded video)
-- Encryption données
-- Auth : PIN / biométrie
-
-### v0.4 — Analytics & Polish
-**Features** :
-- Graphiques dépenses (catégories, mois)
-- Statistiques avancées
-- Auto-suggestion bénéficiaires
-- UI recherche rapide (1-2 clics)
-
----
-
-## 📋 TODO
-
-### 🔴 P1 — Phase 2+ (En cours — Refonte UX)
-
-**Contexte** : Suite feedback utilisateur (PROMPT_USER_ARCHIVE.md), amélioration ergonomie et gestion transactions
-
-**Travail effectué** :
-- [x] **Migration BDD v3→v4** : Correction bug création tables FavoriteAccounts et AppSettings
-- [x] **Boutons favoris** : Logique assignment complète (vide → sélection compte → confirmation → assignation)
-- [x] **Navigation favoris** : Clic bouton favori → ouvre écran transactions du compte
-- [x] **Liste transactions home** : Affichage transactions compte actif avec menu contextuel
-- [x] **Menu contextuel transaction** : Éditer / Supprimer (avec confirmation) / Valider-Dévalider
-- [x] **Toggle validation** : Bouton bascule entre "Valider" (vert) et "Dévalider" (orange) selon statut
-- [x] **Indicateurs visuels** : Point orange pour "en attente", texte grisé
-- [x] **Écran transactions compte** : AccountTransactionsScreen avec soldes + liste complète + FAB ajout
-- [x] **Refonte liste comptes** : Suppression radio buttons, ajout icône édition, navigation vers transactions au tap
-- [x] **Tri transactions** : Plus récentes en haut (orderBy date DESC)
-- [x] **Statut par défaut** : "En attente" au lieu de "Validé" pour nouvelles opérations
-- [x] **Validation virements** : Avertissement si moins de 2 comptes disponibles
-- [x] **Catégorie optionnelle** : Plus obligatoire lors création/édition transaction
-
-**Reste à faire** :
-- [ ] Tests complets flux utilisateur (création, édition, suppression, validation toggle)
-- [ ] Polish UI : Optimiser splash screen (actuellement 3-4s)
-- [ ] Polish UI : Vérifier SafeArea pour bannière pub (ne doit pas chevaucher navigation)
-- [ ] Polish UI : Compacter/réduire certains éléments d'interface (à planifier)
-
-**Commits** :
-- `ce8559e` — Fix migration v3→v4 tables creation
-- `69d15b3` — Implement favorite buttons assignment logic
-- `28b6989` — Add transaction context menu (edit/delete/validate)
-- `a9d1d6f` — Remove radio buttons, add edit icon, open transactions screen
-- (pending) — Add transaction validation toggle + sort DESC + default pending + optional category
-
-### 🟡 P2 — Phases MVP suivantes
-
-- [ ] Phase 0.1b: Polish HomeScreen (à finaliser)
+### 🟡 P2 — Polish UI/UX (Optionnel)
+- [ ] Optimiser splash screen (actuellement 3-4s)
+- [ ] Vérifier SafeArea pour bannière pub (ne doit pas chevaucher navigation)
+- [ ] Compacter/réduire certains éléments d'interface
+- [ ] Tests complets flux utilisateur (création, édition, suppression, validation toggle)Screen (à finaliser)
 - [ ] Phase 0.1f : Onboarding
 
 ### 🔵 P3 — Versions futures
@@ -172,6 +188,12 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 ---
 
 ## 📝 Notes Techniques
+
+### Fichiers Documentation
+- **APP.md** : Roadmap, TODO, notes techniques (fichier principal)
+- **PITCH.md** : Vision, identité, public cible (stable)
+- **PROMPT_AI.md** : Instructions structurées features futures (mis à jour)
+- **PROMPT_USER_ARCHIVE.md** : Historique demandes utilisateur (archive)
 
 ### Terminologie Soldes
 - **Solde Actuel** = Ce qui est effectivement sur le compte bancaire (uniquement les opérations validées)
@@ -247,10 +269,14 @@ soldeDisponible(X) = initialBalance(X)
 2. Pour éditer un virement, le compte source peut être modifié
 3. Refactor UI à prévoir pour améliorer l’ergonomie si besoin (prochaine version)
 
-**Implémentation actuelle** :
-- `transactionsProvider(accountId)` → transactions WHERE accountId = X
-- `incomingTransfersProvider(accountId)` → transactions WHERE accountToId = X  
-- `accountBalanceProvider` → Solde Actuel (status='validated' uniquement)
+**Implémentatio& Bénéficiaires (Stratégie Lean)
+**Structure BDD** : Tables complètes, seed par défaut lors init DB
+**UI MVP** : Masqué/optionnel, pas de CRUD visible
+**Formulaire transaction** :
+- Catégorie : Champ optionnel, peut être NULL, dropdown minimal ou caché
+- Bénéficiaire : Champ optionnel, peut être NULL, dropdown minimal ou caché
+
+**Raison** : Simplifier UX initiale, valider usage réel avant d'exposer complexité. Structure technique prête pour réintroduction rapide en v0.2 si besoin.
 - `accountAvailableBalanceProvider` → Solde Disponible (TOUTES les transactions)
 
 ### Statuts Opération

@@ -89,133 +89,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Database stats
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'État de la base de données',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 12),
-                        if (_dbStats != null) ...[
-                          StatRow(label: 'Comptes', value: _dbStats!['accounts']!.toString()),
-                          StatRow(label: 'Catégories', value: _dbStats!['categories']!.toString()),
-                          StatRow(
-                            label: 'Bénéficiaires',
-                            value: _dbStats!['beneficiaries']!.toString(),
-                          ),
-                          StatRow(
-                            label: 'Transactions',
-                            value: _dbStats!['transactions']!.toString(),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Integrity check
-                if (_integrityIssues != null) ...[
-                  Card(
-                    color: _integrityIssues!.isEmpty ? Colors.green.shade50 : Colors.orange.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                _integrityIssues!.isEmpty ? Icons.check_circle : Icons.warning,
-                                color: _integrityIssues!.isEmpty ? Colors.green : Colors.orange,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                _integrityIssues!.isEmpty
-                                    ? 'Intégrité OK'
-                                    : '${_integrityIssues!.length} problème(s) détecté(s)',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
-                          ),
-                          if (_integrityIssues!.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            ..._integrityIssues!.map(
-                              (issue) => Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Text('• $issue', style: const TextStyle(fontSize: 12)),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-
-                // Debug actions (only in debug mode)
-                if (kDebugMode) ...[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Actions de développement',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            '⚠️ Ces actions sont disponibles uniquement en mode debug',
-                            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                          ),
-                          const SizedBox(height: 16),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: _seedFakeData,
-                              icon: const Icon(Icons.science),
-                              label: const Text('Ajouter données de test'),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () => _resetDatabase(includeFakeData: true),
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Reset DB (avec données test)'),
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () => _resetDatabase(includeFakeData: false),
-                              icon: const Icon(Icons.delete_forever),
-                              label: const Text('Reset DB (vide)'),
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-
                 // General settings
-                const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -233,6 +107,158 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                 ),
+
+                // Dev/Debug section (only in debug mode)
+                if (kDebugMode) ...[
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Theme(
+                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        leading: const Icon(Icons.developer_mode),
+                        title: const Text('Dev / Debug'),
+                        subtitle: Text(
+                          'Outils de développement',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        initiallyExpanded: false,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Database stats
+                                Text(
+                                  'État de la base de données',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 12),
+                                if (_dbStats != null) ...[
+                                  StatRow(
+                                    label: 'Comptes',
+                                    value: _dbStats!['accounts']!.toString(),
+                                  ),
+                                  StatRow(
+                                    label: 'Catégories',
+                                    value: _dbStats!['categories']!.toString(),
+                                  ),
+                                  StatRow(
+                                    label: 'Bénéficiaires',
+                                    value: _dbStats!['beneficiaries']!.toString(),
+                                  ),
+                                  StatRow(
+                                    label: 'Transactions',
+                                    value: _dbStats!['transactions']!.toString(),
+                                  ),
+                                ],
+                                const Divider(height: 32),
+
+                                // Integrity check
+                                Text(
+                                  'Intégrité de la base',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 12),
+                                if (_integrityIssues != null) ...[
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: _integrityIssues!.isEmpty
+                                          ? Colors.green.shade50
+                                          : Colors.orange.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              _integrityIssues!.isEmpty
+                                                  ? Icons.check_circle
+                                                  : Icons.warning,
+                                              color: _integrityIssues!.isEmpty
+                                                  ? Colors.green
+                                                  : Colors.orange,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              _integrityIssues!.isEmpty
+                                                  ? 'Intégrité OK'
+                                                  : '${_integrityIssues!.length} problème(s)',
+                                              style: Theme.of(context).textTheme.bodyMedium
+                                                  ?.copyWith(fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        if (_integrityIssues!.isNotEmpty) ...[
+                                          const SizedBox(height: 8),
+                                          ..._integrityIssues!.map(
+                                            (issue) => Padding(
+                                              padding: const EdgeInsets.only(bottom: 4),
+                                              child: Text(
+                                                '• $issue',
+                                                style: const TextStyle(fontSize: 12),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                                const Divider(height: 32),
+
+                                // Dev actions
+                                Text(
+                                  'Actions de développement',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: _seedFakeData,
+                                    icon: const Icon(Icons.science),
+                                    label: const Text('Ajouter données de test'),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => _resetDatabase(includeFakeData: true),
+                                    icon: const Icon(Icons.refresh),
+                                    label: const Text('Reset DB (avec données test)'),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => _resetDatabase(includeFakeData: false),
+                                    icon: const Icon(Icons.delete_forever),
+                                    label: const Text('Reset DB (vide)'),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
     );
