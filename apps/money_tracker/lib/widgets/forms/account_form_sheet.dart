@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database/app_database.dart';
 import '../../providers/accounts_provider.dart';
+import '../../utils/string_extensions.dart';
+import 'fields/amount_form_field.dart';
+import 'fields/dropdown_form_field_custom.dart';
+import 'fields/text_form_field_custom.dart';
 
 class AccountFormSheet extends ConsumerStatefulWidget {
   final Account? account;
@@ -102,20 +106,15 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormFieldCustom(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nom du compte'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Le nom du compte est requis';
-                  }
-                  return null;
-                },
+                label: 'Nom du compte',
+                required: true,
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedType,
-                decoration: const InputDecoration(labelText: 'Type de compte'),
+              DropdownFormFieldCustom<String>(
+                value: _selectedType,
+                label: 'Type de compte',
                 items: _typeChoices
                     .map(
                       (type) => DropdownMenuItem(
@@ -131,12 +130,10 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                 },
               ),
               const SizedBox(height: 12),
-              TextFormField(
+              AmountFormField(
                 controller: _balanceController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                decoration: const InputDecoration(labelText: 'Solde initial'),
+                label: 'Solde initial',
+                required: false,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -155,9 +152,4 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
       ),
     );
   }
-}
-
-extension on String {
-  String capitalize() =>
-      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dotlyn_ui/dotlyn_ui.dart';
 
 /// Bouton d'action rapide (FAB mini) pour +/- et virements
 class ActionFab extends StatelessWidget {

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../data/database/app_database.dart';
 import '../../models/payment_method.dart';
-import '../../providers/transactions_provider.dart';
-import '../../providers/categories_provider.dart';
-import '../../providers/beneficiaries_provider.dart';
 import '../../providers/accounts_provider.dart';
+import '../../providers/beneficiaries_provider.dart';
+import '../../providers/categories_provider.dart';
+import '../../providers/transactions_provider.dart';
+import 'fields/amount_form_field.dart';
+import 'fields/date_form_field.dart';
+import 'fields/dropdown_form_field_custom.dart';
+import 'fields/text_form_field_custom.dart';
 
 class TransactionFormSheet extends ConsumerStatefulWidget {
   final Transaction? transaction;
@@ -104,6 +107,8 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
       }
     }
 
+    if (!mounted) return;
+
     setState(() => _isSaving = true);
 
     final repository = ref.read(transactionsRepositoryProvider);
@@ -111,6 +116,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
         ? _accountFromId
         : (widget.accountId ?? ref.read(activeAccountProvider)?.id);
     if (accountId == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Aucun compte sélectionné')));
@@ -181,7 +187,6 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
     final categoriesAsync = ref.watch(categoriesProvider);
     final beneficiariesAsync = ref.watch(beneficiariesProvider);
     final isEdit = widget.transaction != null;
-    final dateFormatter = DateFormat.yMd('fr_FR');
 
     final accountsAsync = ref.watch(accountsProvider);
     return Dialog(
@@ -200,18 +205,15 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
-                TextFormField(
+                AmountFormField(
                   controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(labelText: 'Montant'),
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Montant requis' : null,
+                  label: 'Montant',
+                  required: true,
                 ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
+                DropdownFormFieldCustom<String>(
                   value: _type,
+                  label: 'Type',
                   items: const [
                     DropdownMenuItem(value: 'expense', child: Text('Dépense')),
                     DropdownMenuItem(value: 'income', child: Text('Revenu')),
@@ -236,7 +238,7 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                   accountsAsync.when(
                     data: (accounts) {
                       return DropdownButtonFormField<int>(
-                        value: _accountFromId,
+                        initialValue: _accountFromId,
                         items: accounts
                             .map(
                               (a) => DropdownMenuItem(
@@ -346,8 +348,9 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                 ),
                 const SizedBox(height: 12),
                 // Payment method selector
-                DropdownButtonFormField<PaymentMethod>(
+                DropdownFormFieldCustom<PaymentMethod>(
                   value: _paymentMethod,
+                  label: 'Méthode de paiement',
                   items: PaymentMethod.values
                       .map(
                         (m) => DropdownMenuItem(value: m, child: Text(m.label)),
@@ -360,73 +363,43 @@ class _TransactionFormSheetState extends ConsumerState<TransactionFormSheet> {
                       _checkNumber = null;
                     }
                   }),
-                  decoration: const InputDecoration(
-                    labelText: 'Méthode de paiement',
-                  ),
                 ),
                 const SizedBox(height: 12),
                 // Check number field (only visible for check payments)
                 if (_paymentMethod == PaymentMethod.check)
-                  TextFormField(
-                    initialValue: _checkNumber,
-                    decoration: const InputDecoration(
-                      labelText: 'Numéro de chèque',
-                    ),
-                    validator: (v) {
-                      if (_paymentMethod == PaymentMethod.check &&
-                          (v == null || v.trim().isEmpty)) {
-                        return 'Numéro requis pour les chèques';
-                      }
-                      return null;
-                    },
+                  TextFormFieldCustom(
+                    controller: TextEditingController(text: _checkNumber ?? ''),
+                    label: 'Numéro de chèque',
+                    required: true,
                     onChanged: (v) => setState(() => _checkNumber = v),
                   ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text('Date: ${dateFormatter.format(_date)}'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _date,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (picked != null) setState(() => _date = picked);
-                      },
-                      child: const Text('Changer'),
-                    ),
-                  ],
-                ),
-                TextFormField(
-                  controller: _noteController,
-                  decoration: const InputDecoration(labelText: 'Note'),
+                DateFormField(
+                  selectedDate: _date,
+                  label: 'Date',
+                  onDateSelected: (date) => setState(() => _date = date),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Validé'),
-                        value: 'validated',
-                        groupValue: _status,
-                        onChanged: (v) =>
-                            setState(() => _status = v ?? 'validated'),
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('En attente'),
-                        value: 'pending',
-                        groupValue: _status,
-                        onChanged: (v) =>
-                            setState(() => _status = v ?? 'pending'),
-                      ),
+                TextFormFieldCustom(
+                  controller: _noteController,
+                  label: 'Note',
+                  required: false,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 12),
+                DropdownFormFieldCustom<String>(
+                  value: _status,
+                  label: 'Statut',
+                  items: const [
+                    DropdownMenuItem(value: 'validated', child: Text('Validé')),
+                    DropdownMenuItem(
+                      value: 'pending',
+                      child: Text('En attente'),
                     ),
                   ],
+                  onChanged: (v) => setState(() => _status = v ?? 'validated'),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(

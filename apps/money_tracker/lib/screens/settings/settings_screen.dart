@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../providers/database_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/widgets.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -29,26 +31,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _resetDatabase({bool includeFakeData = true}) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await ConfirmDialog.show(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('⚠️ Confirmation'),
-        content: Text(
-          includeFakeData
-              ? 'Supprimer toutes les données et réinsérer les données initiales + données de test ?'
-              : 'Supprimer toutes les données et réinsérer uniquement les catégories par défaut ?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Confirmer'),
-          ),
-        ],
-      ),
+      title: '⚠️ Confirmation',
+      content: includeFakeData
+          ? 'Supprimer toutes les données et réinsérer les données initiales + données de test ?'
+          : 'Supprimer toutes les données et réinsérer uniquement les catégories par défaut ?',
+      isDangerous: true,
     );
 
     if (confirmed == true && mounted) {
@@ -57,9 +46,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await db.resetToDefaultData(includeFakeData: includeFakeData);
       await _refreshStats();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Base de données réinitialisée')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Base de données réinitialisée')));
       }
     }
   }
@@ -113,13 +102,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ),
                         const SizedBox(height: 12),
                         if (_dbStats != null) ...[
-                          _StatRow('Comptes', _dbStats!['accounts']!),
-                          _StatRow('Catégories', _dbStats!['categories']!),
-                          _StatRow(
-                            'Bénéficiaires',
-                            _dbStats!['beneficiaries']!,
+                          StatRow(label: 'Comptes', value: _dbStats!['accounts']!.toString()),
+                          StatRow(label: 'Catégories', value: _dbStats!['categories']!.toString()),
+                          StatRow(
+                            label: 'Bénéficiaires',
+                            value: _dbStats!['beneficiaries']!.toString(),
                           ),
-                          _StatRow('Transactions', _dbStats!['transactions']!),
+                          StatRow(
+                            label: 'Transactions',
+                            value: _dbStats!['transactions']!.toString(),
+                          ),
                         ],
                       ],
                     ),
@@ -130,9 +122,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // Integrity check
                 if (_integrityIssues != null) ...[
                   Card(
-                    color: _integrityIssues!.isEmpty
-                        ? Colors.green.shade50
-                        : Colors.orange.shade50,
+                    color: _integrityIssues!.isEmpty ? Colors.green.shade50 : Colors.orange.shade50,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -141,12 +131,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           Row(
                             children: [
                               Icon(
-                                _integrityIssues!.isEmpty
-                                    ? Icons.check_circle
-                                    : Icons.warning,
-                                color: _integrityIssues!.isEmpty
-                                    ? Colors.green
-                                    : Colors.orange,
+                                _integrityIssues!.isEmpty ? Icons.check_circle : Icons.warning,
+                                color: _integrityIssues!.isEmpty ? Colors.green : Colors.orange,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -162,10 +148,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ..._integrityIssues!.map(
                               (issue) => Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
-                                child: Text(
-                                  '• $issue',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
+                                child: Text('• $issue', style: const TextStyle(fontSize: 12)),
                               ),
                             ),
                           ],
@@ -191,10 +174,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           const SizedBox(height: 12),
                           const Text(
                             '⚠️ Ces actions sont disponibles uniquement en mode debug',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic,
-                            ),
+                            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
                           ),
                           const SizedBox(height: 16),
 
@@ -211,13 +191,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
-                              onPressed: () =>
-                                  _resetDatabase(includeFakeData: true),
+                              onPressed: () => _resetDatabase(includeFakeData: true),
                               icon: const Icon(Icons.refresh),
                               label: const Text('Reset DB (avec données test)'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                              ),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -225,13 +202,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
-                              onPressed: () =>
-                                  _resetDatabase(includeFakeData: false),
+                              onPressed: () => _resetDatabase(includeFakeData: false),
                               icon: const Icon(Icons.delete_forever),
                               label: const Text('Reset DB (vide)'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                             ),
                           ),
                         ],
@@ -248,10 +222,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Paramètres généraux',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+                        Text('Paramètres généraux', style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 16),
                         _DarkModeToggle(),
                         const SizedBox(height: 16),
@@ -273,9 +244,7 @@ class _DarkModeToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(
-      appSettingProvider(AppSettingsRepository.darkModeKey),
-    );
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.darkModeKey));
 
     return settingAsync.when(
       data: (value) {
@@ -286,22 +255,14 @@ class _DarkModeToggle extends ConsumerWidget {
             value: isDark,
             onChanged: (val) async {
               final repo = ref.read(appSettingsRepositoryProvider);
-              await repo.setSetting(
-                AppSettingsRepository.darkModeKey,
-                val.toString(),
-              );
+              await repo.setSetting(AppSettingsRepository.darkModeKey, val.toString());
             },
           ),
         );
       },
-      loading: () => const ListTile(
-        title: Text('Mode sombre'),
-        trailing: CircularProgressIndicator(),
-      ),
-      error: (e, s) => ListTile(
-        title: const Text('Mode sombre'),
-        subtitle: Text('Erreur: $e'),
-      ),
+      loading: () =>
+          const ListTile(title: Text('Mode sombre'), trailing: CircularProgressIndicator()),
+      error: (e, s) => ListTile(title: const Text('Mode sombre'), subtitle: Text('Erreur: $e')),
     );
   }
 }
@@ -311,9 +272,7 @@ class _HideBalanceToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(
-      appSettingProvider(AppSettingsRepository.hideBalance),
-    );
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.hideBalance));
 
     return settingAsync.when(
       data: (value) {
@@ -325,22 +284,15 @@ class _HideBalanceToggle extends ConsumerWidget {
             value: isHidden,
             onChanged: (val) async {
               final repo = ref.read(appSettingsRepositoryProvider);
-              await repo.setSetting(
-                AppSettingsRepository.hideBalance,
-                val.toString(),
-              );
+              await repo.setSetting(AppSettingsRepository.hideBalance, val.toString());
             },
           ),
         );
       },
-      loading: () => const ListTile(
-        title: Text('Masquer les soldes'),
-        trailing: CircularProgressIndicator(),
-      ),
-      error: (e, s) => ListTile(
-        title: const Text('Masquer les soldes'),
-        subtitle: Text('Erreur: $e'),
-      ),
+      loading: () =>
+          const ListTile(title: Text('Masquer les soldes'), trailing: CircularProgressIndicator()),
+      error: (e, s) =>
+          ListTile(title: const Text('Masquer les soldes'), subtitle: Text('Erreur: $e')),
     );
   }
 }
@@ -350,15 +302,13 @@ class _LocaleSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(
-      appSettingProvider(AppSettingsRepository.locale),
-    );
+    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.locale));
 
     return settingAsync.when(
       data: (value) {
         final locale = value ?? 'fr_FR';
         return DropdownButtonFormField<String>(
-          value: locale,
+          initialValue: locale,
           items: const [
             DropdownMenuItem(value: 'fr_FR', child: Text('Français')),
             DropdownMenuItem(value: 'en_US', child: Text('English')),
@@ -369,38 +319,11 @@ class _LocaleSelector extends ConsumerWidget {
               await repo.setSetting(AppSettingsRepository.locale, val);
             }
           },
-          decoration: const InputDecoration(
-            labelText: 'Langue',
-            border: OutlineInputBorder(),
-          ),
+          decoration: const InputDecoration(labelText: 'Langue', border: OutlineInputBorder()),
         );
       },
       loading: () => const CircularProgressIndicator(),
       error: (e, s) => Text('Erreur: $e'),
-    );
-  }
-}
-
-class _StatRow extends StatelessWidget {
-  final String label;
-  final int count;
-
-  const _StatRow(this.label, this.count);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label),
-          Text(
-            count.toString(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
     );
   }
 }

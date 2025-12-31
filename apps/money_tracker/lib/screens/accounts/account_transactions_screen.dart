@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../data/database/app_database.dart';
 import '../../providers/accounts_provider.dart';
 import '../../providers/transactions_provider.dart';
-import '../../widgets/forms/transaction_form_sheet.dart';
-import '../../widgets/transaction_list_item.dart';
+import '../../widgets/widgets.dart';
 
 class AccountTransactionsScreen extends ConsumerWidget {
   final Account account;
@@ -17,84 +15,28 @@ class AccountTransactionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionsAsync = ref.watch(transactionsProvider(account.id));
     final currentBalance = ref.watch(accountBalanceProvider(account.id));
-    final availableBalance = ref.watch(
-      accountAvailableBalanceProvider(account.id),
-    );
-    final currencyFormatter = NumberFormat.currency(
-      locale: 'fr_FR',
-      symbol: '€',
-    );
+    final availableBalance = ref.watch(accountAvailableBalanceProvider(account.id));
 
     return Scaffold(
       appBar: AppBar(title: Text(account.name)),
       body: Column(
         children: [
           // Soldes du compte
-          Card(
-            margin: const EdgeInsets.all(16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Disponible',
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            currencyFormatter.format(availableBalance ?? 0),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Actuel',
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            currencyFormatter.format(currentBalance ?? 0),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          BalanceRow(availableBalance: availableBalance, currentBalance: currentBalance),
 
           // Liste des transactions
           Expanded(
             child: transactionsAsync.when(
               data: (transactions) {
                 if (transactions.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'Aucune opération',
-                      style: TextStyle(color: Colors.grey),
-                    ),
+                  return const EmptyListWidget(
+                    icon: Icons.receipt_long_outlined,
+                    message: 'Aucune opération',
                   );
                 }
 
                 // Calculate balance after each transaction
-                double runningBalance = currentBalance ?? 0;
+                double runningBalance = currentBalance;
 
                 return ListView.builder(
                   itemCount: transactions.length,
@@ -107,8 +49,7 @@ class AccountTransactionsScreen extends ConsumerWidget {
                       transaction: transaction,
                       balanceAfter: balanceAfter,
                       onEdit: () => _editTransaction(context, transaction),
-                      onDelete: () =>
-                          _deleteTransaction(context, ref, transaction),
+                      onDelete: () => _deleteTransaction(context, ref, transaction),
                       onValidate: () => _validateTransaction(ref, transaction),
                     );
                   },
@@ -120,9 +61,10 @@ class AccountTransactionsScreen extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: ActionFab(
+        icon: Icons.add,
+        heroTag: 'add_transaction',
         onPressed: () => _addTransaction(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -152,10 +94,7 @@ class AccountTransactionsScreen extends ConsumerWidget {
         title: const Text('Confirmation'),
         content: const Text('Voulez-vous vraiment supprimer cette opération ?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -176,10 +115,7 @@ class AccountTransactionsScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _validateTransaction(
-    WidgetRef ref,
-    Transaction transaction,
-  ) async {
+  Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
     final repo = ref.read(transactionsRepositoryProvider);
     final newStatus = transaction.status == 'pending' ? 'validated' : 'pending';
     await repo.updateTransaction(

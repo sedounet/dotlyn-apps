@@ -57,7 +57,7 @@ class TransactionListItem extends StatelessWidget {
         transaction.note?.isNotEmpty == true ? transaction.note! : 'Sans note',
         style: TextStyle(
           color: isPending
-              ? theme.colorScheme.onSurface.withOpacity(0.5)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
               : null,
           fontStyle: isPending ? FontStyle.italic : null,
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dotlyn_ui/dotlyn_ui.dart';
 import '../../data/database/app_database.dart';
 
 /// Bouton de compte favori sur la page d'accueil
@@ -36,7 +35,7 @@ class FavoriteAccountButton extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(8),
           color: hasAccount
-              ? theme.colorScheme.primary.withOpacity(0.05)
+              ? theme.colorScheme.primary.withValues(alpha: 0.05)
               : theme.colorScheme.surfaceContainerHighest,
         ),
         child: Column(

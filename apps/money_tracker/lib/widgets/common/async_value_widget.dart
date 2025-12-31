@@ -22,8 +22,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return asyncValue.when(
       data: builder,
-      loading: () =>
-          loading ?? const Center(child: CircularProgressIndicator()),
+      loading: () => loading ?? const Center(child: CircularProgressIndicator()),
       error: (error, stack) =>
           errorBuilder?.call(error, stack) ??
           _DefaultErrorWidget(error: error, showDetails: showErrorDetails),
@@ -51,18 +50,11 @@ class _DefaultErrorWidget extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Une erreur est survenue',
-              style: TextStyle(
-                color: theme.colorScheme.error,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold),
             ),
             if (showDetails) ...[
               const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: theme.textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
+              Text(error.toString(), style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
             ],
           ],
         ),
@@ -74,12 +66,14 @@ class _DefaultErrorWidget extends StatelessWidget {
 /// Widget pour liste vide
 class EmptyListWidget extends StatelessWidget {
   final String message;
+  final String? subMessage;
   final IconData? icon;
   final Widget? action;
 
   const EmptyListWidget({
     super.key,
     required this.message,
+    this.subMessage,
     this.icon,
     this.action,
   });
@@ -103,6 +97,17 @@ class EmptyListWidget extends StatelessWidget {
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
+            if (subMessage != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                subMessage!,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
             if (action != null) ...[const SizedBox(height: 16), action!],
           ],
         ),
@@ -117,12 +122,7 @@ class LoadingPlaceholder extends StatelessWidget {
   final double? width;
   final BorderRadius? borderRadius;
 
-  const LoadingPlaceholder({
-    super.key,
-    this.height,
-    this.width,
-    this.borderRadius,
-  });
+  const LoadingPlaceholder({super.key, this.height, this.width, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
