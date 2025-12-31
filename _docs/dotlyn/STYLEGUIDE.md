@@ -15,8 +15,8 @@ Palette inspirée du croquis (orange terre cuite) avec une base sobre et contras
 
 ### Couleurs de base
 
-| Usage          | Nom                    | Code Hex  | Description                             |
-| -------------- | ---------------------- | --------- | --------------------------------------- |
+| Usage          | Nom                    | Code Hex | Description                             |
+| -------------- | ---------------------- | -------- | --------------------------------------- |
 | Primaire       | **Orange Terre Cuite** | `E36C2D` | Identité principale, chaleur et énergie |
 | Secondaire     | **Gris Anthracite**    | `2C2C2C` | Texte, contraste, stabilité             |
 | Tertiaire      | **Blanc Cassé**        | `F8F8F8` | Fond clair, pureté, sobriété            |
@@ -31,6 +31,7 @@ Palette inspirée du croquis (orange terre cuite) avec une base sobre et contras
 - Dark : `B84D15` (pressed, focus)
 - Lightest : `FFF4EE` (backgrounds légers)
 - Darkest : `8A3510` (texte sur fond clair)
+- **Bright : `FF9A6C` (mode sombre uniquement - meilleure visibilité sur fond sombre)**
 
 **Gris Anthracite (Secondaire)**
 - Base : `2C2C2C`
@@ -49,8 +50,8 @@ Palette inspirée du croquis (orange terre cuite) avec une base sobre et contras
 
 ### Couleurs sémantiques (feedback utilisateur)
 
-| Type    | Couleur | Code Hex  | Variantes                                              |
-| ------- | ------- | --------- | ------------------------------------------------------ |
+| Type    | Couleur | Code Hex | Variantes                                           |
+| ------- | ------- | -------- | --------------------------------------------------- |
 | Success | Vert    | `4CAF50` | Light: `81C784`, Dark: `388E3C`, Lightest: `E8F5E9` |
 | Warning | Ambre   | `FFC107` | Light: `FFD54F`, Dark: `FFA000`, Lightest: `FFF8E1` |
 | Error   | Rouge   | `F44336` | Light: `E57373`, Dark: `D32F2F`, Lightest: `FFEBEE` |
@@ -75,7 +76,8 @@ Utilisée pour textes, bordures, backgrounds secondaires :
 1. **Hiérarchie visuelle** : Utiliser l'orange terre cuite pour les CTA principaux, le bleu acier pour les actions secondaires
 2. **Contraste** : Toujours vérifier le ratio de contraste (WCAG AA minimum : 4.5:1 pour le texte)
 3. **Cohérence** : Utiliser les variantes (light/dark) de manière cohérente pour les états (hover, pressed, disabled)
-4. **Accessibilité** : Les couleurs sémantiques doivent être accompagnées d'icônes ou de texte (ne pas se fier uniquement à la couleur)
+4. **Mode sombre** : Utiliser la variante Bright (`FF9A6C`) pour la couleur primaire en mode sombre pour garantir la visibilité
+5. **Accessibilité** : Les couleurs sémantiques doivent être accompagnées d'icônes ou de texte (ne pas se fier uniquement à la couleur)
 
 ---
 
@@ -119,9 +121,11 @@ Critères : lisibilité, neutralité, rapidité d'usage mobile.
 - **Style global :** aplats, géométrie claire, sans effets 3D.
 - **Objectif :** créer des interfaces rapides, stables, intuitives et éthiques.
 
-### Icônes d'application
+### Icônes d'application (App Icons / Launcher Icons)
 
 **Source d'icônes officielle : [Remix Icon](https://remixicon.com/)**
+
+⚠️ **Important** : Remix Icon est utilisé **UNIQUEMENT pour les icônes d'applications** (icônes launcher, pictogrammes de marque liés au logo DotLyn). Pour l'UI interne des applications Flutter, utiliser **Material Icons** (inclus par défaut dans Flutter).
 
 ✅ **Licence vérifiée** : Toutes les icônes Remix Icon sont **gratuites pour un usage personnel ET commercial**.
 
@@ -139,7 +143,24 @@ Critères : lisibilité, neutralité, rapidité d'usage mobile.
 - Licence libre sans restriction commerciale
 - Large catalogue couvrant tous les besoins (Business, Communication, Device, Editor, etc.)
 
-**Alternatives de secours** (si icône introuvable) : Material Icons, Feather Icons (vérifier licence à chaque fois)
+### Icônes UI internes
+
+**Pour l'interface utilisateur des applications Flutter** : Utiliser **Material Icons** (package Flutter intégré).
+
+```dart
+// Exemple d'utilisation
+Icon(Icons.add)
+Icon(Icons.edit)
+Icon(Icons.delete)
+IconButton(icon: Icon(Icons.settings), onPressed: () {})
+```
+
+**Avantages Material Icons :**
+- Intégré nativement dans Flutter (pas de dépendance externe)
+- Cohérence avec l'écosystème Material Design
+- Large catalogue (900+ icônes)
+- Optimisé pour les performances
+- Support automatique des thèmes (couleurs, tailles)
 
 ---
 

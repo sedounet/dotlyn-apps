@@ -6,6 +6,14 @@
 **Structure** : Melos-based monorepo  
 **Convention** : Apps indépendantes + packages partagés
 
+**Organisation des chats** : Chaque conversation/chat doit être dédiée à une app spécifique ou un point technique particulier pour maintenir le contexte et la clarté.
+
+**Apps actives** :
+- `design_lab` — Outil interne pour tester le design system
+- `money_tracker` — App de gestion financière (Drift + Riverpod)
+- `habit_tracker` — Tracker d'habitudes (en conception)
+- `sc_loop_analyzer` — Analyseur de boucles Starcraft
+
 ---
 
 ## 📁 Structure Monorepo
@@ -13,17 +21,108 @@
 ```
 dotlyn-apps/
 ├── _docs/              ← Documentation (apps + brand)
-│   ├── apps/           ← Doc par app (APP.md + PITCH.md)
-│   ├── dotlyn/         ← Brand (styleguide, assets)
-│   └── DASHBOARD.md    ← Vue d'ensemble globale
+│   ├── apps/           ← Doc par app (APP.md + PITCH.md + PROMPT_USER/AI.md)
+│   ├── dotlyn/         ← Brand (STYLEGUIDE.md, polices)
+│   ├── DASHBOARD.md    ← Vue d'ensemble globale
+│   └── GUIDE_TDD_TESTS.md ← Guide testing Flutter
 ├── apps/               ← Mini-apps Flutter indépendantes
+│   └── [app]/
+│       ├── lib/
+│       │   ├── main.dart
+│       │   ├── data/database/  ← DB schemas (Drift)
+│       │   ├── models/         ← Data models
+│       │   ├── providers/      ← Riverpod providers
+│       │   ├── screens/        ← UI screens
+│       │   └── widgets/        ← Reusable widgets
+│       └── pubspec.yaml
 ├── packages/           ← Code partagé (dotlyn_ui, dotlyn_core)
-└── .github/            ← Config CI/CD, Copilot
-```
+│   ├── dotlyn_ui/      ← Thème, couleurs, typography, widgets
+│   └── dotlyn_core/    ← Services, providers, utils
+└── melos.yaml          ← Config monorepo
 
 ---
 
-## 🎯 Règles de Travail
+## �️ Architecture & Stack Technique
+
+### Stack Standard (Money Tracker)
+- **State Management** : Riverpod 2.4+ (StreamProvider, Provider, NotifierProvider)
+- **Database** : Drift (SQLite) avec migrations versionnées
+- **Code Generation** : build_runner (pour Drift schemas)
+- **Patterns** : Repository pattern pour accès DB
+
+### Structure Data Layer (exemple Money Tracker)
+```dart
+// 1. Schema DB avec Drift
+class Transactions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get accountId => integer().references(Accounts, #id)();
+  RealColumn get amount => real()();
+  // ... migrations via schemaVersion
+}
+
+// 2. Provider DB singleton
+final databaseProvider = Provider<AppDatabase>((ref) => AppDatabase());
+
+// 3. Repository avec métiers
+class TransactionsRepository {
+  Future<int> addTransaction({...}) => _database.into(...).insert(...);
+}
+
+// 4. Stream provider pour UI réactive
+final transactionsProvider = StreamProvider.autoDispose.family<List<Transaction>, int>(
+  (ref, accountId) => database.select(...).watch()
+);
+```
+
+### Packages Partagés
+- **dotlyn_ui** : Exports `theme/{colors,typography,theme}.dart` + widgets
+  - Couleurs : `DotlynColors.primary` (E36C2D), `.secondary` (2C2C2C)
+  - Import : `import 'package:dotlyn_ui/dotlyn_ui.dart';`
+- **dotlyn_core** : Utils, constants, providers communs
+  - Import : `import 'package:dotlyn_core/dotlyn_core.dart';`
+
+### Melos Scripts Clés
+```bash
+melos bootstrap           # Init tous les packages
+melos run analyze         # flutter analyze sur tout
+melos run format          # dart format
+melos run test            # flutter test
+melos run build:runner    # Code generation (Drift, etc.)
+```
+### Workflows de Développement
+
+**Lancer une app spécifique** :
+```bash
+# Méthode 1 : Depuis le dossier de l'app
+cd apps/money_tracker
+flutter run
+
+# Méthode 2 : Spécifier le device
+cd apps/money_tracker
+flutter run -d chrome           # Web
+flutter run -d windows          # Desktop Windows
+flutter run -d <device-id>      # Device Android/iOS
+```
+
+**Après modification DB (Drift)** :
+```bash
+cd apps/money_tracker
+flutter pub run build_runner build --delete-conflicting-outputs
+# Puis hot restart (R dans terminal flutter run, pas hot reload r)
+```
+
+**Debug & Hot Reload** :
+- Hot reload (`r`) : OK pour changements UI uniquement
+- Hot restart (`R`) : REQUIS après modif DB, providers, ou structure
+- DevTools : `flutter pub global activate devtools` puis `flutter pub global run devtools`
+
+**Bootstrap après git pull** :
+```bash
+melos bootstrap          # Récupère les dépendances de tous les packages
+```
+---
+
+## �🎯 Règles de Travail
 
 ### 1. Gestion Multi-Apps
 
@@ -121,17 +220,57 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:dotlyn_core/dotlyn_core.dart';
 ```
 
-**Structure app** :
+**Structure app standardisée** :
 ```
 apps/[nom]/
 ├── lib/
 │   ├── main.dart
-│   ├── screens/
-│   ├── services/
-│   ├── models/
-│   └── widgets/
+│   ├── data/database/        ← Drift schemas + app_database.dart
+│   ├── models/               ← Data models (enums, classes)
+│   ├── providers/            ← Riverpod providers (DB, repo, state)
+│   │   ├── database_provider.dart
+│   │   ├── [entity]_provider.dart
+│   │   └── ui_state_provider.dart
+│   ├── screens/              ← Screens with state consumption
+│   └── widgets/              ← Reusable UI components
+├── test/                     ← Tests unitaires et widgets
 ├── pubspec.yaml
 └── README.md (court, lien vers _docs/)
+```
+
+**Patterns Drift + Riverpod** :
+```dart
+// Pattern: StreamProvider pour réactivité DB
+final itemsProvider = StreamProvider.autoDispose.family<List<Item>, int>(
+  (ref, filterId) {
+    final db = ref.watch(databaseProvider);
+    return (db.select(db.items)..where((t) => t.filter.equals(filterId))).watch();
+  }
+);
+
+// Pattern: Repository avec méthodes métier
+final itemsRepoProvider = Provider<ItemsRepository>((ref) {
+  return ItemsRepository(ref.watch(databaseProvider));
+});
+
+// Migrations Drift: incrémenter schemaVersion + onUpgrade
+@override
+int get schemaVersion => 4;
+
+@override
+MigrationStrategy get migration => MigrationStrategy(
+  onUpgrade: (m, from, to) async {
+    if (from <= 3) await m.createTable(newTable);
+  },
+);
+```
+
+**Code Generation Drift** :
+```bash
+# Après modification des tables
+flutter pub run build_runner build --delete-conflicting-outputs
+# Ou via melos
+melos run build:runner
 ```
 
 ---
@@ -152,11 +291,16 @@ apps/[nom]/
 
 ### 6. Styleguide Dotlyn
 
-**TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` :
-- Couleurs : Orange terre cuite (E36C2D), Gris anthracite (2C2C2C)
-- Typo : Satoshi (titres), Manrope (UI)
-- Icônes : Remix Icon uniquement
-- Zone sécurité icônes : 640px diamètre
+**TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` (source unique de vérité) :
+- **Couleurs** : Orange terre cuite (#E36C2D), Gris anthracite (#2C2C2C), Bleu acier (#3A6EA5)
+  - Utiliser via `DotlynColors.*` de `packages/dotlyn_ui/lib/theme/colors.dart`
+- **Typo** : Satoshi (titres/logo) + Manrope (UI/texte)
+- **Icônes** : Remix Icon (app icons/launcher), Material Icons (UI interne Flutter)
+- **Contraste** : WCAG AA minimum
+
+**Usage** : `import 'package:dotlyn_ui/dotlyn_ui.dart';` puis `DotlynColors.primary`
+
+---
 
 ---
 
@@ -229,16 +373,30 @@ Actions Copilot:
 User: "Créer une nouvelle app Notes"
 
 Actions Copilot:
-1. Créer apps/notes/
-2. Créer _docs/apps/notes/APP.md (template complet)
+1. Créer apps/notes/ avec structure standard :
+   ├── lib/
+   │   ├── main.dart
+   │   ├── data/database/       ← Si DB nécessaire
+   │   ├── models/
+   │   ├── providers/
+   │   ├── screens/
+   │   └── widgets/
+   ├── test/
+   ├── pubspec.yaml             ← Inclure dotlyn_ui, dotlyn_core
+   └── README.md
+2. Créer _docs/apps/notes/APP.md avec :
+   - Vision
+   - v0.1 MVP (phases si complexe)
+   - TODO P1/P2/P3
 3. Créer _docs/apps/notes/PITCH.md
 4. Créer label GitHub "notes"
-5. Update _docs/DASHBOARD.md (ajouter Notes)
+5. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
 6. Commit: "[notes] init: create new notes app structure"
+7. Bootstrap: cd apps/notes && flutter pub get
 ```
 
 ---
 
-**Version** : 1.0  
-**Dernière update** : 2025-11-03  
+**Version** : 1.1  
+**Dernière update** : 2025-12-28  
 **Maintainer** : @sedounet

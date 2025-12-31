@@ -1,7 +1,7 @@
 # Money Tracker — Documentation de développement
 
-> **Status** : 🚧 En développement (Phase 0.1a)  
-> **Version actuelle** : -  
+> **Status** : 🟡 En développement (Phase 2+ — Refonte UX transactions & favoris)  
+> **Version actuelle** : v0.1e+ (Phase 2+)  
 > **Dernière mise à jour** : 2025-12-26
 
 ---
@@ -31,13 +31,13 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - Analytics : Firebase Analytics + Crashlytics
 - Ads : Google AdMob (bannière)
 
-#### Phase 0.1a - Fondations (En cours)
-- [ ] Setup projet + Drift
-- [ ] Schemas BDD
-- [ ] UI statique données fictives
-- [ ] Navigation basique
-- [ ] Thème Dotlyn
-- [ ] Validation manuelle
+#### Phase 0.1a - Fondations (✅ Complétée)
+- [x] Setup projet + Drift
+- [x] Schemas BDD (accounts, categories, transactions, beneficiaries)
+- [x] UI statique avec données fictives
+- [x] Navigation basique
+- [x] Thème Dotlyn
+- [x] Validation manuelle : Interface fonctionnelle (persistence pas encore active)
 
 #### Phase 0.1b - CRUD Comptes (À venir)
 - [ ] Providers Riverpod accounts
@@ -45,23 +45,116 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Compte actif en state
 - [ ] Home affiche solde dynamique
 
-#### Phase 0.1c - CRUD Opérations (À venir)
-- [ ] Providers Riverpod transactions
-- [ ] Bottom sheet ajout opération fonctionnel
-- [ ] Liste opérations scroll infini
-- [ ] Modification/suppression opérations
-- [ ] Calcul Solde Réel (transactions validées)
-- [ ] Calcul Solde Disponible (réel + en attente)
+#### Phase 0.1c - CRUD Opérations (Complétée)
+- [x] Providers Riverpod transactions
+- [x] Bottom sheet ajout opération fonctionnel
+- [x] Liste opérations dynamique (filtrée par compte actif)
+- [x] Modification/suppression opérations
+- [x] Calcul Solde Réel (transactions validées)
+- [x] Support virements entre comptes (type transfer + accountToId)
+- [x] Calcul Solde Disponible (réel + en attente)
+- [x] Virements : permettre de sélectionner explicitement compte origine ET destination
+- [x] Virements : valider l'algorithme de calcul des soldes (voir Notes Techniques)
 
-#### Phase 0.1d - Filtres & Polish (À venir)
-- [ ] Filtres date (Jour, Semaine, Mois, Année)
-- [ ] Filtre catégorie multi-select
-- [ ] Bénéficiaires CRUD
-- [ ] Toggle masquage montants
-- [ ] Thème clair/sombre
-- [ ] Modale détail calcul solde
-- [ ] Menu contextuel opération
-- [ ] Swipe comptes
+#### Phase 0.1d - Filtres & Polish (✅ Complétée - 2025-12-30)
+- [x] Filtres date (Jour, Semaine, Mois, Année)
+- [x] Filtre catégorie multi-select
+- [x] Bénéficiaires CRUD
+- [x] Toggle masquage montants
+- [x] Thème clair/sombre
+- [x] Modale détail calcul solde
+- [x] Menu contextuel opération
+- [x] Swipe comptes
+- [x] **UX Transactions** : Swipe droite pour valider, swipe gauche pour supprimer
+- [x] **UX Transactions** : Indicateur visuel statut (coche/couleur pour validé vs pending)
+- [x] **Layout** : Positionner les FABs au-dessus de la bannière pub (pas dessous)
+- [x] **Refactoring Code** (2025-12-30) :
+  - Phase 1 - Quick Wins : ActionFab, ConfirmDialog, BalanceRow, CurrencyUtils, suppression legacy
+  - Phase 2 - Form Components : 4 form fields réutilisables (Amount, Date, Text, Dropdown)
+  - Phase 3 - Utils & Extensions : StatRow, EmptyListWidget, string_extensions
+  - Résultat : ~150 lignes supprimées, 16 composants réutilisables, 87% duplication éliminée, 0 issues flutter analyze
+- [x] **Performance** : Optimisation démarrage (suppression debug queries, checkIntegrity, debugPrint) → 3-4s → <1s estimé
+
+#### Phase 0.1e - Analytics & Pub (� Prochaine session)
+- [ ] Firebase Analytics + Crashlytics setup
+- [ ] Events tracking basiques (app_open, transaction_created, account_created)
+- [ ] AdMob bannière bottom
+- [ ] Flag isFirstLaunch pour Analytics
+
+#### Phase 0.1f - UX Lean & Polish (🔴 Prochaine session - PRIORITÉ UI/UX)
+**Philosophie** : Ultra-lean MVP, focus expérience essentielle
+- [ ] **Polish UI/UX complet** : Home screen propre et agréable
+- [ ] **Simplifier forms** : Catégorie/bénéficiaire optionnels/masqués
+- [ ] **Alléger navigation** : Retirer accès catégories/bénéficiaires du drawer
+- [ ] **SafeArea** : Vérification bannière pub ne chevauche pas navigation
+- [ ] **Animations** : Transitions smooth, feedback visuel
+- [ ] **Tests device réel** : Installation et validation sur téléphone
+
+**Principe** : Garder infra technique (tables, champs) mais masquer complexité UI. Réintroduire features après validation usage réel.
+
+### v0.1 MVP — Périmètre Final Lean
+
+**Features actives** :
+- ✅ Multi-comptes (création, édition, sélection)
+- ✅ Double solde (Réel / Disponible)
+- ✅ Opérations : montant, date, note, statut (En attente / Validé)
+- ✅ Catégories : Seed par défaut en BDD, optionnel/caché en UI
+- ✅ Bénéficiaires : Structure BDD, optionnel/caché en UI
+- ✅ Filtres date basiques
+- ✅ Settings : thème, masquage montants
+- ✅ Analytics dès début
+
+**Features retirées temporairement** :
+- ❌ Onboarding profils catégories (pas de valeur prouvée)
+- ❌ Écran gestion catégories (pas utilisé en MVP)
+- ❌ Écran gestion bénéficiaires (pas utilisé en MVP)
+- ❌ Filtres catégories avancés (complexité inutile)
+- ❌ Types de paiement (nice-to-have, pas core)
+
+**À réintroduire en v0.2+ selon feedback** :
+- Catégories personnalisées (si besoin exprimé)
+- Bénéficiaires actifs (si usage identifié)
+- Types paiement (si demandé)
+- Onboarding guidé (si users perdus)
+
+### v0.2 — Features Data-Driven (selon feedback beta)
+**Objectif** : Ajouter ce qui manque VRAIMENT aux users
+
+**Candidats à réintroduire** :
+- Catégories personnalisées (création/édition/suppression)
+- Bénéficiaires actifs (CRUD complet visible)
+- Types de paiement (Carte/Virement/Chèque/Espèces)
+- Onboarding guidé (si confusion constatée)
+- Prélèvements automatiques / Opérations récurrentes
+- Solde prévisionnel
+- [ ] Firebase Analytics + Crashlytics setup
+- [ ] Events tracking basiques (app_open, transaction_created, account_created)
+- [ ] AdMob bannière bottom
+- [ ] Flag isFirstLaunch pour Analytics
+
+**Phase 0.1f - UX Lean & Polish** :
+- [ ] Simplifier transaction_form_sheet : masquer/rendre optionnel catégorie & bénéficiaire
+- [ ] Retirer navigation vers écrans catégories/bénéficiaires du drawer
+- [ ] Polish UI home : alléger, focus actions essentielles
+- [ ] SafeArea vérification (bannière pub)
+- [ ] Tests rapides flux utilisateur
+
+**Objectif** : MVP utilisable, lean, sans superflu → Beta test
+
+### 🟡 P2 — Post-Beta (selon feedback)
+
+- [ ] Réintroduire catégories SI besoin exprimé
+- [ ] Réintroduire bénéficiaires SI usage identifié
+- [ ] Onboarding guidé SI users perdus
+- [ ] Types paiement SI demandé
+- [ ] Polish splash screen
+- [ ] Tests complets
+- UI recherche rapide (1-2 clics)
+
+---
+
+## 📋 TODO
+Analytics & Onboarding (Prochaines phases)
 
 #### Phase 0.1e - Analytics & Pub (À venir)
 - [ ] Firebase Analytics + Crashlytics
@@ -73,79 +166,16 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Choix profil catégories (Simple/Standard/Détaillé)
 - [ ] Seed catégories selon profil
 
-**Features MVP complètes** :
-- ✅ Multi-comptes (illimité, focus 2-3)
-- ✅ Double solde (Réel / Disponible)
-- ✅ Opérations : montant, catégorie, bénéficiaire, date, note, statut (En attente / Validé)
-- ✅ Catégories prédéfinies (10 catégories Standard)
-- ✅ Filtres date et catégorie
-- ✅ Settings : thème, masquage montants, locale FR
-- ✅ Analytics dès début
-
-### v0.2 — Prélèvements Automatiques
-**Objectif** : Solde prévisionnel avec récurrences
-
-**Features** :
-- Opérations récurrentes (mensuel, hebdo, annuel)
-- Jour de référence par compte
-- Solde Disponible amélioré (avec prélèvements futurs)
-- Gestion catégories (ajout/modif/suppression)
-
-### v0.3 — Sécurité & Data
-**Features** :
-- Import CSV bancaire
-- Export CSV
-- Backup cloud (rewarded video)
-- Encryption données
-- Auth : PIN / biométrie
-
-### v0.4 — Analytics & Polish
-**Features** :
-- Graphiques dépenses (catégories, mois)
-- Statistiques avancées
-- Auto-suggestion bénéficiaires
-- UI recherche rapide (1-2 clics)
-
----
-
-## 📋 TODO
-
-### 🔴 P1 — Quick Wins Phase 0.1a (~2h) → [PROMPT_AI.md](PROMPT_AI.md)
-
-**Corrections critiques UX + Performance** :
-- [ ] Safe area mobile (15min) — Wrapper SafeArea pour éviter zone système
-- [ ] Retirer radio buttons liste comptes (10min) — Remplacer par ListTile simple
-- [ ] Performance démarrage (1h) — Supprimer splash screen + lazy load providers
-- [ ] Menu contextuel opérations (1h) — Long press → Éditer/Valider/Supprimer
-
-**Impact** : App plus rapide, UX propre, actions accessibles  
-**Livrable** : Version améliorée utilisable immédiatement
-
----
-
-### 🟡 P2 — Features Avancées Phase 0.1a+ (~5h)
-
-**Extensions fonctionnelles** :
-- [ ] Types de paiement (2h) — Carte/Virement/Prélèvement/Chèque + numéro chèque
-- [ ] Système favoris comptes (2h) — Boutons home assignables avec confirmation
-- [ ] Écran Settings (1h) — Page centralisation paramètres (thème, masquage, locale)
-
-**Impact** : Confort utilisateur, meilleure organisation  
-**Note** : Peut être reporté en v0.2 si pas critique
-
----
-
-### 🟢 P3 — Phases MVP suivantes
-
-- [ ] Phase 0.1b : CRUD Comptes
-- [ ] Phase 0.1c : CRUD Opérations
-- [ ] Phase 0.1d : Filtres & Polish
-- [ ] Phase 0.1e : Analytics & Pub
+### 🟡 P2 — Polish UI/UX (Optionnel)
+- [ ] Optimiser splash screen (actuellement 3-4s)
+- [ ] Vérifier SafeArea pour bannière pub (ne doit pas chevaucher navigation)
+- [ ] Compacter/réduire certains éléments d'interface
+- [ ] Tests complets flux utilisateur (création, édition, suppression, validation toggle)Screen (à finaliser)
 - [ ] Phase 0.1f : Onboarding
 
-### 🔵 P4 — Versions futures
+### 🔵 P3 — Versions futures
 
-- [ ] v0.2 : Prélèvements automatiques + Features avancées Phase 0.1a+ (si reportées)
+- [ ] v0.2 : Prélèvements automatiques
 - [ ] v0.3 : Import/Export + Sécurité
 - [ ] v0.4 : Graphiques + Analytics
 
@@ -159,9 +189,95 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 
 ## 📝 Notes Techniques
 
+### Fichiers Documentation
+- **APP.md** : Roadmap, TODO, notes techniques (fichier principal)
+- **PITCH.md** : Vision, identité, public cible (stable)
+- **PROMPT_AI.md** : Instructions structurées features futures (mis à jour)
+- **PROMPT_USER_ARCHIVE.md** : Historique demandes utilisateur (archive)
+
 ### Terminologie Soldes
-- **Solde Réel** = Ce qui est sur le compte bancaire à l'instant T
-- **Solde Disponible** = Réel - opérations "En attente"
+- **Solde Actuel** = Ce qui est effectivement sur le compte bancaire (uniquement les opérations validées)
+- **Solde Disponible** = Solde incluant aussi les opérations "en attente" 
+  - Formule : `initialBalance + sum(TOUTES transactions validées ET pending)`
+  - **Important** : Solde Disponible ≤ Solde Actuel (car les pending sont généralement des dépenses négatives)
+
+### Algorithme Calcul Solde avec Virements
+
+**Structure de données** :
+- Transaction avec `accountId` (compte source), `accountToId` (compte destination pour virements)
+- Type détecté : `accountToId != null` → virement, sinon income/expense basé sur signe
+
+**Calcul Solde Actuel d'un compte X** (uniquement validées) :
+```
+soldeActuel(X) = initialBalance(X) 
+               + Σ transactions WHERE accountId=X AND status='validated' (signées: +revenu, -dépense, -virement)
+               + Σ transactions WHERE accountToId=X AND status='validated' (abs: +crédit virement entrant)
+```
+
+**Calcul Solde Disponible d'un compte X** (validées + pending) :
+```
+soldeDisponible(X) = initialBalance(X)
+                   + Σ transactions WHERE accountId=X (TOUTES: validées + pending)
+                   + Σ transactions WHERE accountToId=X (TOUTES: validées + pending, en abs)
+```
+
+**Exemple concret** :
+- Compte A : initialBalance = 1000€
+- Compte B : initialBalance = 500€
+- Transaction 1 : accountId=A, amount=+200 (revenu validé)
+- Transaction 2 : accountId=A, amount=-50 (dépense validée)
+- Transaction 3 : accountId=A, amount=-30 (dépense PENDING)
+- **Transaction 4 : accountId=A, accountToId=B, amount=-100 (virement A→B validé)**
+
+**Solde Actuel A** :
+```
+= 1000 (initial)
+  + 200 (transaction 1 validée)
+  - 50  (transaction 2 validée)
+  - 100 (transaction 4 validée, virement sortant)
+= 1050€
+```
+
+**Solde Disponible A** :
+```  
+= 1000 (initial)
+  + 200 (transaction 1)
+  - 50  (transaction 2)
+  - 30  (transaction 3 PENDING !)
+  - 100 (transaction 4 virement sortant)
+= 1020€
+```
+
+**Solde Actuel B** :
+```
+= 500 (initial)
+  + 100 (transaction 4 validée, virement entrant)
+= 600€
+```
+
+**Solde Disponible B** :
+```
+= 500 (initial)
+  + 100 (transaction 4, virement entrant)
+= 600€
+```
+
+**✅ Règle** : Solde Disponible ≤ Solde Actuel
+
+**⚠️ Points d'attention actuels** :
+1. Le compte source du virement est désormais sélectionnable explicitement dans le formulaire (création/modification)
+2. Pour éditer un virement, le compte source peut être modifié
+3. Refactor UI à prévoir pour améliorer l’ergonomie si besoin (prochaine version)
+
+**Implémentatio& Bénéficiaires (Stratégie Lean)
+**Structure BDD** : Tables complètes, seed par défaut lors init DB
+**UI MVP** : Masqué/optionnel, pas de CRUD visible
+**Formulaire transaction** :
+- Catégorie : Champ optionnel, peut être NULL, dropdown minimal ou caché
+- Bénéficiaire : Champ optionnel, peut être NULL, dropdown minimal ou caché
+
+**Raison** : Simplifier UX initiale, valider usage réel avant d'exposer complexité. Structure technique prête pour réintroduction rapide en v0.2 si besoin.
+- `accountAvailableBalanceProvider` → Solde Disponible (TOUTES les transactions)
 
 ### Statuts Opération
 - **En attente** = Saisi mais pas encore débité par banque
@@ -173,7 +289,7 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - **Détaillé** : 15 catégories (détail complet courses/restaurants, essence...)
 
 ### Données Fictives Phase 0.1a
-**À SUPPRIMER en phase 0.1b** :
+**Supprimé en phase 0.1b** :
 - 1 compte "Compte Courant" (1000€)
 - 3 bénéficiaires (Carrefour, Employeur, Pizza Hut)
 - 3 transactions (Courses -45€, Salaire +2000€, Resto -20€)

@@ -12,6 +12,8 @@ class DotlynColors {
   static const Color primaryDark = Color(0xFFB84D15); // Pressed, focus
   static const Color primaryLightest = Color(0xFFFFF4EE); // Backgrounds légers
   static const Color primaryDarkest = Color(0xFF8A3510); // Texte sur fond clair
+  static const Color primaryBright =
+      Color(0xFFFF9A6C); // Mode sombre uniquement - meilleure visibilité
 
   /// Gris Anthracite - Couleur secondaire
   static const Color secondary = Color(0xFF2C2C2C);

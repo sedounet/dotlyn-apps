@@ -206,8 +206,8 @@ class DotlynTheme {
 
       // ColorScheme complet pour dark mode
       colorScheme: ColorScheme.dark(
-        primary: DotlynColors.primary,
-        onPrimary: Colors.white,
+        primary: DotlynColors.primaryBright, // Utiliser bright pour meilleure visibilité
+        onPrimary: DotlynColors.secondary,
         primaryContainer: DotlynColors.primaryDark,
         onPrimaryContainer: DotlynColors.primaryLight,
         secondary: DotlynColors.grey300,
@@ -267,8 +267,8 @@ class DotlynTheme {
       // Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: DotlynColors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: DotlynColors.primaryBright,
+          foregroundColor: DotlynColors.secondary,
           disabledBackgroundColor: DotlynColors.grey700,
           disabledForegroundColor: DotlynColors.textDisabledDark,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -287,16 +287,16 @@ class DotlynTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: DotlynColors.primary,
-          side: const BorderSide(color: DotlynColors.primary, width: 1.5),
+          foregroundColor: DotlynColors.primaryBright,
+          side: const BorderSide(color: DotlynColors.primaryBright, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed))
-              return DotlynColors.primary.withValues(alpha: 0.2);
+              return DotlynColors.primaryBright.withValues(alpha: 0.2);
             if (states.contains(WidgetState.hovered))
-              return DotlynColors.primary.withValues(alpha: 0.1);
+              return DotlynColors.primaryBright.withValues(alpha: 0.1);
             return null;
           }),
         ),
@@ -304,14 +304,14 @@ class DotlynTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: DotlynColors.primary,
+          foregroundColor: DotlynColors.primaryBright,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ).copyWith(
           overlayColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.pressed))
-              return DotlynColors.primary.withValues(alpha: 0.2);
+              return DotlynColors.primaryBright.withValues(alpha: 0.2);
             if (states.contains(WidgetState.hovered))
-              return DotlynColors.primary.withValues(alpha: 0.1);
+              return DotlynColors.primaryBright.withValues(alpha: 0.1);
             return null;
           }),
         ),
@@ -339,7 +339,7 @@ class DotlynTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: DotlynColors.primary, width: 2),
+          borderSide: const BorderSide(color: DotlynColors.primaryBright, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
