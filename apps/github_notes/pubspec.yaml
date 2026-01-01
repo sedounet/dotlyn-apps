@@ -1,0 +1,52 @@
+name: github_notes
+description: Simple GitHub-sync note taking app for Dotlyn workflow
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Dotlyn packages
+  dotlyn_ui:
+    path: ../../packages/dotlyn_ui
+  dotlyn_core:
+    path: ../../packages/dotlyn_core
+  
+  # State management
+  flutter_riverpod: ^2.4.0
+  riverpod_annotation: ^2.3.0
+  
+  # Database
+  drift: ^2.14.0
+  drift_flutter: ^0.1.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.0
+  path: ^1.8.3
+  
+  # HTTP & GitHub API
+  http: ^1.2.0
+  
+  # Utils
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  
+  # Code generation
+  build_runner: ^2.4.0
+  drift_dev: ^2.14.0
+  riverpod_generator: ^2.3.0
+
+flutter:
+  uses-material-design: true
+
+# Platforms: Mobile only (Android/iOS)
+platforms:
+  android:
+  ios:

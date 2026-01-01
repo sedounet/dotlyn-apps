@@ -21,6 +21,11 @@
 **Version** : -  
 📁 [Doc](./apps/habit_tracker/APP.md) • [Pitch](./apps/habit_tracker/PITCH.md)
 
+### 📝 GitHub Notes
+**Status** : 🚧 En développement  
+**Version** : v0.1 MVP  
+📁 [Doc](./apps/github_notes/APP.md) • [Pitch](./apps/github_notes/PITCH.md)
+
 ---
 
 ## ⚰️ Apps Abandonnées
@@ -48,6 +53,7 @@
 | Design Lab    | -       | ✅ Interne    | Outil de développement |
 | Money Tracker | -       | 🚧 En dev     | Gestion comptes perso  |
 | Habit Tracker | -       | 🔵 Conception | Tracker d'habitudes    |
+| GitHub Notes  | v0.1    | 🚧 En dev     | Notes sync GitHub      |
 | Timer         | 0.2.0   | ⚰️ Abandonné  | Code archivé           |
 | Pomodoro      | -       | ⚰️ Abandonné  | Supprimé               |
 | Tabata        | -       | ⚰️ Abandonné  | Supprimé               |
@@ -70,8 +76,8 @@
 - [Brand Assets](./dotlyn/brand-assets/)
 
 ---
-
-**Dernière mise à jour** : 2025-12-27  
+31  
+**Apps en dev** : 3 (Money Tracker, Habit Tracker, GitHub Notes
 **Apps en dev** : 2 (Money Tracker, Habit Tracker)  
 **Apps actives** : 1 (Design Lab - outil interne)  
 **Apps abandonnées** : 3 (Timer archivé, Pomodoro/Tabata supprimés)
