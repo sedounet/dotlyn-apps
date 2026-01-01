@@ -84,22 +84,29 @@ Utilisée pour textes, bordures, backgrounds secondaires :
 ## 3. Typographie
 Critères : lisibilité, neutralité, rapidité d'usage mobile.
 
-**Titres / Logo :** `Satoshi`
 > Style géométrique, moderne et affirmé.
 > **Retenu :** Satoshi Heavy Italic pour le logo
 > **Fichiers :** Satoshi-Variable.ttf + Satoshi-VariableItalic.ttf
 
-**Texte / UI :** `Manrope`
+## Typographie
+
+- **Titres / Logo** : Satoshi
+- **UI / Texte** : Plus Jakarta Sans
+
+**Police recommandée UI** : Plus Jakarta Sans (interface, boutons, labels)
+
+**Statut**: Standardisation appliquée — `Plus Jakarta Sans` adopté pour l'UI. `Satoshi` reste pour les titres et le logo.
+**Texte / UI :** `Plus Jakarta Sans`
 > Très bonne lisibilité à petite taille, optimisé pour écrans.
-> **Retenu :** Manrope Regular pour l'interface
+> **Retenu :** Plus Jakarta Sans Regular pour l'interface
 
 **Liens de téléchargement des polices :**
 - [Satoshi (Fontshare)](https://www.fontshare.com/fonts/satoshi) - **Licence gratuite usage commercial**
-- [Manrope (Google Fonts)](https://fonts.google.com/specimen/Manrope)
+- [Plus Jakarta Sans (Google Fonts)](https://fonts.google.com/specimen/Plus+Jakarta+Sans)
 
 **Combinaison finalisée :**
 - *DotLyn* en **Satoshi Heavy Italic** (logo)
-- Textes et interfaces en **Manrope Regular**
+- Textes et interfaces en **Plus Jakarta Sans Regular**
 
 ---
 

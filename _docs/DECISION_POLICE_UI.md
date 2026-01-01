@@ -3,7 +3,7 @@
 ## Problème Identifié
 
 **Incohérence** entre documentation et implémentation :
-- **STYLEGUIDE.md** : "Manrope (UI/texte)"
+- **STYLEGUIDE.md** : "Plus Jakarta Sans (UI/texte)"
 - **dotlyn_ui implementation** : PlusJakartaSans
 
 ## Contexte
@@ -11,9 +11,9 @@
 ### Documentation Actuelle
 `_docs/dotlyn/STYLEGUIDE.md` :
 ```
-**Texte / UI :** `Manrope`
+**Texte / UI :** `Plus Jakarta Sans`
 > Très bonne lisibilité à petite taille, optimisé pour écrans.
-> **Retenu :** Manrope Regular pour l'interface
+> **Retenu :** Plus Jakarta Sans Regular pour l'interface
 ```
 
 ### Implémentation Actuelle
@@ -26,7 +26,6 @@ static const String _jakarta = 'PlusJakartaSans';
 `packages/dotlyn_ui/pubspec.yaml` :
 - Satoshi ✅ (installé)
 - PlusJakartaSans ✅ (installé)
-- Manrope ❌ (NON installé)
 
 ## Options de Résolution
 
@@ -42,21 +41,21 @@ static const String _jakarta = 'PlusJakartaSans';
 - ✅ Cohérence immédiate (apps existantes fonctionnent)
 
 **Inconvénients** :
-- ⚠️ Divergence avec idée initiale (Manrope)
+ - ⚠️ Divergence avec idée initiale (Plus Jakarta Sans)
 
 **Effort** : Minimal (1 fichier markdown)
 
 ---
 
-### Option B — Revenir à Manrope
-**Action** : Remplacer PlusJakartaSans par Manrope dans dotlyn_ui.
+### Option B — Revenir à Plus Jakarta Sans
+**Action** : Remplacer PlusJakartaSans par Plus Jakarta Sans dans dotlyn_ui.
 
 **Avantages** :
 - ✅ Respecte styleguide original
-- ✅ Manrope est aussi excellent pour UI
+- ✅ Plus Jakarta Sans est aussi excellent pour UI
 
 **Inconvénients** :
-- ❌ Nécessite télécharger/installer Manrope
+- ❌ Nécessite télécharger/installer Plus Jakarta Sans
 - ❌ Modifier pubspec.yaml (fonts assets)
 - ❌ Regénérer toutes les apps
 - ❌ Tester visuellement tous les widgets
@@ -65,12 +64,12 @@ static const String _jakarta = 'PlusJakartaSans';
 
 ---
 
-### Option C — Supporter les deux (Manrope prioritaire)
-**Action** : Ajouter Manrope + fallback PlusJakartaSans.
+### Option C — Supporter les deux (Plus Jakarta Sans prioritaire)
+**Action** : Ajouter Plus Jakarta Sans + fallback system font.
 
 **Avantages** :
 - ✅ Maximum flexibilité
-- ✅ Fallback si Manrope non disponible
+ - ✅ Fallback si Plus Jakarta Sans non disponible
 
 **Inconvénients** :
 - ❌ Complexité accrue
@@ -83,15 +82,17 @@ static const String _jakarta = 'PlusJakartaSans';
 
 ## Recommandation
 
-**→ Option A : Adopter PlusJakartaSans officiellement**
+**→ Option A : Adopter PlusJakartaSans officiellement (APPLIQUÉ)**
 
 **Justification** :
 1. PlusJakartaSans est déjà en production (apps fonctionnent)
-2. Qualité équivalente à Manrope pour UI mobile
+2. Qualité équivalente à Plus Jakarta Sans pour UI mobile
 3. Effort minimal (update doc uniquement)
 4. Pas de régression visuelle
 
-**Alternative** : Si attachement fort à Manrope, choisir Option B avant release v0.1 (pas d'apps publiées = changement facile).
+**Statut** : Option A appliquée — `_docs/dotlyn/STYLEGUIDE.md` mis à jour pour utiliser `Plus Jakarta Sans`.
+
+**Alternative** : Si attachement fort à Plus Jakarta Sans, option de migration reste possible mais nécessite plus de travail.
 
 ---
 
@@ -102,7 +103,7 @@ static const String _jakarta = 'PlusJakartaSans';
 **Texte / UI :** `Plus Jakarta Sans`
 > Très bonne lisibilité à petite taille, optimisé pour écrans.
 > **Retenu :** Plus Jakarta Sans Regular pour l'interface
-> **Alternative considérée :** Manrope (similaire, également excellent)
+> **Alternative considérée :** Plus Jakarta Sans (similaire, également excellent)
 
 **Liens de téléchargement des polices :**
 - [Satoshi (Fontshare)](https://www.fontshare.com/fonts/satoshi) - **Licence gratuite usage commercial**
@@ -124,7 +125,7 @@ static const String _jakarta = 'PlusJakartaSans';
 - ⏱️ 1min : Commit "[docs] standardize: adopt Plus Jakarta Sans officially"
 
 **Si Option B** :
-- ⏱️ 10min : Download/install Manrope fonts
+- ⏱️ 10min : Download/install Plus Jakarta Sans fonts
 - ⏱️ 5min : Update pubspec.yaml + typography.dart
 - ⏱️ 15min : Visual testing all apps
 - ⏱️ 5min : Update docs

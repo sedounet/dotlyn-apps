@@ -320,7 +320,7 @@ melos run build:runner
 **TOUJOURS respecter** `_docs/dotlyn/STYLEGUIDE.md` (source unique de vérité) :
 - **Couleurs** : Orange terre cuite (#E36C2D), Gris anthracite (#2C2C2C), Bleu acier (#3A6EA5)
   - Utiliser via `DotlynColors.*` de `packages/dotlyn_ui/lib/theme/colors.dart`
-- **Typo** : Satoshi (titres/logo) + Manrope (UI/texte)
+- **Typo** : Satoshi (titres/logo) + Plus Jakarta Sans (UI/texte)
 - **Icônes** : Remix Icon (app icons/launcher), Material Icons (UI interne Flutter)
 - **Contraste** : WCAG AA minimum
 
@@ -361,7 +361,7 @@ MaterialApp(
 
 ❌ Créer un fichier TODO.md séparé (utiliser APP.md section TODO)  
 ❌ Dupliquer la doc entre fichiers  
-❌ Utiliser d'autres polices que Satoshi/Manrope  
+❌ Utiliser d'autres polices que Satoshi/Plus Jakarta Sans  
 ❌ Utiliser d'autres icônes que Remix Icon  
 ❌ Créer des packages non partagés (code spécifique → dans app/)  
 ❌ Pusher sur `main` directement (toujours passer par PR)

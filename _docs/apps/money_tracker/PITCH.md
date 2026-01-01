@@ -22,7 +22,7 @@
 
 **Typo** :
 - Titres : Satoshi (bold, impact)
-- UI : Manrope (lisible, moderne)
+- UI : Plus Jakarta Sans (lisible, moderne)
 
 **Icônes** : Remix Icon uniquement
 

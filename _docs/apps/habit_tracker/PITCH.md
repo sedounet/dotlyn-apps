@@ -14,7 +14,7 @@
 
 **Styleguide** : Respecte `_docs/dotlyn/STYLEGUIDE.md`
 - **Couleurs** : Orange terre cuite (#E36C2D), Gris anthracite (#2C2C2C)
-- **Typo** : Satoshi (titres), Manrope (UI)
+- **Typo** : Satoshi (titres), Plus Jakarta Sans (UI)
 - **Icônes** : Remix Icon uniquement
 
 ---

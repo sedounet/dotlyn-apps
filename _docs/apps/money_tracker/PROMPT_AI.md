@@ -338,7 +338,7 @@ Phase 1 maintenant → validation → Phase 2 après feedback utilisateur réel
 - Respecter architecture existante (Drift + Riverpod)
 - Utiliser Material 3 design system
 - Thème Dotlyn (orange #E36C2D, gris #2C2C2C)
-- Typo : Satoshi (titres), Manrope (UI)
+- Typo : Satoshi (titres), Plus Jakarta Sans (UI)
 - Toujours inclure SafeArea wrapper
 - Ajouter SnackBar feedback après actions
 - Gérer states loading/error/success dans providers

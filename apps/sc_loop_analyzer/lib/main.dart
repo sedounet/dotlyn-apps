@@ -36,7 +36,7 @@ class SCLoopAnalyzerApp extends StatelessWidget {
             brightness: Brightness.light,
           ),
           useMaterial3: true,
-          fontFamily: 'Manrope',
+          fontFamily: 'Plus Jakarta Sans',
         ),
         home: const HomeScreen(),
       ),

@@ -2,7 +2,7 @@
 
 > **Date:** 2025-11-04  
 > **Objectif:** Installation complète et propre des packages partagés + Design Lab  
-> **Améliorations:** Correction des erreurs de la V1, remplacement Manrope → Jakarta, Design Lab complet
+> **Améliorations:** Correction des erreurs de la V1, standardisation des polices → Plus Jakarta Sans, Design Lab complet
 
 ---
 

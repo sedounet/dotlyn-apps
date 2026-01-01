@@ -13,7 +13,7 @@ Accès direct depuis smartphone aux fichiers markdown de travail (`PROMPT_USER.m
 **Référence** : [`_docs/dotlyn/STYLEGUIDE.md`](../../dotlyn/STYLEGUIDE.md)
 
 - **Couleurs primaires** : Orange terre cuite (#E36C2D) + Gris anthracite (#2C2C2C)
-- **Typographie** : Satoshi (titres) + Manrope (body/UI)
+- **Typographie** : Satoshi (titres) + Plus Jakarta Sans (body/UI)
 - **Icônes** : Material Icons (UI Flutter), Remix Icon (launcher)
 - **Style** : Minimaliste, focus productivité
 

@@ -5,7 +5,7 @@ Application desktop Flutter pour Windows permettant d’analyser et chronométre
 
 ## Identité visuelle
 - Styleguide Dotlyn (orange E36C2D, gris 2C2C2C)
-- Typo Satoshi (titres), Manrope (UI)
+- Typo Satoshi (titres), Plus Jakarta Sans (UI)
 - Icônes Remix Icon
 
 ## Public cible
