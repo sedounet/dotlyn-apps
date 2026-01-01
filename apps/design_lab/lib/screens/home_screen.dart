@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/providers.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
-import 'package:dotlyn_core/dotlyn_core.dart';
 import 'theme_screen.dart';
 import 'buttons_screen.dart';
 import 'inputs_screen.dart';
 import 'cards_screen.dart';
 import 'dialogs_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeProvider = ref.watch(themeProviderRiverpod);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: themeProvider.toggleTheme,
+            onPressed: () => ref.read(themeProviderRiverpod).toggleTheme(),
           ),
         ],
       ),

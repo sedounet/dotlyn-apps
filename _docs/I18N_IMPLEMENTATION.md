@@ -147,12 +147,12 @@ Text(AppLocalizations.of(context)!.appTitle)
 
 ## 📦 Apps Configured
 
-| App | ARB Files | l10n.yaml | main.dart Updated | Status |
-|-----|-----------|-----------|-------------------|--------|
-| `money_tracker` | ✅ | ✅ | ✅ | Ready |
-| `github_notes` | ✅ | ✅ | ✅ | Ready |
-| `habit_tracker` | ✅ | ✅ | ✅ | Ready |
-| `sc_loop_analyzer` | ✅ | ✅ | ✅ | Ready |
+| App                | ARB Files | l10n.yaml | main.dart Updated | Status |
+| ------------------ | --------- | --------- | ----------------- | ------ |
+| `money_tracker`    | ✅         | ✅         | ✅                 | Ready  |
+| `github_notes`     | ✅         | ✅         | ✅                 | Ready  |
+| `habit_tracker`    | ✅         | ✅         | ✅                 | Ready  |
+| `sc_loop_analyzer` | ✅         | ✅         | ✅                 | Ready  |
 
 ---
 

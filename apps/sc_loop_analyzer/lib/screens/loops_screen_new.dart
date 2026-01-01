@@ -1,88 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ConsumerWidget, WidgetRef, Consumer, ConsumerStatefulWidget, ConsumerState;
 import '../models/profile.dart';
 import '../models/gameplay_type.dart';
 import '../models/ship.dart';
 import '../models/resource.dart';
-import '../providers/profile_provider.dart';
-import '../providers/session_provider.dart';
-import '../providers/gameplay_type_provider.dart';
-import '../providers/ship_provider.dart';
-import '../providers/resource_provider.dart';
+import '../providers/providers.dart';
 import '../services/database_service.dart';
 
-class LoopsScreen extends StatelessWidget {
+class LoopsScreen extends ConsumerWidget {
   const LoopsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ProfileProvider>(
-      builder: (context, provider, _) {
-        if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(profileProviderRiverpod);
 
-        return Scaffold(
-          body: ListView(
-            padding: const EdgeInsets.all(24),
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Scaffold(
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text('Boucles (workflows)', style: Theme.of(context).textTheme.headlineSmall),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Boucles (workflows)', style: Theme.of(context).textTheme.headlineSmall),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (kDebugMode)
-                        IconButton(
-                          icon: const Icon(Icons.refresh),
-                          onPressed: () => _resetDatabase(context),
-                          tooltip: 'Reset DB (debug)',
-                        ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () => _showAddLoopDialog(context),
-                        tooltip: 'Ajouter une boucle',
-                      ),
-                    ],
+                  if (kDebugMode)
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () => _resetDatabase(context, ref),
+                      tooltip: 'Reset DB (debug)',
+                    ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => _showAddLoopDialog(context),
+                    tooltip: 'Ajouter une boucle',
                   ),
                 ],
               ),
-              const Divider(),
-              if (provider.profiles.isEmpty)
-                const Center(child: Text('Aucune boucle. Appuyez sur + pour en créer une.'))
-              else
-                ...provider.profiles.map((profile) => ListTile(
-                      leading: const Icon(Icons.repeat),
-                      title: Text(profile.name),
-                      subtitle: Text(profile.description.isNotEmpty
-                          ? profile.description
-                          : 'Étapes: ${profile.steps.join(', ')}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () => _showEditLoopDialog(context, profile),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () async {
-                              await provider.deleteProfile(profile.id);
-                            },
-                          ),
-                        ],
-                      ),
-                    )),
             ],
           ),
-        );
-      },
+          const Divider(),
+          if (provider.profiles.isEmpty)
+            const Center(child: Text('Aucune boucle. Appuyez sur + pour en créer une.'))
+          else
+            ...provider.profiles.map((profile) => ListTile(
+                  leading: const Icon(Icons.repeat),
+                  title: Text(profile.name),
+                  subtitle: Text(profile.description.isNotEmpty
+                      ? profile.description
+                      : 'Étapes: ${profile.steps.join(', ')}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showEditLoopDialog(context, profile),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          await provider.deleteProfile(profile.id);
+                        },
+                      ),
+                    ],
+                  ),
+                )),
+        ],
+      ),
     );
   }
 
-  Future<void> _resetDatabase(BuildContext context) async {
+  Future<void> _resetDatabase(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -98,18 +93,20 @@ class LoopsScreen extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed == true) {
       await DatabaseService().resetDatabase();
-      if (context.mounted) {
-        Provider.of<ProfileProvider>(context, listen: false).loadProfiles();
-        Provider.of<SessionProvider>(context, listen: false).loadSessions();
-        Provider.of<GameplayTypeProvider>(context, listen: false).loadTypes();
-        Provider.of<ShipProvider>(context, listen: false).loadShips();
-        Provider.of<ResourceProvider>(context, listen: false).loadResources();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Base de données réinitialisée')),
-        );
-      }
+      if (!context.mounted) return;
+      await Future.wait([
+        ref.read(profileProviderRiverpod).loadProfiles(),
+        ref.read(sessionProviderRiverpod).loadSessions(),
+        ref.read(gameplayTypeProviderRiverpod).loadTypes(),
+        ref.read(shipProviderRiverpod).loadShips(),
+        ref.read(resourceProviderRiverpod).loadResources(),
+      ]);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Base de données réinitialisée')),
+      );
     }
   }
 
@@ -128,16 +125,16 @@ class LoopsScreen extends StatelessWidget {
   }
 }
 
-class AddLoopScreen extends StatefulWidget {
+class AddLoopScreen extends ConsumerStatefulWidget {
   final Profile? profileToEdit;
 
   const AddLoopScreen({super.key, this.profileToEdit});
 
   @override
-  State<AddLoopScreen> createState() => _AddLoopScreenState();
+  ConsumerState<AddLoopScreen> createState() => _AddLoopScreenState();
 }
 
-class _AddLoopScreenState extends State<AddLoopScreen> {
+class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final List<TextEditingController> _stepControllers = [
@@ -228,7 +225,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
-                final provider = Provider.of<GameplayTypeProvider>(context, listen: false);
+                final provider = ref.read(gameplayTypeProviderRiverpod);
                 final id = await provider.addType(GameplayType(
                   id: 0,
                   name: nameController.text,
@@ -272,7 +269,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
-                final provider = Provider.of<GameplayTypeProvider>(context, listen: false);
+                final provider = ref.read(gameplayTypeProviderRiverpod);
                 await provider.updateType(GameplayType(
                   id: type.id,
                   name: nameController.text,
@@ -307,7 +304,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     );
 
     if (confirmed == true && context.mounted) {
-      final provider = Provider.of<GameplayTypeProvider>(context, listen: false);
+      final provider = ref.read(gameplayTypeProviderRiverpod);
       await provider.deleteType(id);
       setState(() {
         _selectedGameplayTypeId = null;
@@ -340,7 +337,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
-                final provider = Provider.of<ShipProvider>(context, listen: false);
+                final provider = ref.read(shipProviderRiverpod);
                 final id = await provider.addShip(Ship(
                   id: 0,
                   name: nameController.text,
@@ -383,7 +380,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
-                final provider = Provider.of<ShipProvider>(context, listen: false);
+                final provider = ref.read(shipProviderRiverpod);
                 await provider.updateShip(Ship(
                   id: ship.id,
                   name: nameController.text,
@@ -418,7 +415,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
     );
 
     if (confirmed == true && context.mounted) {
-      final provider = Provider.of<ShipProvider>(context, listen: false);
+      final provider = ref.read(shipProviderRiverpod);
       await provider.deleteShip(id);
       setState(() {
         _selectedShipId = null;
@@ -435,8 +432,9 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
         title: const Text('Ajouter une ressource'),
         content: StatefulBuilder(
           builder: (context, setState) {
-            return Consumer<ResourceProvider>(
-              builder: (context, provider, _) {
+            return Consumer(
+              builder: (context, ref, _) {
+                final provider = ref.watch(resourceProviderRiverpod);
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -512,7 +510,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
               if (nameController.text.isNotEmpty &&
                   unitController.text.isNotEmpty &&
                   context.mounted) {
-                final provider = Provider.of<ResourceProvider>(context, listen: false);
+                final provider = ref.read(resourceProviderRiverpod);
                 await provider.addResource(Resource(
                   id: 0,
                   name: nameController.text,
@@ -546,7 +544,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
       shipId: _selectedShipId,
     );
 
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
+    final provider = ref.read(profileProviderRiverpod);
     int? profileId;
 
     // Check if we're editing or creating
@@ -583,6 +581,10 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final gameplayProvider = ref.watch(gameplayTypeProviderRiverpod);
+    final shipProvider = ref.watch(shipProviderRiverpod);
+    final resourceProvider = ref.watch(resourceProviderRiverpod);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.profileToEdit != null ? 'Modifier la boucle' : 'Nouvelle boucle'),
@@ -611,80 +613,72 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
             const SizedBox(height: 24),
             Text('Type de gameplay', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            Consumer<GameplayTypeProvider>(
-              builder: (context, provider, _) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        decoration: const InputDecoration(labelText: 'Gameplay'),
-                        initialValue: _selectedGameplayTypeId,
-                        items: provider.types
-                            .map((type) => DropdownMenuItem(value: type.id, child: Text(type.name)))
-                            .toList(),
-                        onChanged: (value) => setState(() => _selectedGameplayTypeId = value),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: _showAddGameplayTypeDialog,
-                      tooltip: 'Créer un type',
-                    ),
-                    if (_selectedGameplayTypeId != null) ...[
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () => _showEditGameplayTypeDialog(
-                            provider.types.firstWhere((t) => t.id == _selectedGameplayTypeId)),
-                        tooltip: 'Modifier',
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteGameplayType(_selectedGameplayTypeId!),
-                        tooltip: 'Supprimer',
-                      ),
-                    ],
-                  ],
-                );
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(labelText: 'Gameplay'),
+                    initialValue: _selectedGameplayTypeId,
+                    items: gameplayProvider.types
+                        .map((type) => DropdownMenuItem(value: type.id, child: Text(type.name)))
+                        .toList(),
+                    onChanged: (value) => setState(() => _selectedGameplayTypeId = value),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _showAddGameplayTypeDialog,
+                  tooltip: 'Créer un type',
+                ),
+                if (_selectedGameplayTypeId != null) ...[
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _showEditGameplayTypeDialog(
+                        gameplayProvider.types.firstWhere((t) => t.id == _selectedGameplayTypeId)),
+                    tooltip: 'Modifier',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => _deleteGameplayType(_selectedGameplayTypeId!),
+                    tooltip: 'Supprimer',
+                  ),
+                ],
+              ],
             ),
             const SizedBox(height: 16),
             Text('Vaisseau', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            Consumer<ShipProvider>(
-              builder: (context, provider, _) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        decoration: const InputDecoration(labelText: 'Vaisseau'),
-                        initialValue: _selectedShipId,
-                        items: provider.ships
-                            .map((ship) => DropdownMenuItem(value: ship.id, child: Text(ship.name)))
-                            .toList(),
-                        onChanged: (value) => setState(() => _selectedShipId = value),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: _showAddShipDialog,
-                      tooltip: 'Créer un vaisseau',
-                    ),
-                    if (_selectedShipId != null) ...[
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () => _showEditShipDialog(
-                            provider.ships.firstWhere((s) => s.id == _selectedShipId)),
-                        tooltip: 'Modifier',
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteShip(_selectedShipId!),
-                        tooltip: 'Supprimer',
-                      ),
-                    ],
-                  ],
-                );
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(labelText: 'Vaisseau'),
+                    initialValue: _selectedShipId,
+                    items: shipProvider.ships
+                        .map((ship) => DropdownMenuItem(value: ship.id, child: Text(ship.name)))
+                        .toList(),
+                    onChanged: (value) => setState(() => _selectedShipId = value),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _showAddShipDialog,
+                  tooltip: 'Créer un vaisseau',
+                ),
+                if (_selectedShipId != null) ...[
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _showEditShipDialog(
+                        shipProvider.ships.firstWhere((s) => s.id == _selectedShipId)),
+                    tooltip: 'Modifier',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => _deleteShip(_selectedShipId!),
+                    tooltip: 'Supprimer',
+                  ),
+                ],
+              ],
             ),
             const SizedBox(height: 24),
             Row(
@@ -703,29 +697,25 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
               const Text('Aucune ressource configurée',
                   style: TextStyle(fontStyle: FontStyle.italic))
             else
-              Consumer<ResourceProvider>(
-                builder: (context, provider, _) {
-                  return Column(
-                    children: _selectedResources.map((res) {
-                      final resource = provider.resources.firstWhere(
-                        (r) => r.id == res['resourceId'],
-                        orElse: () => Resource(id: 0, name: 'Unknown', unit: ''),
-                      );
-                      return ListTile(
-                        dense: true,
-                        title: Text('${resource.name} (${resource.unit})'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, size: 20),
-                          onPressed: () {
-                            setState(() {
-                              _selectedResources.remove(res);
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
+              Column(
+                children: _selectedResources.map((res) {
+                  final resource = resourceProvider.resources.firstWhere(
+                    (r) => r.id == res['resourceId'],
+                    orElse: () => Resource(id: 0, name: 'Unknown', unit: ''),
                   );
-                },
+                  return ListTile(
+                    dense: true,
+                    title: Text('${resource.name} (${resource.unit})'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.remove_circle_outline, size: 20),
+                      onPressed: () {
+                        setState(() {
+                          _selectedResources.remove(res);
+                        });
+                      },
+                    ),
+                  );
+                }).toList(),
               ),
             const SizedBox(height: 24),
             Row(

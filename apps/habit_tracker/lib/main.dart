@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:dotlyn_core/dotlyn_core.dart';
 

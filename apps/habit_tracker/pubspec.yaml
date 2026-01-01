@@ -12,6 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.0
+  flutter_riverpod: ^2.4.0
   
   # Packages partagés Dotlyn
   dotlyn_ui:

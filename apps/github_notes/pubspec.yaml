@@ -21,6 +21,7 @@ dependencies:
   # State management
   flutter_riverpod: ^2.4.0
   riverpod_annotation: ^2.3.0
+  intl: ^0.20.0
   
   # Database
   drift: ^2.14.0
