@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 // removed unused import: drift
@@ -235,6 +237,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ],
           ),
+
+          // Debug: show stored token (only in debug builds)
+          if (kDebugMode) ...[
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () async {
+                final storage = ref.read(secureStorageProvider);
+                final token = await storage.read(key: 'github_token');
+                await showDialog<void>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Debug: GitHub token'),
+                    content: SelectableText(token ?? '<empty>'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Close'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (token != null) Clipboard.setData(ClipboardData(text: token));
+                          Navigator.pop(ctx);
+                        },
+                        child: const Text('Copy'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('Show token (debug)'),
+            ),
+          ],
 
           const SizedBox(height: 32),
           const Divider(),
