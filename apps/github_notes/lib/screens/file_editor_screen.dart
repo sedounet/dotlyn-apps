@@ -279,9 +279,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
             onPressed: () {
               showModalBottomSheet<void>(
                 context: context,
-                builder: (ctx) => Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: const SingleChildScrollView(
+                builder: (ctx) => const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

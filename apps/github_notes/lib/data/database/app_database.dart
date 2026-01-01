@@ -36,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   // Test constructor for unit tests
-  AppDatabase.testConstructor(QueryExecutor e) : super(e);
+  AppDatabase.testConstructor(super.e);
 
   @override
   int get schemaVersion => 1;

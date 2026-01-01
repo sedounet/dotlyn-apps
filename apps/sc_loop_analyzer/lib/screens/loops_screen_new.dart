@@ -618,7 +618,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                     Expanded(
                       child: DropdownButtonFormField<int>(
                         decoration: const InputDecoration(labelText: 'Gameplay'),
-                        value: _selectedGameplayTypeId,
+                        initialValue: _selectedGameplayTypeId,
                         items: provider.types
                             .map((type) => DropdownMenuItem(value: type.id, child: Text(type.name)))
                             .toList(),
@@ -657,7 +657,7 @@ class _AddLoopScreenState extends State<AddLoopScreen> {
                     Expanded(
                       child: DropdownButtonFormField<int>(
                         decoration: const InputDecoration(labelText: 'Vaisseau'),
-                        value: _selectedShipId,
+                        initialValue: _selectedShipId,
                         items: provider.ships
                             .map((ship) => DropdownMenuItem(value: ship.id, child: Text(ship.name)))
                             .toList(),

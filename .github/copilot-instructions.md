@@ -153,7 +153,7 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 
 ### 2. Système de Documentation
 
-**Chaque app a EXACTEMENT 3 fichiers** :
+**Chaque app a EXACTEMENT 4 fichiers** :
 
 #### APP.md (fichier de travail)
 - Versions (v0.1 MVP, v0.2, v0.3+)
@@ -170,6 +170,18 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 - Public cible
 - Différenciation
 - Métriques succès
+
+#### USER-NOTES.md (notes d'utilisation) ⭐ NOUVEAU
+- **Usage** : Notes personnelles de l'utilisateur au fil de l'utilisation quotidienne
+- **Sections** :
+  - 🐛 Bugs Rencontrés : Bugs observés avec date + contexte
+  - 💡 Améliorations Souhaitées : Idées d'amélioration + justification
+  - 📝 Notes d'Usage : Observations générales, comportements inattendus
+  - ✅ Résolu : Bugs/améliorations traités (archive)
+- **Workflow Copilot** :
+  - Lire USER-NOTES.md régulièrement pour identifier les tâches à traiter
+  - Déplacer les items traités vers section "✅ Résolu"
+  - Utiliser comme source pour mise à jour APP.md TODO
 
 #### PROMPT_USER.md (demande utilisateur)
 - Fichier en langage naturel (1-2 chapitres max)
@@ -188,11 +200,17 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 3. Copilot exécute les tâches
 4. Fichiers vidés/supprimés pour la prochaine demande
 
+**Workflow USER-NOTES.md** :
+1. Utilisateur prend des notes au fil de l'utilisation (bugs, idées, observations)
+2. Copilot lit USER-NOTES.md lors des sessions de travail sur l'app
+3. Copilot identifie les tâches prioritaires et les traite
+4. Items résolus déplacés vers section "✅ Résolu" avec date de résolution
+
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
 - Créer de fichier MASTER.md
 - Garder plusieurs versions de prompts (PROMPT_V0.1.md, etc.)
-- Multiplier les fichiers de doc au-delà de APP.md + PITCH.md + PROMPT_USER.md + PROMPT_AI.md
+- Multiplier les fichiers de doc au-delà de APP.md + PITCH.md + USER-NOTES.md + PROMPT_USER.md + PROMPT_AI.md
 
 ---
 
@@ -423,6 +441,32 @@ Actions Copilot:
    │   └── widgets/
    ├── test/
    ├── pubspec.yaml             ← Inclure dotlyn_ui, dotlyn_core
+   └── README.md
+2. Créer _docs/apps/notes/APP.md avec :
+   - Vision
+   - v0.1 MVP (phases si complexe)
+   - TODO P1/P2/P3
+3. Créer _docs/apps/notes/PITCH.md
+4. Créer _docs/apps/notes/USER-NOTES.md (template avec sections 🐛💡📝✅)
+5. Créer label GitHub "notes"
+6. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
+7. Commit: "[notes] init: create new notes app structure"
+8. Bootstrap: cd apps/notes && flutter pub get
+```
+
+### Exemple 4 : Traiter notes utilisateur
+```
+User: "Regarde les notes dans USER-NOTES et traite les bugs/amélio"
+
+Actions Copilot:
+1. Lire _docs/apps/[app-active]/USER-NOTES.md
+2. Identifier items prioritaires (bugs critiques en premier)
+3. Pour chaque item traité:
+   - Corriger le code ou implémenter l'amélioration
+   - Déplacer l'item vers section "✅ Résolu" avec date
+   - Ajouter référence dans APP.md TODO si tâche récurrente
+4. Commit: "[app] fix/feat: address user-reported issues from USER-NOTES"
+```
    └── README.md
 2. Créer _docs/apps/notes/APP.md avec :
    - Vision
