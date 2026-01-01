@@ -106,10 +106,20 @@ flutter run -d <device-id>      # Device Android/iOS
 
 **Après modification DB (Drift)** :
 ```bash
+# Depuis le dossier de l'app (recommandé pour app isolée)
 cd apps/money_tracker
 flutter pub run build_runner build --delete-conflicting-outputs
+
+# OU depuis la racine avec Melos (pour regénérer tout le monorepo)
+melos run build:runner
+
 # Puis hot restart (R dans terminal flutter run, pas hot reload r)
 ```
+
+**Melos vs Flutter Pub** :
+- **Melos** (`melos run ...`) : Commandes monorepo-wide (analyze, format, test sur toutes apps)
+- **Flutter Pub** (`flutter pub ...`) : Commandes app-specific (run, build_runner sur une app)
+- **Règle** : Utiliser `flutter pub` depuis `apps/[app]/` pour travailler sur une app, `melos` depuis racine pour CI/audit global
 
 **Debug & Hot Reload** :
 - Hot reload (`r`) : OK pour changements UI uniquement
@@ -232,13 +242,29 @@ apps/[nom]/
 │   │   ├── [entity]_provider.dart
 │   │   └── ui_state_provider.dart
 │   ├── screens/              ← Screens with state consumption
-│   └── widgets/              ← Reusable UI components
+│   └── widgets/              ← Reusable UI components (optionnel si pas de widgets extraits)
 ├── test/                     ← Tests unitaires et widgets
 ├── pubspec.yaml
 └── README.md (court, lien vers _docs/)
 ```
 
-**Patterns Drift + Riverpod** :
+**Patterns standards** :
+
+*Drift + Riverpod* :
+```dart
+// Pattern: StreamProvider pour réactivité DB
+final itemsProvider = StreamProvider.autoDispose.family<List<Item>, int>(
+  (ref, filterId) {
+    final db = ref.watch(databaseProvider);
+    return (db.select(db.items)..where((t) => t.filter.equals(filterId))).watch();
+  }
+);
+```
+
+*Secure Storage (tokens/credentials)* :
+- Utiliser `flutter_secure_storage` pour données sensibles
+- Pattern documenté : `_docs/SECURE_STORAGE_PATTERN.md`
+- Toujours invalider providers après écriture token
 ```dart
 // Pattern: StreamProvider pour réactivité DB
 final itemsProvider = StreamProvider.autoDispose.family<List<Item>, int>(
@@ -299,6 +325,20 @@ melos run build:runner
 - **Contraste** : WCAG AA minimum
 
 **Usage** : `import 'package:dotlyn_ui/dotlyn_ui.dart';` puis `DotlynColors.primary`
+
+**Dark Theme** :
+- Toutes les apps doivent supporter le dark theme via `ThemeMode.system`
+- Pattern standard :
+```dart
+MaterialApp(
+  theme: DotlynTheme.lightTheme,
+  darkTheme: DotlynTheme.darkTheme,
+  themeMode: ThemeMode.system,
+  // ...
+)
+```
+- Utiliser `Theme.of(context).colorScheme.surface` au lieu de `Colors.white` hardcodé
+- Vérifier `Theme.of(context).brightness` pour ajuster shadows/borders
 
 ---
 

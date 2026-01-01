@@ -15,7 +15,7 @@ class GitHubNotesApp extends StatelessWidget {
     return MaterialApp(
       title: 'GitHub Notes',
       theme: DotlynTheme.lightTheme,
-      darkTheme: (DotlynTheme.darkTheme ?? ThemeData.dark()),
+      darkTheme: DotlynTheme.darkTheme,
       themeMode: ThemeMode.system,
       home: const FilesListScreen(),
       debugShowCheckedModeBanner: false,

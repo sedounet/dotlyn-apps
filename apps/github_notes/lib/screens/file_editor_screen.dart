@@ -281,11 +281,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                 context: context,
                 builder: (ctx) => Padding(
                   padding: const EdgeInsets.all(16),
-                  child: SingleChildScrollView(
+                  child: const SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text('Markdown quick reference', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      children: [
+                        Text('Markdown quick reference',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                         SizedBox(height: 8),
                         Text('- # Heading 1'),
                         Text('- ## Heading 2'),
@@ -345,22 +346,22 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Scrollbar(
-                          controller: _scrollController,
-                          thumbVisibility: true,
-                          child: TextField(
-                            controller: _controller,
-                            scrollController: _scrollController,
-                            maxLines: null,
-                            expands: true,
-                            decoration: const InputDecoration(
-                              hintText: 'Write your notes here...',
-                              border: InputBorder.none,
-                            ),
-                            onChanged: (_) {
-                              setState(() => _hasLocalChanges = true);
-                            },
-                          ),
+                      controller: _scrollController,
+                      thumbVisibility: true,
+                      child: TextField(
+                        controller: _controller,
+                        scrollController: _scrollController,
+                        maxLines: null,
+                        expands: true,
+                        decoration: const InputDecoration(
+                          hintText: 'Write your notes here...',
+                          border: InputBorder.none,
                         ),
+                        onChanged: (_) {
+                          setState(() => _hasLocalChanges = true);
+                        },
+                      ),
+                    ),
                   ),
                 ),
 

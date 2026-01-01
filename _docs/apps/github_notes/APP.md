@@ -45,54 +45,63 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 **Fonctionnalités** :
 - ✅ Configuration de fichiers trackés (owner/repo/path/nickname)
 - ✅ Liste des fichiers configurés
-- ✅ Éditeur markdown simple (TextField multiline)
+- ✅ Éditeur markdown simple (TextField multiline + scrollbar)
 - ✅ Sauvegarde locale (cache Drift)
-- ✅ Sync manuelle vers GitHub (bouton "Push")
-- ✅ Auth GitHub via Personal Access Token (saisie manuelle)
+- ✅ Sync manuelle vers GitHub (bouton "Sync GitHub")
+- ✅ Auth GitHub via Personal Access Token (saisie manuelle + secure storage)
+- ✅ Détection conflits SHA + dialog résolution
+- ✅ Dark theme support (system)
+- ✅ Markdown quick help (bouton aide)
 
 **Specs techniques** :
-- **State** : Riverpod (Provider, StreamProvider, NotifierProvider)
-- **DB** : Drift (tables: `project_files`, `file_contents`)
+- **State** : Riverpod (Provider, StreamProvider, FutureProvider)
+- **DB** : Drift (tables: `project_files`, `file_contents`, `app_settings`)
 - **API** : GitHub REST API (`GET/PUT /repos/{owner}/{repo}/contents/{path}`)
 - **UI** : dotlyn_ui theme + Material Icons
+- **Security** : flutter_secure_storage pour GitHub token
 
 **Non inclus v0.1** :
-- ❌ Détection conflits (si fichier modifié sur GitHub)
 - ❌ Background sync automatique
-- ❌ Preview markdown avancé
+- ❌ Preview markdown avancé (rendu HTML)
 - ❌ OAuth GitHub (seulement token manuel)
 
 ---
 
 ## 📝 TODO
 
-### 🔴 P1 — MVP v0.1 (ASAP)
+### 🔴 P1 — MVP v0.1 (Release prep)
 
 **Backend** :
-- [ ] Models: `ProjectFile`, `FileContent`, `SyncStatus`
-- [ ] Drift schema: tables + migrations
-- [ ] GitHub API service: `fetchFile()`, `updateFile()`
-- [ ] Providers: `projectFilesProvider`, `fileContentProvider`, `githubServiceProvider`
+- [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
+- [x] Drift schema: tables + migrations
+- [x] GitHub API service: `fetchFile()`, `updateFile()`, `testToken()`
+- [x] Providers: `projectFilesProvider`, `fileContentProvider`, `githubServiceProvider`
+- [x] Secure storage: token storage via `flutter_secure_storage`
 
 **UI** :
-- [ ] Screen: Files list (home)
-- [ ] Screen: File editor
-- [ ] Screen: Settings (GitHub token + add/remove files)
-- [ ] Widget: FileCard (status badge, last sync)
+- [x] Screen: Files list (home)
+- [x] Screen: File editor (scrollbar + markdown help)
+- [x] Screen: Settings (GitHub token + add/remove files)
+- [ ] Widget: FileCard extracted (reusable component)
 
 **Setup** :
 - [x] Bootstrap dependencies
-- [ ] Test API GitHub (avec token test)
-- [ ] Build & run sur Android/iOS
+- [x] Test API GitHub (avec token test)
+- [ ] Tests unitaires de base (Drift + GitHub service mock)
+- [ ] Build & run sur Android/iOS (device smoke test)
+- [ ] Create GitHub label `github_notes`
+- [ ] Release: version bump + CHANGELOG.md
 
 **Note** : App mobile uniquement (Android/iOS). Pas de support web/desktop.
 
 ### 🟡 P2 — Améliorations v0.2
 
-- [ ] Détection conflits (compare SHA GitHub vs local)
-- [ ] Preview markdown (package flutter_markdown)
+- [x] Détection conflits (compare SHA GitHub vs local)
+- [ ] Preview markdown avancé (package flutter_markdown avec rendu)
 - [ ] Background sync (chaque 15min si connecté)
 - [ ] Historique versions locales (rollback)
+- [ ] FileCard widget extracted (status badge, last sync)
+- [ ] Widget library standardization
 
 ### 🔵 P3 — Plus tard
 

@@ -34,6 +34,9 @@ class AppSettings extends Table {
 @DriftDatabase(tables: [ProjectFiles, FileContents, AppSettings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  
+  // Test constructor for unit tests
+  AppDatabase.testConstructor(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;
