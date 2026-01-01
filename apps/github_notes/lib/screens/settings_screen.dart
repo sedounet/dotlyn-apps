@@ -45,6 +45,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await storage.write(key: 'github_token', value: token);
     // also persist in DB for compatibility
     await database.saveGithubToken(token);
+    // refresh token provider so consumers use the new value
+    ref.invalidate(githubTokenProvider);
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +60,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _tokenValid = null;
     });
 
-    final githubService = ref.read(githubServiceProvider);
+    // read token fresh from secure storage to avoid stale provider value
+    final storage = ref.read(secureStorageProvider);
+    final token = await storage.read(key: 'github_token');
+    final githubService = GitHubService(token: token);
     final isValid = await githubService.testToken();
 
     setState(() {
