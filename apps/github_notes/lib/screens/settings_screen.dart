@@ -40,10 +40,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveToken() async {
     final database = ref.read(databaseProvider);
-    await database.saveGithubToken(_tokenController.text.trim());
+    final token = _tokenController.text.trim();
+    final storage = ref.read(secureStorageProvider);
+    await storage.write(key: 'github_token', value: token);
+    // also persist in DB for compatibility
+    await database.saveGithubToken(token);
+
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('GitHub token saved')),
+      const SnackBar(content: Text('GitHub token saved (secure)')),
     );
   }
 

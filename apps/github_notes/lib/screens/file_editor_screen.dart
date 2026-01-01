@@ -120,17 +120,92 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       final database = ref.read(databaseProvider);
       final existing = await database.getFileContent(widget.projectFile.id);
 
-      if (existing?.githubSha == null) {
+      final githubService = ref.read(githubServiceProvider);
+
+      // Fetch latest remote SHA to detect conflicts
+      String? remoteSha;
+      String? remoteContent;
+      try {
+        final remote = await githubService.fetchFile(
+          owner: widget.projectFile.owner,
+          repo: widget.projectFile.repo,
+          path: widget.projectFile.path,
+        );
+        remoteSha = remote.sha;
+        remoteContent = remote.content;
+      } on GitHubApiException catch (_) {
+        // ignore fetch errors for now; we'll handle missing SHA below
+      }
+
+      final localSha = existing?.githubSha;
+
+      // If both exist and differ -> conflict
+      if (localSha != null && remoteSha != null && localSha != remoteSha) {
+        final choice = await showDialog<String?>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Conflict detected'),
+            content: const Text(
+                'The file changed on GitHub since you last synced. What would you like to do?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, 'cancel'),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, 'fetch_remote'),
+                child: const Text('Fetch remote'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, 'overwrite'),
+                child: const Text('Overwrite GitHub'),
+              ),
+            ],
+          ),
+        );
+
+        if (choice == 'fetch_remote') {
+          if (remoteContent != null) {
+            _controller.text = remoteContent;
+            await database.upsertFileContent(
+              db.FileContentsCompanion(
+                id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+                projectFileId: drift.Value(widget.projectFile.id),
+                content: drift.Value(remoteContent),
+                githubSha: drift.Value(remoteSha),
+                syncStatus: drift.Value('synced'),
+                lastSyncAt: drift.Value(DateTime.now()),
+                localModifiedAt: drift.Value(DateTime.now()),
+              ),
+            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Fetched remote content')),
+              );
+            }
+            return;
+          }
+        }
+
+        if (choice != 'overwrite') {
+          // user cancelled or no overwrite -> abort
+          return;
+        }
+        // else proceed to overwrite GitHub (use localSha or remoteSha as base)
+      }
+
+      final shaToUse = localSha ?? remoteSha;
+
+      if (shaToUse == null) {
         throw Exception('No SHA available. Fetch from GitHub first.');
       }
 
-      final githubService = ref.read(githubServiceProvider);
       final newSha = await githubService.updateFile(
         owner: widget.projectFile.owner,
         repo: widget.projectFile.repo,
         path: widget.projectFile.path,
         content: _controller.text,
-        sha: existing!.githubSha!,
+        sha: shaToUse,
         message: 'Update ${widget.projectFile.nickname} from GitHub Notes',
       );
 
