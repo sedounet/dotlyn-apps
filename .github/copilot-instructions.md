@@ -11,8 +11,11 @@
 **Apps actives** :
 - `design_lab` — Outil interne pour tester le design system
 - `money_tracker` — App de gestion financière (Drift + Riverpod)
+- `github_notes` — Notes markdown synchro GitHub (mobile Android/iOS)
 - `habit_tracker` — Tracker d'habitudes (en conception)
 - `sc_loop_analyzer` — Analyseur de boucles Starcraft
+
+**Standards techniques** : Voir [`_docs/APP_STANDARDS.md`](../_docs/APP_STANDARDS.md) pour les exigences i18n, analytics, ads à intégrer dès v0.2-v0.3.
 
 ---
 
@@ -21,28 +24,32 @@
 ```
 dotlyn-apps/
 ├── _docs/              ← Documentation (apps + brand)
-│   ├── apps/           ← Doc par app (APP.md + PITCH.md + PROMPT_USER/AI.md)
+│   ├── apps/           ← Doc par app (APP.md + PITCH.md + ROADMAP.md + USER-NOTES.md)
 │   ├── dotlyn/         ← Brand (STYLEGUIDE.md, polices)
+│   ├── APP_STANDARDS.md ← Standards techniques (i18n, analytics, ads) ⭐
 │   ├── DASHBOARD.md    ← Vue d'ensemble globale
 │   └── GUIDE_TDD_TESTS.md ← Guide testing Flutter
 ├── apps/               ← Mini-apps Flutter indépendantes
 │   └── [app]/
 │       ├── lib/
 │       │   ├── main.dart
+│       │   ├── l10n/           ← Localization ARB files (v0.2+)
 │       │   ├── data/database/  ← DB schemas (Drift)
 │       │   ├── models/         ← Data models
 │       │   ├── providers/      ← Riverpod providers
 │       │   ├── screens/        ← UI screens
-│       │   └── widgets/        ← Reusable widgets
+│       │   ├── services/       ← Business logic (analytics, etc.)
+│       │   └── widgets/        ← Reusable widgets (+ ad placeholder)
 │       └── pubspec.yaml
 ├── packages/           ← Code partagé (dotlyn_ui, dotlyn_core)
 │   ├── dotlyn_ui/      ← Thème, couleurs, typography, widgets
 │   └── dotlyn_core/    ← Services, providers, utils
 └── melos.yaml          ← Config monorepo
+```
 
 ---
 
-## �️ Architecture & Stack Technique
+## ⚙️ Architecture & Stack Technique
 
 ### Stack Standard (Money Tracker)
 - **State Management** : Riverpod 2.4+ (StreamProvider, Provider, NotifierProvider)

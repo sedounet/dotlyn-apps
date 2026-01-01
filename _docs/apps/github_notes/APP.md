@@ -2,7 +2,8 @@
 
 **Status** : 🚧 En développement  
 **Version actuelle** : v0.1 MVP  
-**Dernière update** : 2025-12-31
+**Dernière update** : 2026-01-01  
+**Roadmap** : Voir [`ROADMAP.md`](ROADMAP.md) pour le plan détaillé des versions
 
 ---
 
