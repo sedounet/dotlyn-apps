@@ -7,6 +7,7 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:github_notes/data/database/app_database.dart';
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/providers/github_provider.dart';
+import 'package:github_notes/services/github_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -87,9 +88,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final repoController = TextEditingController();
     final pathController = TextEditingController();
     final nicknameController = TextEditingController();
+    final parentContext = context;
 
     showDialog(
-      context: context,
+      context: parentContext,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Add File to Track'),
         content: SingleChildScrollView(
@@ -132,7 +134,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
@@ -160,8 +162,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
 
               if (!mounted) return;
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
+              Navigator.pop(parentContext);
+              ScaffoldMessenger.of(parentContext).showSnackBar(
                 const SnackBar(content: Text('File added successfully')),
               );
             },
@@ -319,18 +321,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () async {
+                          final parentContext = context;
                           final confirm = await showDialog<bool>(
-                            context: context,
+                            context: parentContext,
                             builder: (dialogContext) => AlertDialog(
                               title: const Text('Delete File?'),
                               content: Text('Remove "${file.nickname}" from tracked files?'),
                               actions: [
                                 TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
+                                  onPressed: () => Navigator.pop(dialogContext, false),
                                   child: const Text('Cancel'),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () => Navigator.pop(context, true),
+                                  onPressed: () => Navigator.pop(dialogContext, true),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                   ),
@@ -344,8 +347,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           if (confirm == true) {
                             await ref.read(databaseProvider).deleteProjectFile(file.id);
                             if (!mounted) return;
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            ScaffoldMessenger.of(parentContext).showSnackBar(
                               const SnackBar(content: Text('File removed')),
                             );
                           }
