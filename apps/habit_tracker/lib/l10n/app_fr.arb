@@ -1,0 +1,14 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Habit Tracker",
+  "habit": "Habitude",
+  "habits": "Habitudes",
+  "addHabit": "Ajouter une Habitude",
+  "editHabit": "Modifier l'Habitude",
+  "deleteHabit": "Supprimer l'Habitude",
+  "name": "Nom",
+  "description": "Description",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "settings": "Paramètres"
+}

@@ -1,0 +1,47 @@
+{
+  "@@locale": "en",
+  "appTitle": "Habit Tracker",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "habit": "Habit",
+  "@habit": {
+    "description": "Habit label"
+  },
+  "habits": "Habits",
+  "@habits": {
+    "description": "Habits label (plural)"
+  },
+  "addHabit": "Add Habit",
+  "@addHabit": {
+    "description": "Button to add a new habit"
+  },
+  "editHabit": "Edit Habit",
+  "@editHabit": {
+    "description": "Button to edit habit"
+  },
+  "deleteHabit": "Delete Habit",
+  "@deleteHabit": {
+    "description": "Button to delete habit"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name label"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label"
+  }
+}

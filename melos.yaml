@@ -3,7 +3,8 @@ repository: https://github.com/sedounet/dotlyn-apps
 
 packages:
   - apps/**
-  - packages/**
+  - packages/dotlyn_ui
+  - packages/dotlyn_core
 
 command:
   bootstrap:

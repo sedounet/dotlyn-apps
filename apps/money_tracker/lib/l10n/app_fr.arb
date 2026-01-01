@@ -1,0 +1,21 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Money Tracker",
+  "account": "Compte",
+  "accounts": "Comptes",
+  "addTransaction": "Ajouter une Opération",
+  "addAccount": "Ajouter un Compte",
+  "amount": "Montant",
+  "balance": "Solde",
+  "category": "Catégorie",
+  "date": "Date",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "settings": "Paramètres",
+  "transaction": "Opération",
+  "transactions": "Opérations",
+  "validated": "Validée",
+  "pending": "En attente"
+}

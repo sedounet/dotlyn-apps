@@ -1,0 +1,15 @@
+{
+  "@@locale": "fr",
+  "appTitle": "GitHub Notes",
+  "note": "Note",
+  "notes": "Notes",
+  "addNote": "Ajouter une Note",
+  "editNote": "Modifier la Note",
+  "deleteNote": "Supprimer la Note",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "sync": "Synchroniser",
+  "settings": "Paramètres",
+  "title": "Titre",
+  "content": "Contenu"
+}

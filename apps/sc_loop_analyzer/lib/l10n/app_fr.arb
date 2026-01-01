@@ -1,0 +1,11 @@
+{
+  "@@locale": "fr",
+  "appTitle": "SC Loop Analyzer",
+  "analyze": "Analyser",
+  "replay": "Replay",
+  "upload": "Charger",
+  "results": "Résultats",
+  "settings": "Paramètres",
+  "save": "Enregistrer",
+  "cancel": "Annuler"
+}

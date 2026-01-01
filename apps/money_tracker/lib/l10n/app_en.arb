@@ -1,0 +1,75 @@
+{
+  "@@locale": "en",
+  "appTitle": "Money Tracker",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account label"
+  },
+  "accounts": "Accounts",
+  "@accounts": {
+    "description": "Accounts label (plural)"
+  },
+  "addTransaction": "Add Transaction",
+  "@addTransaction": {
+    "description": "Button to add a new transaction"
+  },
+  "addAccount": "Add Account",
+  "@addAccount": {
+    "description": "Button to add a new account"
+  },
+  "amount": "Amount",
+  "@amount": {
+    "description": "Amount label"
+  },
+  "balance": "Balance",
+  "@balance": {
+    "description": "Balance label"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Category label"
+  },
+  "date": "Date",
+  "@date": {
+    "description": "Date label"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label"
+  },
+  "transaction": "Transaction",
+  "@transaction": {
+    "description": "Transaction label"
+  },
+  "transactions": "Transactions",
+  "@transactions": {
+    "description": "Transactions label (plural)"
+  },
+  "validated": "Validated",
+  "@validated": {
+    "description": "Status label for validated transaction"
+  },
+  "pending": "Pending",
+  "@pending": {
+    "description": "Status label for pending transaction"
+  }
+}

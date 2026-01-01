@@ -1,0 +1,51 @@
+{
+  "@@locale": "en",
+  "appTitle": "GitHub Notes",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "note": "Note",
+  "@note": {
+    "description": "Note label"
+  },
+  "notes": "Notes",
+  "@notes": {
+    "description": "Notes label (plural)"
+  },
+  "addNote": "Add Note",
+  "@addNote": {
+    "description": "Button to add a new note"
+  },
+  "editNote": "Edit Note",
+  "@editNote": {
+    "description": "Button to edit note"
+  },
+  "deleteNote": "Delete Note",
+  "@deleteNote": {
+    "description": "Button to delete note"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "sync": "Sync",
+  "@sync": {
+    "description": "Sync button"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Title label"
+  },
+  "content": "Content",
+  "@content": {
+    "description": "Content label"
+  }
+}

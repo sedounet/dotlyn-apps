@@ -4,10 +4,12 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   
   # Dotlyn packages
@@ -30,9 +32,6 @@ dependencies:
   # HTTP & GitHub API
   http: ^1.2.0
   flutter_secure_storage: ^9.0.0
-  
-  # Utils
-  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -46,8 +45,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# Platforms: Mobile only (Android/iOS)
-platforms:
-  android:
-  ios:
+  generate: true

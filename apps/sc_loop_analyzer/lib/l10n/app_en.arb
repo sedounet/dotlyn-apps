@@ -1,0 +1,35 @@
+{
+  "@@locale": "en",
+  "appTitle": "SC Loop Analyzer",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "analyze": "Analyze",
+  "@analyze": {
+    "description": "Analyze button"
+  },
+  "replay": "Replay",
+  "@replay": {
+    "description": "Replay label"
+  },
+  "upload": "Upload",
+  "@upload": {
+    "description": "Upload button"
+  },
+  "results": "Results",
+  "@results": {
+    "description": "Results label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  }
+}

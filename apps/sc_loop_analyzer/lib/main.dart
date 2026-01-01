@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:dotlyn_core/dotlyn_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope, ConsumerWidget, WidgetRef;
 import 'models/gameplay_type.dart';
 import 'models/ship.dart';
 import 'providers/profile_provider.dart';
@@ -9,36 +12,55 @@ import 'providers/ship_provider.dart';
 import 'providers/resource_provider.dart';
 import 'services/database_service.dart';
 import 'screens/loops_screen_new.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
-  runApp(const SCLoopAnalyzerApp());
+  runApp(
+    ProviderScope(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ProfileProvider>(create: (_) => ProfileProvider()..loadProfiles()),
+          ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider()..loadSessions()),
+          ChangeNotifierProvider<GameplayTypeProvider>(create: (_) => GameplayTypeProvider()..loadTypes()),
+          ChangeNotifierProvider<ShipProvider>(create: (_) => ShipProvider()..loadShips()),
+          ChangeNotifierProvider<ResourceProvider>(create: (_) => ResourceProvider()..loadResources()),
+        ],
+        child: const SCLoopAnalyzerApp(),
+      ),
+    ),
+  );
 }
 
-class SCLoopAnalyzerApp extends StatelessWidget {
+class SCLoopAnalyzerApp extends ConsumerWidget {
   const SCLoopAnalyzerApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProfileProvider()..loadProfiles()),
-        ChangeNotifierProvider(create: (_) => SessionProvider()..loadSessions()),
-        ChangeNotifierProvider(create: (_) => GameplayTypeProvider()..loadTypes()),
-        ChangeNotifierProvider(create: (_) => ShipProvider()..loadShips()),
-        ChangeNotifierProvider(create: (_) => ResourceProvider()..loadResources()),
-      ],
-      child: MaterialApp(
-        title: 'SC Loop Analyzer',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFFE36C2D),
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          fontFamily: 'Plus Jakarta Sans',
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
+    return MaterialApp(
+      title: 'SC Loop Analyzer',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE36C2D),
+          brightness: Brightness.light,
         ),
-        home: const HomeScreen(),
+        useMaterial3: true,
+        fontFamily: 'Plus Jakarta Sans',
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE36C2D),
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        fontFamily: 'Plus Jakarta Sans',
+      ),
+      themeMode: ThemeMode.system,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const HomeScreen(),
     );
   }
 }

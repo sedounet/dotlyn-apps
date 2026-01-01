@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:dotlyn_ui/dotlyn_ui.dart';
+import 'package:dotlyn_core/dotlyn_core.dart';
+
+import 'l10n/app_localizations.dart';
 
 void main() {
-  runApp(const HabitTrackerApp());
+  runApp(const ProviderScope(child: HabitTrackerApp()));
 }
 
-class HabitTrackerApp extends StatelessWidget {
+class HabitTrackerApp extends ConsumerWidget {
   const HabitTrackerApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
       title: 'Habit Tracker',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE36C2D)),
-        useMaterial3: true,
-      ),
+      theme: DotlynTheme.lightTheme,
+      darkTheme: DotlynTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const HabitTrackerHome(),
     );
   }
