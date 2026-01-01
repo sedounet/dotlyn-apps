@@ -74,10 +74,20 @@
 - [Styleguide Dotlyn](./dotlyn/STYLEGUIDE.md)
 - [Idées mini-apps](./dotlyn/miniapps_idees.md)
 - [Brand Assets](./dotlyn/brand-assets/)
+- [I18N Implementation Guide](./I18N_IMPLEMENTATION.md)
+- [APP Standards](./APP_STANDARDS.md)
 
 ---
-31  
-**Apps en dev** : 3 (Money Tracker, Habit Tracker, GitHub Notes
-**Apps en dev** : 2 (Money Tracker, Habit Tracker)  
+
+## 📊 Statistiques
+
+**Apps en dev** : 2 (Money Tracker, GitHub Notes)  
+**Apps en conception** : 1 (Habit Tracker)  
 **Apps actives** : 1 (Design Lab - outil interne)  
 **Apps abandonnées** : 3 (Timer archivé, Pomodoro/Tabata supprimés)
+
+**Standards Techniques Implémentés** :
+- ✅ Localization (i18n) - en, fr
+- 🚧 Analytics - À intégrer v0.3+
+- 🚧 Ads Placeholder - À intégrer v0.3-v0.4
+- ✅ Dark Theme - ThemeMode.system
