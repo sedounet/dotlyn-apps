@@ -18,6 +18,7 @@ class FileEditorScreen extends ConsumerStatefulWidget {
 
 class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   late TextEditingController _controller;
+  late ScrollController _scrollController;
   bool _isLoading = false;
   bool _hasLocalChanges = false;
 
@@ -25,11 +26,13 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _scrollController = ScrollController();
     _loadContent();
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -40,6 +43,11 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
     if (content != null) {
       _controller.text = content.content;
+      // ensure caret at start and scroll to top
+      _controller.selection = const TextSelection.collapsed(offset: 0);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) _scrollController.jumpTo(0);
+      });
     } else {
       // No local content, try fetching from GitHub
       await _fetchFromGitHub();
@@ -59,6 +67,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       );
 
       _controller.text = response.content;
+
+      // ensure caret at start and scroll to top
+      _controller.selection = const TextSelection.collapsed(offset: 0);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) _scrollController.jumpTo(0);
+      });
 
       // Save to local DB
       final database = ref.read(databaseProvider);
@@ -259,6 +273,35 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       appBar: AppBar(
         title: Text(widget.projectFile.nickname),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'Markdown quick help',
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (ctx) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('Markdown quick reference', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        SizedBox(height: 8),
+                        Text('- # Heading 1'),
+                        Text('- ## Heading 2'),
+                        Text('- **bold**'),
+                        Text('- *italic*'),
+                        Text('- `inline code`'),
+                        Text('- ```\ncode block\n```'),
+                        Text('- - list item'),
+                        Text('- [link](https://example.com)'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           if (fileContentAsync.valueOrNull?.syncStatus == 'synced')
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -301,18 +344,23 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      controller: _controller,
-                      maxLines: null,
-                      expands: true,
-                      decoration: const InputDecoration(
-                        hintText: 'Write your notes here...',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (_) {
-                        setState(() => _hasLocalChanges = true);
-                      },
-                    ),
+                    child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          child: TextField(
+                            controller: _controller,
+                            scrollController: _scrollController,
+                            maxLines: null,
+                            expands: true,
+                            decoration: const InputDecoration(
+                              hintText: 'Write your notes here...',
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (_) {
+                              setState(() => _hasLocalChanges = true);
+                            },
+                          ),
+                        ),
                   ),
                 ),
 
@@ -320,10 +368,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha(13),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withAlpha(60)
+                            : Colors.black.withAlpha(13),
                         blurRadius: 10,
                         offset: const Offset(0, -2),
                       ),
