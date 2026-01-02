@@ -155,10 +155,13 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
       final githubService = ref.read(githubServiceProvider);
 
-      // Fetch latest remote SHA to detect conflicts
+      // Fetch latest remote SHA to detect conflicts (with small delay to avoid initial race conditions)
       String? remoteSha;
       String? remoteContent;
       try {
+        // Small delay to avoid sync race condition on first fetch
+        await Future.delayed(const Duration(milliseconds: 500));
+        
         final remote = await githubService.fetchFile(
           owner: widget.projectFile.owner,
           repo: widget.projectFile.repo,
@@ -166,8 +169,22 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         );
         remoteSha = remote.sha;
         remoteContent = remote.content;
-      } on GitHubApiException catch (_) {
-        // ignore fetch errors for now; we'll handle missing SHA below
+      } on GitHubApiException catch (e) {
+        // If fetch fails and we have no local SHA, re-fetch on initial sync attempt
+        if (existing?.githubSha == null) {
+          try {
+            await Future.delayed(const Duration(seconds: 1));
+            final remote = await githubService.fetchFile(
+              owner: widget.projectFile.owner,
+              repo: widget.projectFile.repo,
+              path: widget.projectFile.path,
+            );
+            remoteSha = remote.sha;
+            remoteContent = remote.content;
+          } on GitHubApiException catch (_) {
+            // Still failed, will handle below
+          }
+        }
       }
 
       final localSha = existing?.githubSha;

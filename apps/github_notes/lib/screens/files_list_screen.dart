@@ -124,6 +124,19 @@ class FileCard extends ConsumerWidget {
                           ),
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    iconSize: 18,
+                    tooltip: 'Edit file settings',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SettingsScreen(editingFile: file),
+                        ),
+                      );
+                    },
+                  ),
                   fileContentAsync.when(
                     data: (content) {
                       if (content == null) return const SizedBox.shrink();

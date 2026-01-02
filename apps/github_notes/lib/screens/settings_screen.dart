@@ -10,7 +10,9 @@ import 'package:github_notes/providers/github_provider.dart';
 import 'package:github_notes/services/github_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({super.key});
+  final ProjectFile? editingFile;
+  
+  const SettingsScreen({super.key, this.editingFile});
 
   @override
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
