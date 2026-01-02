@@ -103,6 +103,15 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [ ] Historique versions locales (rollback)
 - [ ] FileCard widget extracted (status badge, last sync)
 - [ ] Widget library standardization
+- [ ] Ajouter un bouton “Dupliquer” sur chaque carte de fichier suivi. Ce bouton ouvre le dialogue d’ajout de fichier, pré-rempli avec les paramètres du fichier source (modifiable avant validation).
+- [ ] Repenser l’UI des actions : placer les icônes d’édition et de suppression au-dessus du texte de la carte pour alléger la présentation.
+- [ ] Lors de l’ajout ou duplication, permettre de tester si le fichier distant existe déjà :
+    - Si oui, proposer de le suivre directement.
+    - Si non, proposer de le créer ou de modifier les paramètres avant validation.
+- [ ] Permettre la synchronisation bidirectionnelle : si le fichier a été modifié sur GitHub, proposer de rapatrier la version distante (pull) au lieu d’écraser systématiquement avec la version locale. L’utilisateur doit pouvoir choisir entre :
+    - Écraser GitHub avec la version locale (push)
+    - Récupérer la version GitHub et remplacer le local (pull)
+    - Fusionner manuellement en cas de conflit
 
 ### 🔵 P3 — Plus tard
 
