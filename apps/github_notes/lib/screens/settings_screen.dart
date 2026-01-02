@@ -11,7 +11,7 @@ import 'package:github_notes/services/github_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
-  
+
   const SettingsScreen({super.key, this.editingFile});
 
   @override
@@ -176,6 +176,96 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  void _showEditFileDialog(ProjectFile file) {
+    final ownerController = TextEditingController(text: file.owner);
+    final repoController = TextEditingController(text: file.repo);
+    final pathController = TextEditingController(text: file.path);
+    final nicknameController = TextEditingController(text: file.nickname);
+    final parentContext = context;
+
+    showDialog(
+      context: parentContext,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Edit File Settings'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: ownerController,
+                decoration: const InputDecoration(
+                  labelText: 'Owner',
+                  hintText: 'e.g., sedounet',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: repoController,
+                decoration: const InputDecoration(
+                  labelText: 'Repository',
+                  hintText: 'e.g., dotlyn-apps',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: pathController,
+                decoration: const InputDecoration(
+                  labelText: 'File Path',
+                  hintText: 'e.g., _docs/apps/money_tracker/PROMPT_USER.md',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nicknameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nickname',
+                  hintText: 'e.g., Money Tracker - User Prompt',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (ownerController.text.isEmpty ||
+                  repoController.text.isEmpty ||
+                  pathController.text.isEmpty ||
+                  nicknameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('All fields are required')),
+                );
+                return;
+              }
+
+              final database = ref.read(databaseProvider);
+              await database.updateProjectFile(
+                file.copyWith(
+                  owner: ownerController.text.trim(),
+                  repo: repoController.text.trim(),
+                  path: pathController.text.trim(),
+                  nickname: nicknameController.text.trim(),
+                  updatedAt: DateTime.now(),
+                ),
+              );
+
+              if (!mounted) return;
+              Navigator.pop(parentContext);
+              ScaffoldMessenger.of(parentContext).showSnackBar(
+                const SnackBar(content: Text('File updated successfully')),
+              );
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final projectFilesAsync = ref.watch(projectFilesProvider);
@@ -320,40 +410,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () async {
-                          final parentContext = context;
-                          final confirm = await showDialog<bool>(
-                            context: parentContext,
-                            builder: (dialogContext) => AlertDialog(
-                              title: const Text('Delete File?'),
-                              content: Text('Remove "${file.nickname}" from tracked files?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(dialogContext, false),
-                                  child: const Text('Cancel'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: DotlynColors.primary),
+                            tooltip: 'Edit settings',
+                            onPressed: () {
+                              // Show edit dialog with pre-filled values
+                              _showEditFileDialog(file);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              final parentContext = context;
+                              final confirm = await showDialog<bool>(
+                                context: parentContext,
+                                builder: (dialogContext) => AlertDialog(
+                                  title: const Text('Delete File?'),
+                                  content: Text('Remove "${file.nickname}" from tracked files?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(dialogContext, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.pop(dialogContext, true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
                                 ),
-                                ElevatedButton(
-                                  onPressed: () => Navigator.pop(dialogContext, true),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                  ),
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            ),
-                          );
+                              );
 
-                          if (!mounted) return;
-                          if (confirm == true) {
-                            await ref.read(databaseProvider).deleteProjectFile(file.id);
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(parentContext).showSnackBar(
-                              const SnackBar(content: Text('File removed')),
-                            );
-                          }
-                        },
+                              if (!mounted) return;
+                              if (confirm == true) {
+                                await ref.read(databaseProvider).deleteProjectFile(file.id);
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(parentContext).showSnackBar(
+                                  const SnackBar(content: Text('File removed')),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );

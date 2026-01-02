@@ -31,6 +31,13 @@ class FilesListScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: projectFilesAsync.when(
+          loading: () => const Center(
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
           data: (files) {
             if (files.isEmpty) {
               return Center(
@@ -123,19 +130,6 @@ class FileCard extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    iconSize: 18,
-                    tooltip: 'Edit file settings',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SettingsScreen(editingFile: file),
-                        ),
-                      );
-                    },
                   ),
                   fileContentAsync.when(
                     data: (content) {

@@ -6,7 +6,8 @@ import 'package:dotlyn_core/dotlyn_core.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/files_list_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: GitHubNotesApp()));
 }
 

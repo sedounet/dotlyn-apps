@@ -161,7 +161,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       try {
         // Small delay to avoid sync race condition on first fetch
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         final remote = await githubService.fetchFile(
           owner: widget.projectFile.owner,
           repo: widget.projectFile.repo,
