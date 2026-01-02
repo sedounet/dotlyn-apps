@@ -29,59 +29,61 @@ class FilesListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: projectFilesAsync.when(
-        data: (files) {
-          if (files.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.note_add, size: 64, color: DotlynColors.primary.withAlpha(128)),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No files configured',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('Go to Settings to add files'),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                      );
-                    },
-                    icon: const Icon(Icons.settings),
-                    label: const Text('Open Settings'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: files.length,
-            itemBuilder: (context, index) {
-              final file = files[index];
-              return FileCard(
-                file: file,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => FileEditorScreen(projectFile: file),
+      body: SafeArea(
+        child: projectFilesAsync.when(
+          data: (files) {
+            if (files.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.note_add, size: 64, color: DotlynColors.primary.withAlpha(128)),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No files configured',
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  );
-                },
+                    const SizedBox(height: 8),
+                    const Text('Go to Settings to add files'),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.settings),
+                      label: const Text('Open Settings'),
+                    ),
+                  ],
+                ),
               );
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: files.length,
+              itemBuilder: (context, index) {
+                final file = files[index];
+                return FileCard(
+                  file: file,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FileEditorScreen(projectFile: file),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text('Error: $error'),
+          ),
         ),
       ),
     );

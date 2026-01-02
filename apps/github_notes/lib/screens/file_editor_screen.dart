@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
@@ -21,6 +22,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   late ScrollController _scrollController;
   bool _isLoading = false;
   bool _hasLocalChanges = false;
+  Timer? _autoSaveTimer;
+  final Duration _autoSaveDelay = const Duration(seconds: 2);
 
   @override
   void initState() {
@@ -32,9 +35,17 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
   @override
   void dispose() {
+    _autoSaveTimer?.cancel();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _scheduleAutoSave() {
+    _autoSaveTimer?.cancel();
+    _autoSaveTimer = Timer(_autoSaveDelay, () {
+      if (_hasLocalChanges) _saveLocal(auto: true);
+    });
   }
 
   Future<void> _loadContent() async {
@@ -103,7 +114,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
     }
   }
 
-  Future<void> _saveLocal() async {
+  Future<void> _saveLocal({bool auto = false}) async {
     final parentContext = context;
     final database = ref.read(databaseProvider);
     final existing = await database.getFileContent(widget.projectFile.id);
@@ -120,9 +131,14 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       ),
     );
 
-    setState(() => _hasLocalChanges = false);
-
     if (mounted) {
+      setState(() => _hasLocalChanges = false);
+    } else {
+      // If unmounted, just reset flag locally
+      _hasLocalChanges = false;
+    }
+
+    if (!auto && mounted) {
       ScaffoldMessenger.of(parentContext).showSnackBar(
         const SnackBar(content: Text('Saved locally')),
       );
@@ -269,143 +285,156 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   Widget build(BuildContext context) {
     final fileContentAsync = ref.watch(fileContentProvider(widget.projectFile.id));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.projectFile.nickname),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            tooltip: 'Markdown quick help',
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                builder: (ctx) => const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Markdown quick reference',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        SizedBox(height: 8),
-                        Text('- # Heading 1'),
-                        Text('- ## Heading 2'),
-                        Text('- **bold**'),
-                        Text('- *italic*'),
-                        Text('- `inline code`'),
-                        Text('- ```\ncode block\n```'),
-                        Text('- - list item'),
-                        Text('- [link](https://example.com)'),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          if (fileContentAsync.valueOrNull?.syncStatus == 'synced')
+    return WillPopScope(
+      onWillPop: () async {
+        // If there are local changes, save them before popping
+        if (_hasLocalChanges) {
+          await _saveLocal();
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.projectFile.nickname),
+          actions: [
             IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _isLoading ? null : _fetchFromGitHub,
-              tooltip: 'Fetch from GitHub',
-            ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Status bar
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  color: DotlynColors.secondary.withAlpha(13),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.folder_outlined,
-                        size: 16,
-                        color: DotlynColors.secondary.withAlpha(153),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${widget.projectFile.owner}/${widget.projectFile.repo}/${widget.projectFile.path}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: DotlynColors.secondary.withAlpha(153),
-                              ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Editor
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Scrollbar(
-                      controller: _scrollController,
-                      thumbVisibility: true,
-                      child: TextField(
-                        controller: _controller,
-                        scrollController: _scrollController,
-                        maxLines: null,
-                        expands: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Write your notes here...',
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (_) {
-                          setState(() => _hasLocalChanges = true);
-                        },
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'Markdown quick help',
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (ctx) => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Markdown quick reference',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          SizedBox(height: 8),
+                          Text('- # Heading 1'),
+                          Text('- ## Heading 2'),
+                          Text('- **bold**'),
+                          Text('- *italic*'),
+                          Text('- `inline code`'),
+                          Text('- ```\ncode block\n```'),
+                          Text('- - list item'),
+                          Text('- [link](https://example.com)'),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                );
+              },
+            ),
+            if (fileContentAsync.valueOrNull?.syncStatus == 'synced')
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _isLoading ? null : _fetchFromGitHub,
+                tooltip: 'Fetch from GitHub',
+              ),
+          ],
+        ),
+        body: SafeArea(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    // Status bar
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      color: DotlynColors.secondary.withAlpha(13),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.folder_outlined,
+                            size: 16,
+                            color: DotlynColors.secondary.withAlpha(153),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              '${widget.projectFile.owner}/${widget.projectFile.repo}/${widget.projectFile.path}',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: DotlynColors.secondary.withAlpha(153),
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                // Bottom actions
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.black.withAlpha(60)
-                            : Colors.black.withAlpha(13),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _hasLocalChanges ? _saveLocal : null,
-                          icon: const Icon(Icons.save),
-                          label: const Text('Save Local'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: _isLoading ? null : _syncToGitHub,
-                          icon: const Icon(Icons.cloud_upload),
-                          label: const Text('Sync GitHub'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: DotlynColors.primary,
-                            foregroundColor: Colors.white,
+                    // Editor
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          child: TextField(
+                            controller: _controller,
+                            scrollController: _scrollController,
+                            maxLines: null,
+                            expands: true,
+                            textAlignVertical: TextAlignVertical.top,
+                            decoration: const InputDecoration(
+                              hintText: 'Write your notes here...',
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (_) {
+                              setState(() => _hasLocalChanges = true);
+                              _scheduleAutoSave();
+                            },
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // Bottom actions
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.black.withAlpha(60)
+                                : Colors.black.withAlpha(13),
+                            blurRadius: 10,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _hasLocalChanges ? _saveLocal : null,
+                              icon: const Icon(Icons.save),
+                              label: const Text('Save Local'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _isLoading ? null : _syncToGitHub,
+                              icon: const Icon(Icons.cloud_upload),
+                              label: const Text('Sync GitHub'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: DotlynColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+        ),
+      ),
     );
   }
 }

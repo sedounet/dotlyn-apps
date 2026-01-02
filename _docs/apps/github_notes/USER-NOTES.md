@@ -24,4 +24,4 @@ lorsque je fais une synchro avec github je me retrouve toujours la première foi
 
 prévoir la possibilité de copier-coller un fichier suivi de manière à pouvoir le modifier après et récupérer les infos déjà existantes je vois bien un bouton dupliquer qui duplique directement le les éléments en question et pour une nouvelle fenêtre pour faire le modif tout de suite
 
-
+vérifier la correspondance des couleurs avec le thème dotlyn pour le mode sombre et clair. le theme sombre est lisible sur github notes mais pas money tracker. uniquement verifier la concordance des themes entre les deux applications pour définir la marche a suivre
