@@ -22,3 +22,6 @@ ajouter d'autres plateformes que guitle dans une version ultérieure je ne sais 
 
 lorsque je fais une synchro avec github je me retrouve toujours la première fois avec un refus ou une erreur voir pour désynchroniser de quelques dixième de seconde voire une ou deux secondes le début de la synchro si ce n'est pas ça qui fait erreur 
 
+prévoir la possibilité de copier-coller un fichier suivi de manière à pouvoir le modifier après et récupérer les infos déjà existantes 
+
+
