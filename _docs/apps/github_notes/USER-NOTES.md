@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## ✅ Résolu (2026-01-02)
 
 - SafeArea/navigation : l’app ne déborde plus sur la zone système, SafeArea ajouté partout (et doc à jour)
@@ -19,3 +20,5 @@
 - [ ] ajouter d'autres plateformes que guitle dans une version ultérieure je ne sais pas laquelle exactement c'était déterminé et ce sera dans longtemps optionnel 
 - [ ] prévoir la possibilité de copier-coller un fichier suivi de manière à pouvoir le modifier après et récupérer les infos déjà existantes je vois bien un bouton dupliquer qui duplique directement le les éléments en question et pour une nouvelle fenêtre pour faire le modif tout de suite
 - [ ] vérifier la correspondance des couleurs avec le thème dotlyn pour le mode sombre et clair. le theme sombre est lisible sur github notes mais pas money tracker. uniquement verifier la concordance des themes entre les deux applications pour définir la marche a suivre
+=======
+>>>>>>> 4f29e93440946df95a6466b2d54b1dbf2607f48e
