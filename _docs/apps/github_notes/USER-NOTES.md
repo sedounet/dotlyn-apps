@@ -15,3 +15,10 @@ des paramètres généraux tels que  theme (clair/sombre/système) la langue de 
 dans la fenêtre de configuration de fichier suivi, mettre des petits ? au droit des zones de saisie avec l'aide sur les éléments atendus
 
 réduire le temps de chargement de l'application. elle met environ 3 secondes a s;ouvrir sans être en mode debug.  
+
+ajouter en todo la conception de l'icône et l'insertion dans l'appli 
+
+ajouter d'autres plateformes que guitle dans une version ultérieure je ne sais pas laquelle exactement c'était déterminé et ce sera dans longtemps optionnel 
+
+lorsque je fais une synchro avec github je me retrouve toujours la première fois avec un refus ou une erreur voir pour désynchroniser de quelques dixième de seconde voire une ou deux secondes le début de la synchro si ce n'est pas ça qui fait erreur 
+
