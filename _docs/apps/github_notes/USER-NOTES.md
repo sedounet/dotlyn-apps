@@ -13,3 +13,5 @@ la liste des fichiers suivis devra elle aussi être foldables.
 des paramètres généraux tels que  theme (clair/sombre/système) la langue de l'App doivent apparaître (non exhaustive)
 
 dans la fenêtre de configuration de fichier suivi, mettre des petits ? au droit des zones de saisie avec l'aide sur les éléments atendus
+
+réduire le temps de chargement de l'application. elle met environ 3 secondes a s;ouvrir sans être en mode debug.  
