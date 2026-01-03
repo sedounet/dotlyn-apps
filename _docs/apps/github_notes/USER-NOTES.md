@@ -22,3 +22,8 @@
 - [ ] vérifier la correspondance des couleurs avec le thème dotlyn pour le mode sombre et clair. le theme sombre est lisible sur github notes mais pas money tracker. uniquement verifier la concordance des themes entre les deux applications pour définir la marche a suivre
 =======
 >>>>>>> 4f29e93440946df95a6466b2d54b1dbf2607f48e
+
+
+3/1/25 ajouts user
+
+deplacer le message de succès de config au dessus des boutons ou de[lacer les boutons au-dessus de manière à ne pas cacher les boutons
