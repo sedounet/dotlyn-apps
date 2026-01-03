@@ -41,8 +41,7 @@ class AmountFormField extends StatelessWidget {
         border: const OutlineInputBorder(),
       ),
       onChanged: onChanged,
-      validator:
-          validator ??
+      validator: validator ??
           (value) {
             if (required && (value == null || value.trim().isEmpty)) {
               return 'Ce champ est requis';

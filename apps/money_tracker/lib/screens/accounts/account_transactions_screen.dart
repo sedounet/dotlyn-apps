@@ -15,14 +15,17 @@ class AccountTransactionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionsAsync = ref.watch(transactionsProvider(account.id));
     final currentBalance = ref.watch(accountBalanceProvider(account.id));
-    final availableBalance = ref.watch(accountAvailableBalanceProvider(account.id));
+    final availableBalance =
+        ref.watch(accountAvailableBalanceProvider(account.id));
 
     return Scaffold(
       appBar: AppBar(title: Text(account.name)),
       body: Column(
         children: [
           // Soldes du compte
-          BalanceRow(availableBalance: availableBalance, currentBalance: currentBalance),
+          BalanceRow(
+              availableBalance: availableBalance,
+              currentBalance: currentBalance),
 
           // Liste des transactions
           Expanded(
@@ -49,7 +52,8 @@ class AccountTransactionsScreen extends ConsumerWidget {
                       transaction: transaction,
                       balanceAfter: balanceAfter,
                       onEdit: () => _editTransaction(context, transaction),
-                      onDelete: () => _deleteTransaction(context, ref, transaction),
+                      onDelete: () =>
+                          _deleteTransaction(context, ref, transaction),
                       onValidate: () => _validateTransaction(ref, transaction),
                     );
                   },
@@ -94,7 +98,9 @@ class AccountTransactionsScreen extends ConsumerWidget {
         title: const Text('Confirmation'),
         content: const Text('Voulez-vous vraiment supprimer cette opération ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -115,7 +121,8 @@ class AccountTransactionsScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
+  Future<void> _validateTransaction(
+      WidgetRef ref, Transaction transaction) async {
     final repo = ref.read(transactionsRepositoryProvider);
     final newStatus = transaction.status == 'pending' ? 'validated' : 'pending';
     await repo.updateTransaction(

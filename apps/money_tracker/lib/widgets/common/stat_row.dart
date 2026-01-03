@@ -7,7 +7,12 @@ class StatRow extends StatelessWidget {
   final IconData? icon;
   final TextStyle? valueStyle;
 
-  const StatRow({super.key, required this.label, required this.value, this.icon, this.valueStyle});
+  const StatRow(
+      {super.key,
+      required this.label,
+      required this.value,
+      this.icon,
+      this.valueStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,9 @@ class StatRow extends StatelessWidget {
               Text(label),
             ],
           ),
-          Text(value, style: valueStyle ?? const TextStyle(fontWeight: FontWeight.bold)),
+          Text(value,
+              style:
+                  valueStyle ?? const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

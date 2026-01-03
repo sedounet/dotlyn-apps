@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
+import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/data/database/app_database.dart' as db;
-import 'package:intl/intl.dart';
 
-/// Reusable widget to display a project file card with sync status
-class FileCard extends StatelessWidget {
+class FileCard extends ConsumerWidget {
   final db.ProjectFile file;
-  final db.FileContent? content;
   final VoidCallback onTap;
+  final ValueChanged<db.ProjectFile>? onDuplicate;
 
   const FileCard({
     super.key,
     required this.file,
-    this.content,
     required this.onTap,
+    this.onDuplicate,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final syncStatus = content?.syncStatus ?? 'unknown';
-    final lastSync = content?.lastSyncAt;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fileContentAsync = ref.watch(fileContentProvider(file.id));
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -41,100 +40,107 @@ class FileCard extends StatelessWidget {
                           ),
                     ),
                   ),
-                  _buildStatusBadge(context, syncStatus),
+                  fileContentAsync.when(
+                    data: (content) {
+                      if (content == null) return const SizedBox.shrink();
+                      return _SyncStatusBadge(syncStatus: content.syncStatus);
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  if (onDuplicate != null) ...[
+                    const SizedBox(width: 8),
+                    PopupMenuButton<String>(
+                      tooltip: 'Actions',
+                      onSelected: (value) {
+                        if (value == 'duplicate') onDuplicate?.call(file);
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(
+                            value: 'duplicate', child: Text('Duplicate')),
+                      ],
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.folder_outlined,
-                    size: 14,
-                    color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      '${file.owner}/${file.repo}/${file.path}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
-                          ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              Text(
+                '${file.owner}/${file.repo}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: DotlynColors.secondary.withAlpha(179),
                     ),
-                  ),
-                ],
               ),
-              if (lastSync != null) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.sync,
-                      size: 14,
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
+              Text(
+                file.path,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: DotlynColors.secondary.withAlpha(128),
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Last sync: ${DateFormat('MMM dd, HH:mm').format(lastSync)}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
-                          ),
-                    ),
-                  ],
-                ),
-              ],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildStatusBadge(BuildContext context, String status) {
-    Color badgeColor;
+class _SyncStatusBadge extends StatelessWidget {
+  final String syncStatus;
+
+  const _SyncStatusBadge({required this.syncStatus});
+
+  @override
+  Widget build(BuildContext context) {
+    Color color;
     IconData icon;
     String label;
 
-    switch (status) {
+    switch (syncStatus) {
       case 'synced':
-        badgeColor = Colors.green;
+        color = Colors.green;
         icon = Icons.check_circle;
         label = 'Synced';
         break;
       case 'modified':
-        badgeColor = DotlynColors.primary;
+        color = DotlynColors.primary;
         icon = Icons.edit;
         label = 'Modified';
         break;
       case 'conflict':
-        badgeColor = Colors.red;
+        color = Colors.red;
         icon = Icons.warning;
         label = 'Conflict';
         break;
+      case 'error':
+        color = Colors.red;
+        icon = Icons.error;
+        label = 'Error';
+        break;
       default:
-        badgeColor = Colors.grey;
-        icon = Icons.help_outline;
+        color = Colors.grey;
+        icon = Icons.help;
         label = 'Unknown';
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: badgeColor.withAlpha(26),
+        color: color.withAlpha((0.1 * 255).round()),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: badgeColor.withAlpha(77), width: 1),
+        border: Border.all(color: color.withAlpha((0.3 * 255).round())),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: badgeColor),
+          Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
-              color: badgeColor,
               fontSize: 12,
+              color: color,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -5,16 +5,16 @@ import '../data/database/app_database.dart';
 import '../models/payment_method.dart';
 import 'database_provider.dart';
 
-final transactionsProvider = StreamProvider.autoDispose
-    .family<List<Transaction>, int>((ref, accountId) {
-      final database = ref.watch(databaseProvider);
-      return (database.select(database.transactions)
-            ..where((t) => t.accountId.equals(accountId))
-            ..orderBy([
-              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
-            ]))
-          .watch();
-    });
+final transactionsProvider =
+    StreamProvider.autoDispose.family<List<Transaction>, int>((ref, accountId) {
+  final database = ref.watch(databaseProvider);
+  return (database.select(database.transactions)
+        ..where((t) => t.accountId.equals(accountId))
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+        ]))
+      .watch();
+});
 
 final transactionsRepositoryProvider = Provider<TransactionsRepository>((ref) {
   final database = ref.watch(databaseProvider);
@@ -38,9 +38,7 @@ class TransactionsRepository {
     PaymentMethod paymentMethod = PaymentMethod.card,
     String? checkNumber,
   }) {
-    return _database
-        .into(_database.transactions)
-        .insert(
+    return _database.into(_database.transactions).insert(
           TransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
@@ -71,7 +69,8 @@ class TransactionsRepository {
   }) {
     return (_database.update(
       _database.transactions,
-    )..where((t) => t.id.equals(id))).write(
+    )..where((t) => t.id.equals(id)))
+        .write(
       TransactionsCompanion(
         accountId: Value(accountId),
         categoryId: Value(categoryId),
@@ -90,6 +89,7 @@ class TransactionsRepository {
   Future<void> deleteTransaction(int id) {
     return (_database.delete(
       _database.transactions,
-    )..where((t) => t.id.equals(id))).go();
+    )..where((t) => t.id.equals(id)))
+        .go();
   }
 }

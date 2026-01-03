@@ -10,9 +10,11 @@ class InputsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Text Fields', style: Theme.of(context).textTheme.headlineMedium),
+          Text('Text Fields',
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          const TextField(decoration: InputDecoration(labelText: 'Basic Input')),
+          const TextField(
+              decoration: InputDecoration(labelText: 'Basic Input')),
           const SizedBox(height: 16),
           const TextField(
             decoration: InputDecoration(

@@ -11,7 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_tracker/main.dart';
 
 void main() {
-  testWidgets('App renders Home and shows ad banner', (WidgetTester tester) async {
+  testWidgets('App renders Home and shows ad banner',
+      (WidgetTester tester) async {
     // Build our app inside a ProviderScope and trigger a frame.
     await tester.pumpWidget(const ProviderScope(child: MyApp()));
 

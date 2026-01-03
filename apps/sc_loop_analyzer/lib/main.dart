@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dotlyn_core/dotlyn_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
-    show ProviderScope, ConsumerWidget, WidgetRef, Consumer, ConsumerStatefulWidget, ConsumerState;
+    show
+        ProviderScope,
+        ConsumerWidget,
+        WidgetRef,
+        Consumer,
+        ConsumerStatefulWidget,
+        ConsumerState;
 import 'models/gameplay_type.dart';
 import 'models/ship.dart';
 import 'providers/providers.dart';
@@ -124,10 +130,12 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
           if (activeProfile == null)
             Column(
               children: [
-                Text('Sélectionnez une boucle', style: Theme.of(context).textTheme.headlineMedium),
+                Text('Sélectionnez une boucle',
+                    style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
                 if (profileProvider.profiles.isEmpty)
-                  const Text('Aucune boucle disponible. Créez-en une dans l\'onglet Boucles.')
+                  const Text(
+                      'Aucune boucle disponible. Créez-en une dans l\'onglet Boucles.')
                 else
                   ...profileProvider.profiles.map((profile) => ListTile(
                         title: Text(profile.name),
@@ -151,11 +159,13 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                     onPressed: () {
                       sessionProvider.recordStep();
                     },
-                    style: ElevatedButton.styleFrom(minimumSize: const Size(220, 56)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(220, 56)),
                   )
                 else
                   const Text('Toutes les étapes enregistrées',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 24),
                 ListView.builder(
                   shrinkWrap: true,
@@ -185,13 +195,16 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () async {
-                      final quantity = int.tryParse(_quantityController.text) ?? 0;
-                      await sessionProvider.saveSession(quantity, _commentsController.text);
+                      final quantity =
+                          int.tryParse(_quantityController.text) ?? 0;
+                      await sessionProvider.saveSession(
+                          quantity, _commentsController.text);
                       _quantityController.clear();
                       _commentsController.clear();
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Session enregistrée !')),
+                          const SnackBar(
+                              content: Text('Session enregistrée !')),
                         );
                       }
                     },
@@ -261,10 +274,12 @@ class _GameplayTypesTab extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Types de gameplay', style: Theme.of(context).textTheme.headlineSmall),
+                Text('Types de gameplay',
+                    style: Theme.of(context).textTheme.headlineSmall),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: () => _showAddGameplayTypeDialog(context, provider),
+                  onPressed: () =>
+                      _showAddGameplayTypeDialog(context, provider),
                   tooltip: 'Ajouter un type',
                 ),
               ],
@@ -276,8 +291,9 @@ class _GameplayTypesTab extends StatelessWidget {
               ...provider.types.map((type) => ListTile(
                     leading: const Icon(Icons.category),
                     title: Text(type.name),
-                    subtitle:
-                        Text(type.description.isNotEmpty ? type.description : 'Pas de description'),
+                    subtitle: Text(type.description.isNotEmpty
+                        ? type.description
+                        : 'Pas de description'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () => _confirmDelete(
@@ -307,7 +323,8 @@ class _GameplayTypesTab extends StatelessWidget {
           children: [
             TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom (ex: Salvage)')),
+                decoration:
+                    const InputDecoration(labelText: 'Nom (ex: Salvage)')),
             const SizedBox(height: 8),
             TextField(
                 controller: descController,
@@ -315,7 +332,9 @@ class _GameplayTypesTab extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty) {
@@ -354,7 +373,8 @@ class _ShipsTab extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Vaisseaux', style: Theme.of(context).textTheme.headlineSmall),
+                Text('Vaisseaux',
+                    style: Theme.of(context).textTheme.headlineSmall),
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () => _showAddShipDialog(context, provider),
@@ -369,7 +389,8 @@ class _ShipsTab extends StatelessWidget {
               ...provider.ships.map((ship) => ListTile(
                     leading: const Icon(Icons.rocket_launch),
                     title: Text(ship.name),
-                    subtitle: Text(ship.type.isNotEmpty ? ship.type : 'Pas de type'),
+                    subtitle:
+                        Text(ship.type.isNotEmpty ? ship.type : 'Pas de type'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () => _confirmDelete(
@@ -385,7 +406,8 @@ class _ShipsTab extends StatelessWidget {
     );
   }
 
-  Future<void> _showAddShipDialog(BuildContext context, ShipProvider provider) async {
+  Future<void> _showAddShipDialog(
+      BuildContext context, ShipProvider provider) async {
     final nameController = TextEditingController();
     final typeController = TextEditingController();
 
@@ -398,15 +420,19 @@ class _ShipsTab extends StatelessWidget {
           children: [
             TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom (ex: Vulture)')),
+                decoration:
+                    const InputDecoration(labelText: 'Nom (ex: Vulture)')),
             const SizedBox(height: 8),
             TextField(
                 controller: typeController,
-                decoration: const InputDecoration(labelText: 'Type (ex: Salvage)')),
+                decoration:
+                    const InputDecoration(labelText: 'Type (ex: Salvage)')),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty) {
@@ -427,14 +453,17 @@ class _ShipsTab extends StatelessWidget {
   }
 }
 
-Future<void> _confirmDelete(BuildContext context, String message, VoidCallback onConfirm) async {
+Future<void> _confirmDelete(
+    BuildContext context, String message, VoidCallback onConfirm) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
       title: const Text('Confirmation'),
       content: Text(message),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+        TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler')),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
           child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
@@ -470,7 +499,8 @@ class HistoryScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Historique des sessions', style: Theme.of(context).textTheme.headlineSmall),
+              Text('Historique des sessions',
+                  style: Theme.of(context).textTheme.headlineSmall),
               IconButton(
                 icon: const Icon(Icons.delete_forever),
                 onPressed: () => _resetHistory(context, provider),
@@ -495,12 +525,14 @@ class HistoryScreen extends ConsumerWidget {
                   DataCell(Text(
                       '${session.startTime.day}/${session.startTime.month}/${session.startTime.year}')),
                   DataCell(Text(session.profileName)),
-                  DataCell(Text('${session.totalDuration.toStringAsFixed(0)} min')),
+                  DataCell(
+                      Text('${session.totalDuration.toStringAsFixed(0)} min')),
                   DataCell(Text('${session.quantity}')),
                   DataCell(Text(session.comments)),
                   DataCell(IconButton(
                     icon: const Icon(Icons.delete, size: 18),
-                    onPressed: () => _confirmDeleteSession(context, provider, session.id),
+                    onPressed: () =>
+                        _confirmDeleteSession(context, provider, session.id),
                   )),
                 ]);
               }).toList(),
@@ -519,7 +551,9 @@ class HistoryScreen extends ConsumerWidget {
         title: const Text('Supprimer la session'),
         content: const Text('Voulez-vous vraiment supprimer cette session ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
@@ -534,17 +568,21 @@ class HistoryScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _resetHistory(BuildContext context, SessionProvider provider) async {
+  Future<void> _resetHistory(
+      BuildContext context, SessionProvider provider) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset historique'),
         content: const Text('Supprimer toutes les sessions ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Supprimer tout', style: TextStyle(color: Colors.red)),
+            child: const Text('Supprimer tout',
+                style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -577,7 +615,8 @@ class StatsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Statistiques', style: Theme.of(context).textTheme.headlineSmall),
+              Text('Statistiques',
+                  style: Theme.of(context).textTheme.headlineSmall),
               IconButton(
                 icon: const Icon(Icons.delete_forever),
                 onPressed: () => _resetStats(context, sessionProvider),
@@ -610,17 +649,22 @@ class StatsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _resetStats(BuildContext context, SessionProvider provider) async {
+  Future<void> _resetStats(
+      BuildContext context, SessionProvider provider) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset statistiques'),
-        content: const Text('Supprimer toutes les sessions pour réinitialiser les stats ?'),
+        content: const Text(
+            'Supprimer toutes les sessions pour réinitialiser les stats ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Supprimer tout', style: TextStyle(color: Colors.red)),
+            child: const Text('Supprimer tout',
+                style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

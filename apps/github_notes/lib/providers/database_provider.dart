@@ -26,7 +26,8 @@ final settingsProvider = FutureProvider<AppSetting?>((ref) async {
 
 /// Stream provider for file content by project file ID
 /// Lazy-loaded only when user opens a file
-final fileContentProvider = StreamProvider.family<FileContent?, int?>((ref, projectFileId) {
+final fileContentProvider =
+    StreamProvider.family<FileContent?, int?>((ref, projectFileId) {
   final database = ref.watch(databaseProvider);
   if (projectFileId == null) {
     // No project id provided -> emit null

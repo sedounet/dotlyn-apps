@@ -67,9 +67,7 @@ class AccountsRepository {
     required String type,
     required double initialBalance,
   }) {
-    return _database
-        .into(_database.accounts)
-        .insert(
+    return _database.into(_database.accounts).insert(
           AccountsCompanion.insert(
             name: name,
             type: type,
@@ -86,7 +84,8 @@ class AccountsRepository {
   }) {
     return (_database.update(
       _database.accounts,
-    )..where((tbl) => tbl.id.equals(id))).write(
+    )..where((tbl) => tbl.id.equals(id)))
+        .write(
       AccountsCompanion(
         name: Value(name),
         type: Value(type),
@@ -98,18 +97,20 @@ class AccountsRepository {
   Future<void> deleteAccount(int id) {
     return (_database.delete(
       _database.accounts,
-    )..where((tbl) => tbl.id.equals(id))).go();
+    )..where((tbl) => tbl.id.equals(id)))
+        .go();
   }
 }
 
 // Provider pour récupérer les virements ENTRANTS (où ce compte est la destination)
-final incomingTransfersProvider = StreamProvider.autoDispose
-    .family<List<Transaction>, int>((ref, accountId) {
-      final database = ref.watch(databaseProvider);
-      return (database.select(
-        database.transactions,
-      )..where((t) => t.accountToId.equals(accountId))).watch();
-    });
+final incomingTransfersProvider =
+    StreamProvider.autoDispose.family<List<Transaction>, int>((ref, accountId) {
+  final database = ref.watch(databaseProvider);
+  return (database.select(
+    database.transactions,
+  )..where((t) => t.accountToId.equals(accountId)))
+      .watch();
+});
 
 // Provider qui calcule le solde actuel : initialBalance + sum(transactions where status='validated')
 // Inclut uniquement les opérations validées (virements sortants et entrants)

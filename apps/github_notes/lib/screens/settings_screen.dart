@@ -22,11 +22,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _tokenController = TextEditingController();
   bool _isTestingToken = false;
   bool? _tokenValid;
+  String _themeMode = 'system';
+  String _language = 'system';
 
   @override
   void initState() {
     super.initState();
     _loadToken();
+    if (widget.editingFile != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showAddFileDialog(prefill: widget.editingFile);
+      });
+    }
   }
 
   @override
@@ -41,11 +48,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (token != null) {
       _tokenController.text = token;
     }
+    // load preferences from secure storage
+    final storage = ref.read(secureStorageProvider);
+    final theme = await storage.read(key: 'theme_mode');
+    final lang = await storage.read(key: 'app_language');
+    setState(() {
+      _themeMode = theme ?? 'system';
+      _language = lang ?? 'system';
+    });
   }
 
   Future<void> _saveToken() async {
     final database = ref.read(databaseProvider);
     final token = _tokenController.text.trim();
+    final messenger = ScaffoldMessenger.of(context);
     final storage = ref.read(secureStorageProvider);
     await storage.write(key: 'github_token', value: token);
     // also persist in DB for compatibility
@@ -54,8 +70,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.invalidate(githubTokenProvider);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       const SnackBar(content: Text('GitHub token saved (secure)')),
+    );
+  }
+
+  Future<void> _saveThemeMode(String mode) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final storage = ref.read(secureStorageProvider);
+    await storage.write(key: 'theme_mode', value: mode);
+    if (!mounted) return;
+    setState(() => _themeMode = mode);
+    messenger.showSnackBar(
+      SnackBar(content: Text('Theme set to $mode')),
+    );
+  }
+
+  Future<void> _saveLanguage(String lang) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final storage = ref.read(secureStorageProvider);
+    await storage.write(key: 'app_language', value: lang);
+    if (!mounted) return;
+    setState(() => _language = lang);
+    messenger.showSnackBar(
+      SnackBar(content: Text('Language set to $lang (no translations yet)')),
     );
   }
 
@@ -85,11 +123,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showAddFileDialog() {
-    final ownerController = TextEditingController();
-    final repoController = TextEditingController();
-    final pathController = TextEditingController();
-    final nicknameController = TextEditingController();
+  void _showAddFileDialog({ProjectFile? prefill}) {
+    final ownerController = TextEditingController(text: prefill?.owner ?? '');
+    final repoController = TextEditingController(text: prefill?.repo ?? '');
+    final pathController = TextEditingController(text: prefill?.path ?? '');
+    final nicknameController = TextEditingController(text: prefill?.nickname ?? '');
     final parentContext = context;
 
     showDialog(
@@ -141,12 +179,65 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
+              final messenger = ScaffoldMessenger.of(parentContext);
+              final navigator = Navigator.of(parentContext);
+
               if (ownerController.text.isEmpty ||
                   repoController.text.isEmpty ||
                   pathController.text.isEmpty ||
                   nicknameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   const SnackBar(content: Text('All fields are required')),
+                );
+                return;
+              }
+
+              final owner = ownerController.text.trim();
+              final repo = repoController.text.trim();
+              final path = pathController.text.trim();
+
+              // Check if file exists on GitHub
+              try {
+                final storage = ref.read(secureStorageProvider);
+                final token = await storage.read(key: 'github_token');
+                final githubService = GitHubService(token: token);
+                try {
+                  await githubService.fetchFile(owner: owner, repo: repo, path: path);
+
+                  // File exists remotely — confirm with user
+                  if (!mounted) return;
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('File exists on GitHub'),
+                      content: Text(
+                          'A file already exists at $path in $owner/$repo. Add to tracked files anyway?'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: const Text('Cancel')),
+                        ElevatedButton(
+                            onPressed: () => Navigator.pop(ctx, true), child: const Text('Add')),
+                      ],
+                    ),
+                  );
+
+                  if (confirm != true) return;
+                } on GitHubApiException catch (e) {
+                  if (e.statusCode == 404) {
+                    // Not found — OK to add
+                  } else {
+                    if (!mounted) return;
+                    messenger.showSnackBar(
+                      SnackBar(content: Text('GitHub error: ${e.message}')),
+                    );
+                    return;
+                  }
+                }
+              } catch (e) {
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(content: Text('Error checking GitHub: $e')),
                 );
                 return;
               }
@@ -164,8 +255,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
 
               if (!mounted) return;
-              Navigator.pop(parentContext);
-              ScaffoldMessenger.of(parentContext).showSnackBar(
+              navigator.pop();
+              messenger.showSnackBar(
                 const SnackBar(content: Text('File added successfully')),
               );
             },
@@ -232,11 +323,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
+              final messenger = ScaffoldMessenger.of(parentContext);
+              final navigator = Navigator.of(parentContext);
+
               if (ownerController.text.isEmpty ||
                   repoController.text.isEmpty ||
                   pathController.text.isEmpty ||
                   nicknameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   const SnackBar(content: Text('All fields are required')),
                 );
                 return;
@@ -254,8 +348,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
 
               if (!mounted) return;
-              Navigator.pop(parentContext);
-              ScaffoldMessenger.of(parentContext).showSnackBar(
+              navigator.pop();
+              messenger.showSnackBar(
                 const SnackBar(content: Text('File updated successfully')),
               );
             },
@@ -339,32 +433,87 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: () async {
                 final storage = ref.read(secureStorageProvider);
                 final token = await storage.read(key: 'github_token');
-                await showDialog<void>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Debug: GitHub token'),
-                    content: SelectableText(token ?? '<empty>'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Close'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (token != null) Clipboard.setData(ClipboardData(text: token));
-                          Navigator.pop(ctx);
-                        },
-                        child: const Text('Copy'),
-                      ),
-                    ],
-                  ),
-                );
+                if (!mounted) return;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Debug: GitHub token'),
+                      content: SelectableText(token ?? '<empty>'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Close'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            if (token != null) {
+                              Clipboard.setData(ClipboardData(text: token));
+                            }
+                            Navigator.pop(ctx);
+                          },
+                          child: const Text('Copy'),
+                        ),
+                      ],
+                    ),
+                  );
+                });
               },
               child: const Text('Show token (debug)'),
             ),
           ],
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
+
+          // Appearance & Language
+          Text(
+            'Appearance',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          ListTile(
+            title: const Text('Theme'),
+            subtitle: Text(_themeMode == 'system'
+                ? 'System'
+                : _themeMode == 'light'
+                    ? 'Light'
+                    : 'Dark'),
+            trailing: DropdownButton<String>(
+              value: _themeMode,
+              items: const [
+                DropdownMenuItem(value: 'system', child: Text('System')),
+                DropdownMenuItem(value: 'light', child: Text('Light')),
+                DropdownMenuItem(value: 'dark', child: Text('Dark')),
+              ],
+              onChanged: (v) {
+                if (v != null) _saveThemeMode(v);
+              },
+            ),
+          ),
+          ListTile(
+            title: const Text('Language'),
+            subtitle: Text(_language == 'system'
+                ? 'System (device)'
+                : _language == 'en'
+                    ? 'English'
+                    : 'Français'),
+            trailing: DropdownButton<String>(
+              value: _language,
+              items: const [
+                DropdownMenuItem(value: 'system', child: Text('System')),
+                DropdownMenuItem(value: 'en', child: Text('English')),
+                DropdownMenuItem(value: 'fr', child: Text('Français')),
+              ],
+              onChanged: (v) {
+                if (v != null) _saveLanguage(v);
+              },
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
           const Divider(),
           const SizedBox(height: 16),
 
@@ -425,6 +574,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () async {
                               final parentContext = context;
+                              final messenger = ScaffoldMessenger.of(parentContext);
                               final confirm = await showDialog<bool>(
                                 context: parentContext,
                                 builder: (dialogContext) => AlertDialog(
@@ -450,7 +600,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               if (confirm == true) {
                                 await ref.read(databaseProvider).deleteProjectFile(file.id);
                                 if (!mounted) return;
-                                ScaffoldMessenger.of(parentContext).showSnackBar(
+                                messenger.showSnackBar(
                                   const SnackBar(content: Text('File removed')),
                                 );
                               }

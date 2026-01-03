@@ -27,7 +27,8 @@ class DialogsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Popup (Bottom Sheet)', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Popup (Bottom Sheet)',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             const Text('Ceci est un exemple de popup modal.'),
             const SizedBox(height: 12),
@@ -59,7 +60,8 @@ class DialogsScreen extends StatelessWidget {
               child: const Text('Afficher Popup'),
             ),
             const SizedBox(height: 32),
-            const Text('ListView Exemple', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('ListView Exemple',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...List.generate(
                 10,

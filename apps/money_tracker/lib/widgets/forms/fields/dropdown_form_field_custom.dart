@@ -32,8 +32,7 @@ class DropdownFormFieldCustom<T> extends StatelessWidget {
         hintText: hintText,
         border: const OutlineInputBorder(),
       ),
-      validator:
-          validator ??
+      validator: validator ??
           (value) {
             if (required && value == null) {
               return 'Ce champ est requis';

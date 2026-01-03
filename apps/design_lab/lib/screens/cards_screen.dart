@@ -18,9 +18,11 @@ class CardsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Basic Card', style: Theme.of(context).textTheme.titleMedium),
+                  Text('Basic Card',
+                      style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  Text('Contenu de la carte', style: Theme.of(context).textTheme.bodyMedium),
+                  Text('Contenu de la carte',
+                      style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ),
@@ -33,9 +35,11 @@ class CardsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Elevated Card', style: Theme.of(context).textTheme.titleMedium),
+                  Text('Elevated Card',
+                      style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  Text('Avec elevation plus haute', style: Theme.of(context).textTheme.bodyMedium),
+                  Text('Avec elevation plus haute',
+                      style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ),

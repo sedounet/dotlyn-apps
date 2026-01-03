@@ -103,9 +103,8 @@ class FavoriteAccountsRow extends StatelessWidget {
                 index: index,
                 account: account,
                 onTap: () => onTap(index, account),
-                onLongPress: onLongPress != null
-                    ? () => onLongPress!(index)
-                    : null,
+                onLongPress:
+                    onLongPress != null ? () => onLongPress!(index) : null,
               ),
             ),
           );

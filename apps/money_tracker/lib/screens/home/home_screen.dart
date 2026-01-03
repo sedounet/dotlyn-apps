@@ -41,7 +41,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     double? availableBalance;
     if (activeAccount != null) {
       currentBalance = ref.watch(accountBalanceProvider(activeAccount.id));
-      availableBalance = ref.watch(accountAvailableBalanceProvider(activeAccount.id));
+      availableBalance =
+          ref.watch(accountAvailableBalanceProvider(activeAccount.id));
     }
 
     return Scaffold(
@@ -60,8 +61,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               availableBalance: availableBalance,
               currentBalance: currentBalance,
               isVisible: isBalanceVisible,
-              onToggleVisibility: () =>
-                  ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
+              onToggleVisibility: () => ref
+                  .read(balanceVisibilityProvider.notifier)
+                  .toggleVisibility(),
             ),
 
             // Boutons d'action (+/- virement)
@@ -93,17 +95,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, WidgetRef ref, bool isBalanceVisible) {
+  AppBar _buildAppBar(
+      BuildContext context, WidgetRef ref, bool isBalanceVisible) {
     return AppBar(
       title: const Text('Money Tracker'),
       actions: [
         IconButton(
-          icon: Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
-          onPressed: () => ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
+          icon:
+              Icon(isBalanceVisible ? Icons.visibility : Icons.visibility_off),
+          onPressed: () =>
+              ref.read(balanceVisibilityProvider.notifier).toggleVisibility(),
         ),
         IconButton(
           icon: Icon(
-            ref.watch(themeModeProvider) == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
+            ref.watch(themeModeProvider) == ThemeMode.light
+                ? Icons.dark_mode
+                : Icons.light_mode,
           ),
           onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
           tooltip: 'Basculer thème',
@@ -120,14 +127,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         DrawerMenuItemData(
           icon: Icons.account_balance_wallet,
           title: 'Mes Comptes',
-          onTap: () =>
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountsScreen())),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AccountsScreen())),
         ),
         DrawerMenuItemData(
           icon: Icons.settings,
           title: 'Paramètres',
-          onTap: () =>
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen())),
         ),
         if (kDebugMode)
           DrawerMenuItemData(
@@ -165,7 +172,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final db = ref.read(databaseProvider);
     final messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(const SnackBar(content: Text('Réinitialisation en cours...')));
+    messenger.showSnackBar(
+        const SnackBar(content: Text('Réinitialisation en cours...')));
     await db.resetToDefaultData(includeFakeData: true);
     messenger.showSnackBar(const SnackBar(content: Text('Base réinitialisée')));
   }
@@ -193,15 +201,17 @@ class _FavoriteAccountsSection extends ConsumerWidget {
 
           return FavoriteAccountsRow(
             accounts: favoriteAccounts,
-            onTap: (index, account) =>
-                _handleFavoriteButtonTap(context, ref, index, account, accounts),
+            onTap: (index, account) => _handleFavoriteButtonTap(
+                context, ref, index, account, accounts),
           );
         },
         loading: () => const LoadingPlaceholder(height: 64),
-        error: (e, s) => const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
+        error: (e, s) =>
+            const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
       ),
       loading: () => const LoadingPlaceholder(height: 64),
-      error: (e, s) => const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
+      error: (e, s) =>
+          const SizedBox(height: 64, child: Center(child: Text('Erreur'))),
     );
   }
 
@@ -215,7 +225,8 @@ class _FavoriteAccountsSection extends ConsumerWidget {
     if (currentAccount != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => AccountTransactionsScreen(account: currentAccount)),
+        MaterialPageRoute(
+            builder: (_) => AccountTransactionsScreen(account: currentAccount)),
       );
     } else {
       _showAccountSelectionDialog(context, ref, buttonIndex, allAccounts);
@@ -239,7 +250,8 @@ class _FavoriteAccountsSection extends ConsumerWidget {
     final confirmed = await ConfirmDialog.show(
       context: context,
       title: 'Confirmation',
-      content: 'Voulez-vous assigner le compte "${selected.name}" au bouton ${buttonIndex + 1} ?',
+      content:
+          'Voulez-vous assigner le compte "${selected.name}" au bouton ${buttonIndex + 1} ?',
       confirmText: 'Oui',
       cancelText: 'Non',
     );
@@ -251,7 +263,9 @@ class _FavoriteAccountsSection extends ConsumerWidget {
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${selected.name} assigné au bouton ${buttonIndex + 1}')),
+        SnackBar(
+            content:
+                Text('${selected.name} assigné au bouton ${buttonIndex + 1}')),
       );
     }
   }
@@ -271,13 +285,15 @@ class _TransactionsList extends ConsumerWidget {
       asyncValue: transactionsAsync,
       builder: (transactions) {
         if (transactions.isEmpty) {
-          return const EmptyListWidget(message: 'Aucune opération', icon: Icons.receipt_long);
+          return const EmptyListWidget(
+              message: 'Aucune opération', icon: Icons.receipt_long);
         }
 
         // Limiter à 10 dernières transactions pour performance
         final recentTransactions = transactions.take(10).toList();
 
-        double runningBalance = ref.watch(accountBalanceProvider(accountId)) ?? 0;
+        double runningBalance =
+            ref.watch(accountBalanceProvider(accountId)) ?? 0;
 
         return ListView.builder(
           itemCount: recentTransactions.length,
@@ -330,7 +346,8 @@ class _TransactionsList extends ConsumerWidget {
     }
   }
 
-  Future<void> _validateTransaction(WidgetRef ref, Transaction transaction) async {
+  Future<void> _validateTransaction(
+      WidgetRef ref, Transaction transaction) async {
     final repo = ref.read(transactionsRepositoryProvider);
     final newStatus = transaction.status == 'pending' ? 'validated' : 'pending';
     await repo.updateTransaction(
