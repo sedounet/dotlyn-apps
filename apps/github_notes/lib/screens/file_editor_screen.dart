@@ -66,7 +66,6 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   }
 
   Future<void> _fetchFromGitHub() async {
-    final parentContext = context;
     setState(() => _isLoading = true);
 
     try {
@@ -98,24 +97,21 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         ),
       );
 
-      if (mounted) {
-        ScaffoldMessenger.of(parentContext).showSnackBar(
-          const SnackBar(content: Text('File loaded from GitHub')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('File loaded from GitHub')),
+      );
     } on GitHubApiException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(parentContext).showSnackBar(
-          SnackBar(content: Text('Error: ${e.message}')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.message}')),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
   Future<void> _saveLocal({bool auto = false}) async {
-    final parentContext = context;
     final database = ref.read(databaseProvider);
     final existing = await database.getFileContent(widget.projectFile.id);
 
@@ -138,15 +134,15 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       _hasLocalChanges = false;
     }
 
-    if (!auto && mounted) {
-      ScaffoldMessenger.of(parentContext).showSnackBar(
+    if (!auto) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Saved locally')),
       );
     }
   }
 
   Future<void> _syncToGitHub() async {
-    final parentContext = context;
     setState(() => _isLoading = true);
 
     try {
@@ -169,7 +165,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         );
         remoteSha = remote.sha;
         remoteContent = remote.content;
-      } on GitHubApiException catch (e) {
+      } on GitHubApiException catch (_) {
         // If fetch fails and we have no local SHA, re-fetch on initial sync attempt
         if (existing?.githubSha == null) {
           try {
@@ -191,9 +187,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
       // If both exist and differ -> conflict
       if (localSha != null && remoteSha != null && localSha != remoteSha) {
-        final parentContext = context;
+        if (!mounted) return;
         final choice = await showDialog<String?>(
-          context: parentContext,
+          context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Conflict detected'),
             content: const Text(
@@ -229,12 +225,10 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                 localModifiedAt: drift.Value(DateTime.now()),
               ),
             );
-            if (mounted) {
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(parentContext).showSnackBar(
-                const SnackBar(content: Text('Fetched remote content')),
-              );
-            }
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Fetched remote content')),
+            );
             return;
           }
         }
@@ -274,25 +268,21 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         ),
       );
 
-      if (mounted) {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(parentContext).showSnackBar(
-          const SnackBar(
-            content: Text('Synced to GitHub successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Synced to GitHub successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } on GitHubApiException catch (e) {
-      if (mounted) {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(parentContext).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.message}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.message}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -302,6 +292,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
   Widget build(BuildContext context) {
     final fileContentAsync = ref.watch(fileContentProvider(widget.projectFile.id));
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // If there are local changes, save them before popping

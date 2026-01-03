@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:github_notes/data/database/app_database.dart';
 
 // Lazy database instance - created only on first access
-late final AppDatabase _databaseInstance = AppDatabase();
+final AppDatabase _databaseInstance = AppDatabase();
 
 /// Provider for the database singleton with lazy initialization
 /// Only creates the database when first accessed, not at app startup
