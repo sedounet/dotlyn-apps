@@ -12,20 +12,20 @@ Préparer et exécuter une série de refactors pour améliorer la maintenabilit�
 ---
 
 ## Tâches (priorisées) ✅
-1. [P1] Extraire le formulaire Add/Edit dans `lib/widgets/project_file_form.dart` (ou nom équivalent)
-   - Description : déplacer les champs `owner/repo/path/nickname`, validation, et expose callbacks `onSubmit(ProjectFileData)` et `onCancel()`.
-   - Avantages : réduis la duplication Add/Edit/Duplicate, facilite tests widget et logique de validation.
-   - Estimation : 1 jour / PR small
+1. [P1] **(DONE)** Extraire le formulaire Add/Edit dans `lib/widgets/project_file_form.dart` (ProjectFileForm)
+   - Description : Reusable form for `owner/repo/path/nickname` with validators and returns `ProjectFileData` on submit.
+   - Done: Widget added, **2 widget tests** added (`validation shows errors` + `submits when valid`), tests pass locally.
+   - Branch: `feat/githubnotes-refactor-form` — merged (2026-01-03).
 
-2. [P1] Extraire la logique "check file exists on GitHub" dans un service testable (`GitHubService` ou `FileCheckService`)
-   - Description : méthode `Future<FileCheckResult> checkFileExists(owner, repo, path)` qui renvoie {exists, statusCode, message} ou lève une exception contrôlée.
-   - Avantages : testable, réutilisable, facilite backoff/retry.
-   - Estimation : 0.5 jour
+2. [P1] **(TODO - lightweight)** Extraire la logique "check file exists on GitHub" dans un service testable (`lib/services/file_check_service.dart` or extend `lib/services/github_service.dart`)
+   - Description : method `Future<FileCheckResult> checkFileExists(owner, repo, path)` that returns `{exists, statusCode, message}` or throws controlled exceptions. **Implementation to remain minimal:** no heavy retry/backoff logic; focus on clear mapping of HTTP statuses and network errors.
+   - Goal: minimally testable (mock HTTP), cover 200 / 404 / 401/403 / 5xx and network unreachable cases. Keep API small and easy to review.
+   - Estimation : 0.5 day (light)
 
-3. [P1] Créer un `SettingsController` / `ProjectFilesNotifier` (Riverpod Notifier)
-   - Description : déplacer `addProjectFile`, `updateProjectFile`, `deleteProjectFile` et les interactions GitHub dans un Notifier testé.
-   - Avantages : séparation UI / business, réduit le code asynchrone dans les widgets et les risques liés aux BuildContext across async gaps.
-   - Estimation : 1 jour
+3. [P1] **(TODO)** Créer un `ProjectFilesNotifier` (Riverpod Notifier)
+   - Description : move `addProjectFile`, `updateProjectFile`, `deleteProjectFile` and GitHub interactions into a Notifier with unit tests (Drift in-memory DB).
+   - Goal: remove direct DB calls from UI, simplify widget tests, avoid `use_build_context_synchronously` patterns.
+   - Estimation : 1 day
 
 4. [P2] Remplacer le formulaire ad-hoc par `Form` + `TextFormField` + validators
    - Avantages : validation déclarative, messages d'erreur affichés automatiquement.

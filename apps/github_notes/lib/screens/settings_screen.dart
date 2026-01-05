@@ -7,7 +7,10 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:github_notes/data/database/app_database.dart';
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/providers/github_provider.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:github_notes/services/github_service.dart';
+import 'package:github_notes/widgets/project_file_form.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -268,96 +271,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showEditFileDialog(ProjectFile file) {
-    final ownerController = TextEditingController(text: file.owner);
-    final repoController = TextEditingController(text: file.repo);
-    final pathController = TextEditingController(text: file.path);
-    final nicknameController = TextEditingController(text: file.nickname);
-    final parentContext = context;
-
-    showDialog(
-      context: parentContext,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Edit File Settings'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: ownerController,
-                decoration: const InputDecoration(
-                  labelText: 'Owner',
-                  hintText: 'e.g., sedounet',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: repoController,
-                decoration: const InputDecoration(
-                  labelText: 'Repository',
-                  hintText: 'e.g., dotlyn-apps',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: pathController,
-                decoration: const InputDecoration(
-                  labelText: 'File Path',
-                  hintText: 'e.g., _docs/apps/money_tracker/PROMPT_USER.md',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: nicknameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nickname',
-                  hintText: 'e.g., Money Tracker - User Prompt',
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final messenger = ScaffoldMessenger.of(parentContext);
-              final navigator = Navigator.of(parentContext);
-
-              if (ownerController.text.isEmpty ||
-                  repoController.text.isEmpty ||
-                  pathController.text.isEmpty ||
-                  nicknameController.text.isEmpty) {
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('All fields are required')),
-                );
-                return;
-              }
-
-              final database = ref.read(databaseProvider);
-              await database.updateProjectFile(
-                file.copyWith(
-                  owner: ownerController.text.trim(),
-                  repo: repoController.text.trim(),
-                  path: pathController.text.trim(),
-                  nickname: nicknameController.text.trim(),
-                  updatedAt: DateTime.now(),
-                ),
-              );
-
-              if (!mounted) return;
-              navigator.pop();
-              messenger.showSnackBar(
-                const SnackBar(content: Text('File updated successfully')),
-              );
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+    // Use the reusable ProjectFileForm dialog for editing
+    final initial = ProjectFileData(
+      owner: file.owner,
+      repo: file.repo,
+      path: file.path,
+      nickname: file.nickname,
     );
+
+    showDialog<ProjectFileData>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit File Settings'),
+        content: ProjectFileForm(initial: initial, submitLabel: 'Save'),
+      ),
+    ).then((result) async {
+      if (result == null) return;
+
+      final database = ref.read(databaseProvider);
+      await database.updateProjectFile(
+        file.copyWith(
+          owner: result.owner.trim(),
+          repo: result.repo.trim(),
+          path: result.path.trim(),
+          nickname: result.nickname.trim(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      final messenger = ScaffoldMessenger.of(context);
+      navigator.pop();
+      messenger.showSnackBar(const SnackBar(content: Text('File updated successfully')));
+    });
   }
 
   @override
@@ -528,7 +475,88 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
               ),
               IconButton(
-                onPressed: _showAddFileDialog,
+                onPressed: () async {
+                  final result = await showDialog<ProjectFileData>(
+                    context: context,
+                    builder: (ctx) => const AlertDialog(
+                      title: Text('Add File to Track'),
+                      content: ProjectFileForm(),
+                    ),
+                  );
+
+                  if (result == null) return; // cancelled
+
+                  // Check if file exists on GitHub
+                  try {
+                    final storage = ref.read(secureStorageProvider);
+                    final token = await storage.read(key: 'github_token');
+                    final githubService = GitHubService(token: token);
+                    try {
+                      await githubService.fetchFile(
+                          owner: result.owner, repo: result.repo, path: result.path);
+
+                      // File exists remotely — confirm with user
+                      if (!mounted) return;
+                      // File exists remotely — confirm with user
+                      final ctxForDialog = context;
+                      final confirm = await showDialog<bool>(
+                        context: ctxForDialog,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('File exists on GitHub'),
+                          content: Text(
+                              'A file already exists at ${result.path} in ${result.owner}/${result.repo}. Add to tracked files anyway?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Cancel')),
+                            ElevatedButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('Add')),
+                          ],
+                        ),
+                      );
+
+                      if (confirm != true) return;
+                    } on GitHubApiException catch (e) {
+                      if (e.statusCode == 404) {
+                        // Not found — OK to add
+                      } else {
+                        if (!mounted) return;
+                        // Safe: checked mounted immediately before using context
+                        final ctxForMsg = context;
+                        ScaffoldMessenger.of(ctxForMsg)
+                            .showSnackBar(SnackBar(content: Text('GitHub error: ${e.message}')));
+                        return;
+                      }
+                    }
+                  } catch (e) {
+                    if (!mounted) return;
+                    // Safe: checked mounted immediately before using context
+                    final ctxForMsg = context;
+                    ScaffoldMessenger.of(ctxForMsg)
+                        .showSnackBar(SnackBar(content: Text('Error checking GitHub: $e')));
+                    return;
+                  }
+
+                  final database = ref.read(databaseProvider);
+                  await database.addProjectFile(
+                    ProjectFilesCompanion.insert(
+                      owner: result.owner,
+                      repo: result.repo,
+                      path: result.path,
+                      nickname: result.nickname,
+                      createdAt: DateTime.now(),
+                      updatedAt: DateTime.now(),
+                    ),
+                  );
+
+                  if (!mounted) return;
+                  // Safe: checked mounted immediately before using context
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  navigator.pop();
+                  messenger.showSnackBar(const SnackBar(content: Text('File added successfully')));
+                },
                 icon: const Icon(Icons.add_circle, color: DotlynColors.primary),
                 tooltip: 'Add file',
               ),

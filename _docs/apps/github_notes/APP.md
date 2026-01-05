@@ -51,6 +51,19 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 ### 🔴 P1 — MVP v0.1 (Finalisation)
 
+**Refactors (Completed for v0.1)**
+- [x] **Extract form widget** — `lib/widgets/project_file_form.dart` (ProjectFileForm)
+  - Description: Reusable Add/Edit form with validation for `owner`, `repo`, `path`, `nickname`.
+  - Tests: `test/widgets/project_file_form_test.dart` (validation + successful submit) — **passed**.
+  - Branch: `feat/githubnotes-refactor-form` — **merged (2026-01-03)**
+
+**Release Checklist** :
+- [ ] Device smoke test (`flutter run --release` on Android/iOS)
+- [x] Fix analyzer warnings — **zero issues** ✅
+- [x] Version in pubspec.yaml — **0.1.0** ✅
+- [x] CHANGELOG.md updated — **done** ✅
+- [ ] GitHub label `github_notes` created
+
 **Backend** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
 - [x] Drift schema: tables + migrations
@@ -63,17 +76,25 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] Screen: File editor (scrollbar + markdown help)
 - [x] Screen: Settings (GitHub token + add/remove/edit files)
 - [x] Widget: FileCard extracted → `lib/widgets/file_card.dart` (status badge + popup menu duplicate)
+- [x] Settings: use `ProjectFileForm` for Add/Edit; theme & language pickers added
 
-**Release** :
+**Release / housekeeping** :
 - [ ] Device smoke test (`flutter run --release`)
-- [ ] Fix analyzer warnings (async-gap in settings_screen)
-- [ ] Version bump + CHANGELOG.md
 - [ ] GitHub label `github_notes`
 
 **Note** : App mobile uniquement (Android/iOS). Pas de support web/desktop.
 
 ### 🟡 P2 — Améliorations légères v0.2
 
+**Code Quality & Refactors** :
+- [ ] Extract GitHub file check service (lightweight) — `lib/services/file_check_service.dart`
+  - Goal: Testable wrapper for file existence check (200/404/401/5xx/network)
+  - Branch: `feat/githubnotes-filecheck-service`
+- [ ] ProjectFilesNotifier (Riverpod Notifier) — `lib/providers/project_files_notifier.dart`
+  - Goal: Move DB operations out of widgets into a Notifier with unit tests
+  - Branch: `feat/githubnotes-notifier`
+
+**Localization & UI** :
 - [ ] Localization (i18n) : ARB files en/fr (per APP_STANDARDS.md)
 - [ ] Theme switcher + language picker (settings screen)
 - [ ] UI tweaks : edit/delete icons visibility

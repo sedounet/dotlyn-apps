@@ -44,7 +44,8 @@ class FilesListScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.note_add, size: 64, color: DotlynColors.primary.withAlpha(128)),
+                    Icon(Icons.note_add,
+                        size: 64, color: DotlynColors.primary.withAlpha(128)),
                     const SizedBox(height: 16),
                     Text(
                       'No files configured',
@@ -57,7 +58,8 @@ class FilesListScreen extends ConsumerWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const SettingsScreen()),
                         );
                       },
                       icon: const Icon(Icons.settings),
@@ -86,7 +88,8 @@ class FilesListScreen extends ConsumerWidget {
                   onDuplicate: (f) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => SettingsScreen(editingFile: f)),
+                      MaterialPageRoute(
+                          builder: (_) => SettingsScreen(editingFile: f)),
                     );
                   },
                 );

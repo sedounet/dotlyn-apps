@@ -13,6 +13,8 @@ L’esprit DotLyn : *sans surcharge, sans fioriture, simplement efficace.*
 ## 2. Palette colorimétrique
 Palette inspirée du croquis (orange terre cuite) avec une base sobre et contrastée.
 
+**Aide-mémoire Inkscape (RVBA)** : Ajouter `ff` à la fin du code hex pour opacité 100% → ex: `2c2c2cff` (gris anthracite), `e36c2dff` (orange).
+
 ### Couleurs de base
 
 | Usage          | Nom                    | Code Hex | Description                             |

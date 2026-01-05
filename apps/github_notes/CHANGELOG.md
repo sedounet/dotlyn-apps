@@ -9,21 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Widget library: `FileCard` widget for reusable file display with status badges
-- Unit tests: Basic database tests for ProjectFiles, FileContents, AppSettings
-- Test infrastructure: `AppDatabase.testConstructor` for testing
-
-### Changed
-- N/A
-
-### Fixed
-- Analyzer: Removed `dead_null_aware_expression` in main.dart
-- Analyzer: Applied `const` constructors in markdown help dialog
+_Future improvements and features for v0.2+_
 
 ---
 
-## [0.1.0] - 2026-01-01
+## [0.1.0] - 2026-01-05
+
+### Added (since initial version)
+- **Refactors & Code Quality**:
+  - Extracted `ProjectFileForm` widget — reusable Add/Edit form with validation
+  - Widget tests for `ProjectFileForm` (validation + submission flows)
+  - Duplicate file flow with prefilled dialog and GitHub existence check
+  - Theme switcher UI (Light/Dark/System) in Settings
+  - Language picker UI (English/French placeholder) in Settings
+  
+- **Widget Library**:
+  - `FileCard` widget for reusable file display with status badges and popup menu
+  - `ProjectFileForm` widget for Add/Edit file dialogs with inline validation
+
+- **Testing Infrastructure**:
+  - Basic database tests for ProjectFiles, FileContents, AppSettings
+  - Widget tests: `test/widgets/project_file_form_test.dart` (2 tests passing)
+  - `AppDatabase.testConstructor` for testing
+
+### Changed
+- Settings screen: Add/Edit file dialogs now use `ProjectFileForm` widget
+- Improved SafeArea handling across all screens
+- Caret positioning: auto-scroll to top on file load
+
+### Fixed
+- Analyzer warnings: removed `use_build_context_synchronously` lint warnings with proper mounted checks
+- Analyzer: removed `dead_null_aware_expression` in main.dart
+- Analyzer: applied `const` constructors throughout codebase
+- **Zero analyzer issues** ✅
 
 ### Added
 - **Core Features**:
