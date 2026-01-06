@@ -58,10 +58,11 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Branch: `feat/githubnotes-refactor-form` — **merged (2026-01-03)**
 
 **Release Checklist** :
-- [ ] Device smoke test (`flutter run --release` on Android/iOS)
+- [x] Device smoke test (`flutter run --release` on Android/iOS) — **passed on Android device A015** ✅
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
+- [x] Icons & splash screen generated (adaptive icons) — **done (2026-01-03)** ✅
 - [ ] GitHub label `github_notes` created
 
 **Backend** :
