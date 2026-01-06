@@ -2,12 +2,14 @@
 
 ## 1. Source unique
 - **Logo master** : `_docs/dotlyn/brand-assets/DotLyn-logo.png` (source SVG dans le même dossier)
-- **Icon app-specific** : `_docs/apps/[nom_app]/assets/Dotlyn-app-icon-[nom_app].png` (optionnel)
+- **Icon app-specific** : `_docs/apps/[nom_app]/assets/Dotlyn-app-icon-[nom_app].png` (1024×1024 PNG)
 - **Format source** : SVG pour édition, PNG 1024×1024 pour génération
 
-## 2. Convention de nommage
-- **Logo** = identité Dotlyn (DotLyn-logo.png) → utilisé pour launcher icon ET splash screen
-- **Icon** = icône spécifique app (Dotlyn-app-icon-[app].png) → uniquement si customisation nécessaire
+## 2. Convention de nommage (STANDARD DOTLYN)
+- **icon.png** (dans `apps/[app]/assets/`) = launcher icon de l'app → icône spécifique avec logo + couleur app
+- **DotLyn-logo.png** (dans `apps/[app]/assets/`) = splash screen → logo Dotlyn neutre
+
+**⚠️ IMPORTANT** : Ne PAS utiliser le même fichier pour les deux. L'icône doit être distinctive par app, le splash reste uniforme Dotlyn.
 
 ## 3. Export PNG depuis SVG (si nécessaire)
 ```bash
@@ -28,14 +30,14 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/DotLyn-logo.png"
+  image_path: "assets/icon.png"  # Icône spécifique app
   remove_alpha_ios: true
   # Configuration adaptive pour Android (évite les bords blancs dans les masques circulaires)
-  adaptive_icon_foreground: "assets/DotLyn-logo.png"
+  adaptive_icon_foreground: "assets/icon.png"
   adaptive_icon_background: "#F8F8F8"  # Couleur de fond adaptative
 
 flutter_native_splash:
-  image: "assets/DotLyn-logo.png"
+  image: "assets/DotLyn-logo.png"  # Logo Dotlyn pour splash
   color: "#F8F8F8"  # Fond du splash
   android: true
   ios: true
@@ -57,10 +59,17 @@ flutter run --release -d <device-id>
 
 ## 5. Intégration à la création d'une nouvelle app
 
-### Étape 1 : Copier le logo dans assets
+### Étape 1 : Copier les assets dans l'app
 ```bash
 # Depuis la racine du monorepo
+# 1. Copier le logo Dotlyn pour le splash
 Copy-Item "_docs/dotlyn/brand-assets/DotLyn-logo.png" "apps/[nom_app]/assets/"
+
+# 2. Copier l'icône spécifique app (si déjà créée)
+Copy-Item "_docs/apps/[nom_app]/assets/Dotlyn-app-icon-[nom_app].png" "apps/[nom_app]/assets/icon.png"
+
+# OU créer icon.png depuis le logo si pas encore d'icône custom
+Copy-Item "_docs/dotlyn/brand-assets/DotLyn-logo.png" "apps/[nom_app]/assets/icon.png"
 ```
 
 ### Étape 2 : Ajouter la config dans pubspec.yaml
