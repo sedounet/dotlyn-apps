@@ -50,20 +50,17 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - assets/Dotlyn-app-icon-github_notes.svg
-    - assets/DotLyn-logo.svg
-    # - assets/icon.png  # removed, unused
+    - assets/DotLyn-logo.png
+    - assets/icon.png
 
 # Configuration for launcher icons and native splash
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/Dotlyn-app-icon-github_notes.svg"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/Dotlyn-app-icon-github_notes.svg"
+  image_path: "assets/icon.png"
 
 flutter_native_splash:
-  image: "assets/DotLyn-logo.svg"
+  image: "assets/DotLyn-logo.png"
   color: "#FFFFFF"
   android: true
   ios: true
