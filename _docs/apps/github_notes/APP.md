@@ -58,11 +58,11 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Branch: `feat/githubnotes-refactor-form` — **merged (2026-01-03)**
 
 **Release Checklist** :
-- [ ] Device smoke test (`flutter run --release` on Android/iOS) — **icons verified, full smoke pending**
+- [ ] Device smoke test (`flutter run --release` on Android/iOS) — **full smoke pending**
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
-- [ ] 🔥 **PROBLÈME SPLASH SCREEN** : L'icône s'affiche au lieu du logo malgré config correcte dans pubspec.yaml (`flutter_native_splash: image: assets/DotLyn-logo.png`). Régénération multiple sans effet. À investiguer demain — flutter_native_splash cache? Build cache Android?
+- [x] Icons & splash screen generated (adaptive icons) — **done (2026-01-08)** ✅
 - [ ] GitHub label `github_notes` created
 
 **Backend** :
