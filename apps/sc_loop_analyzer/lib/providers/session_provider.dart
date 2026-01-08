@@ -12,7 +12,8 @@ class SessionProvider extends ChangeNotifier {
   bool _isLoading = false;
 
   Profile? get activeProfile => _sessionService.activeProfile;
-  List<TimestampEntry> get currentTimestamps => _sessionService.currentTimestamps;
+  List<TimestampEntry> get currentTimestamps =>
+      _sessionService.currentTimestamps;
   int get currentStep => _sessionService.currentStep;
   List<Session> get sessions => _sessions;
   bool get isLoading => _isLoading;

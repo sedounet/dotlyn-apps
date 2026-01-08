@@ -48,7 +48,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Base de données réinitialisée')));
+        ).showSnackBar(
+            const SnackBar(content: Text('Base de données réinitialisée')));
       }
     }
   }
@@ -96,7 +97,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Paramètres généraux', style: Theme.of(context).textTheme.titleLarge),
+                        Text('Paramètres généraux',
+                            style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 16),
                         _DarkModeToggle(),
                         const SizedBox(height: 16),
@@ -113,7 +115,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 16),
                   Card(
                     child: Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
                         leading: const Icon(Icons.developer_mode),
                         title: const Text('Dev / Debug'),
@@ -133,7 +136,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   'État de la base de données',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  )
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 12),
                                 if (_dbStats != null) ...[
@@ -147,11 +153,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   ),
                                   StatRow(
                                     label: 'Bénéficiaires',
-                                    value: _dbStats!['beneficiaries']!.toString(),
+                                    value:
+                                        _dbStats!['beneficiaries']!.toString(),
                                   ),
                                   StatRow(
                                     label: 'Transactions',
-                                    value: _dbStats!['transactions']!.toString(),
+                                    value:
+                                        _dbStats!['transactions']!.toString(),
                                   ),
                                 ],
                                 const Divider(height: 32),
@@ -161,7 +169,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   'Intégrité de la base',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  )
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 12),
                                 if (_integrityIssues != null) ...[
@@ -174,7 +185,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -192,8 +204,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                               _integrityIssues!.isEmpty
                                                   ? 'Intégrité OK'
                                                   : '${_integrityIssues!.length} problème(s)',
-                                              style: Theme.of(context).textTheme.bodyMedium
-                                                  ?.copyWith(fontWeight: FontWeight.bold),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -201,10 +217,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                           const SizedBox(height: 8),
                                           ..._integrityIssues!.map(
                                             (issue) => Padding(
-                                              padding: const EdgeInsets.only(bottom: 4),
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 4),
                                               child: Text(
                                                 '• $issue',
-                                                style: const TextStyle(fontSize: 12),
+                                                style: const TextStyle(
+                                                    fontSize: 12),
                                               ),
                                             ),
                                           ),
@@ -220,7 +238,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   'Actions de développement',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  )
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 12),
                                 SizedBox(
@@ -228,27 +249,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   child: ElevatedButton.icon(
                                     onPressed: _seedFakeData,
                                     icon: const Icon(Icons.science),
-                                    label: const Text('Ajouter données de test'),
+                                    label:
+                                        const Text('Ajouter données de test'),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton.icon(
-                                    onPressed: () => _resetDatabase(includeFakeData: true),
+                                    onPressed: () =>
+                                        _resetDatabase(includeFakeData: true),
                                     icon: const Icon(Icons.refresh),
-                                    label: const Text('Reset DB (avec données test)'),
-                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                                    label: const Text(
+                                        'Reset DB (avec données test)'),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton.icon(
-                                    onPressed: () => _resetDatabase(includeFakeData: false),
+                                    onPressed: () =>
+                                        _resetDatabase(includeFakeData: false),
                                     icon: const Icon(Icons.delete_forever),
                                     label: const Text('Reset DB (vide)'),
-                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red),
                                   ),
                                 ),
                               ],
@@ -270,7 +297,8 @@ class _DarkModeToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.darkModeKey));
+    final settingAsync =
+        ref.watch(appSettingProvider(AppSettingsRepository.darkModeKey));
 
     return settingAsync.when(
       data: (value) {
@@ -281,14 +309,16 @@ class _DarkModeToggle extends ConsumerWidget {
             value: isDark,
             onChanged: (val) async {
               final repo = ref.read(appSettingsRepositoryProvider);
-              await repo.setSetting(AppSettingsRepository.darkModeKey, val.toString());
+              await repo.setSetting(
+                  AppSettingsRepository.darkModeKey, val.toString());
             },
           ),
         );
       },
-      loading: () =>
-          const ListTile(title: Text('Mode sombre'), trailing: CircularProgressIndicator()),
-      error: (e, s) => ListTile(title: const Text('Mode sombre'), subtitle: Text('Erreur: $e')),
+      loading: () => const ListTile(
+          title: Text('Mode sombre'), trailing: CircularProgressIndicator()),
+      error: (e, s) => ListTile(
+          title: const Text('Mode sombre'), subtitle: Text('Erreur: $e')),
     );
   }
 }
@@ -298,7 +328,8 @@ class _HideBalanceToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.hideBalance));
+    final settingAsync =
+        ref.watch(appSettingProvider(AppSettingsRepository.hideBalance));
 
     return settingAsync.when(
       data: (value) {
@@ -310,15 +341,18 @@ class _HideBalanceToggle extends ConsumerWidget {
             value: isHidden,
             onChanged: (val) async {
               final repo = ref.read(appSettingsRepositoryProvider);
-              await repo.setSetting(AppSettingsRepository.hideBalance, val.toString());
+              await repo.setSetting(
+                  AppSettingsRepository.hideBalance, val.toString());
             },
           ),
         );
       },
-      loading: () =>
-          const ListTile(title: Text('Masquer les soldes'), trailing: CircularProgressIndicator()),
-      error: (e, s) =>
-          ListTile(title: const Text('Masquer les soldes'), subtitle: Text('Erreur: $e')),
+      loading: () => const ListTile(
+          title: Text('Masquer les soldes'),
+          trailing: CircularProgressIndicator()),
+      error: (e, s) => ListTile(
+          title: const Text('Masquer les soldes'),
+          subtitle: Text('Erreur: $e')),
     );
   }
 }
@@ -328,7 +362,8 @@ class _LocaleSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingAsync = ref.watch(appSettingProvider(AppSettingsRepository.locale));
+    final settingAsync =
+        ref.watch(appSettingProvider(AppSettingsRepository.locale));
 
     return settingAsync.when(
       data: (value) {
@@ -345,7 +380,8 @@ class _LocaleSelector extends ConsumerWidget {
               await repo.setSetting(AppSettingsRepository.locale, val);
             }
           },
-          decoration: const InputDecoration(labelText: 'Langue', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+              labelText: 'Langue', border: OutlineInputBorder()),
         );
       },
       loading: () => const CircularProgressIndicator(),

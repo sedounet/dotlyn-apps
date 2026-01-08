@@ -20,7 +20,8 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Dotlyn Design Lab'),
         actions: [
           IconButton(
-            icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            icon: Icon(
+                themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
             onPressed: () => ref.read(themeProviderRiverpod).toggleTheme(),
           ),
         ],
@@ -129,7 +130,8 @@ class _MenuCard extends StatelessWidget {
                   children: [
                     Text(title, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
-                    Text(description, style: Theme.of(context).textTheme.bodySmall),
+                    Text(description,
+                        style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
               ),

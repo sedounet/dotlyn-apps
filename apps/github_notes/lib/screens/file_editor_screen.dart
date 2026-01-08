@@ -117,7 +117,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
     await database.upsertFileContent(
       db.FileContentsCompanion(
-        id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+        id: existing == null
+            ? const drift.Value.absent()
+            : drift.Value(existing.id),
         projectFileId: drift.Value(widget.projectFile.id),
         content: drift.Value(_controller.text),
         githubSha: drift.Value(existing?.githubSha),
@@ -216,7 +218,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
             _controller.text = remoteContent;
             await database.upsertFileContent(
               db.FileContentsCompanion(
-                id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+                id: existing == null
+                    ? const drift.Value.absent()
+                    : drift.Value(existing.id),
                 projectFileId: drift.Value(widget.projectFile.id),
                 content: drift.Value(remoteContent),
                 githubSha: drift.Value(remoteSha),
@@ -258,7 +262,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       // Update local DB with new SHA
       await database.upsertFileContent(
         db.FileContentsCompanion(
-          id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+          id: existing == null
+              ? const drift.Value.absent()
+              : drift.Value(existing.id),
           projectFileId: drift.Value(widget.projectFile.id),
           content: drift.Value(_controller.text),
           githubSha: drift.Value(newSha),
@@ -290,7 +296,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fileContentAsync = ref.watch(fileContentProvider(widget.projectFile.id));
+    final fileContentAsync =
+        ref.watch(fileContentProvider(widget.projectFile.id));
 
     // ignore: deprecated_member_use
     return WillPopScope(
@@ -318,7 +325,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Markdown quick reference',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                           SizedBox(height: 8),
                           Text('- # Heading 1'),
                           Text('- ## Heading 2'),
@@ -363,8 +371,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                           Expanded(
                             child: Text(
                               '${widget.projectFile.owner}/${widget.projectFile.repo}/${widget.projectFile.path}',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: DotlynColors.secondary.withAlpha(153),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color:
+                                        DotlynColors.secondary.withAlpha(153),
                                   ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -407,9 +419,10 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                         color: Theme.of(context).colorScheme.surface,
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black.withAlpha(60)
-                                : Colors.black.withAlpha(13),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black.withAlpha(60)
+                                    : Colors.black.withAlpha(13),
                             blurRadius: 10,
                             offset: const Offset(0, -2),
                           ),

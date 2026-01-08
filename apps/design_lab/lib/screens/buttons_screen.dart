@@ -10,15 +10,19 @@ class ButtonsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Button Types', style: Theme.of(context).textTheme.headlineMedium),
+          Text('Button Types',
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () {}, child: const Text('Elevated Button')),
+          ElevatedButton(
+              onPressed: () {}, child: const Text('Elevated Button')),
           const SizedBox(height: 12),
-          OutlinedButton(onPressed: () {}, child: const Text('Outlined Button')),
+          OutlinedButton(
+              onPressed: () {}, child: const Text('Outlined Button')),
           const SizedBox(height: 12),
           TextButton(onPressed: () {}, child: const Text('Text Button')),
           const SizedBox(height: 32),
-          Text('Button Sizes', style: Theme.of(context).textTheme.headlineMedium),
+          Text('Button Sizes',
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {},
@@ -28,7 +32,8 @@ class ButtonsScreen extends StatelessWidget {
             child: const Text('Small'),
           ),
           const SizedBox(height: 12),
-          ElevatedButton(onPressed: () {}, child: const Text('Medium (default)')),
+          ElevatedButton(
+              onPressed: () {}, child: const Text('Medium (default)')),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () {},

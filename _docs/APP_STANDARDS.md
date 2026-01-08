@@ -25,19 +25,44 @@
 **v0.2-v0.3 maximum** (avant toute beta publique)
 
 ### Stack technique
-- **Package** : `flutter_localizations` + `intl`
+- **Package** : `flutter_localizations` + `intl` + **dotlyn_core/i18n**
 - **Format** : ARB files (`l10n/app_en.arb`, `l10n/app_fr.arb`)
 - **Langues minimum** : Français (fr) + Anglais (en)
+- **Infrastructure centralisée** : `packages/dotlyn_core/lib/i18n/` (localeProvider, LocaleService, I18nHelpers)
+
+### Architecture
+
+```
+packages/dotlyn_core/lib/i18n/
+├── supported_locales.dart        ← Locale definitions (DotlynLocales.en, .fr)
+├── locale_service.dart           ← SharedPreferences persistence
+├── locale_provider.dart          ← Riverpod StateNotifierProvider
+└── i18n_helpers.dart             ← Format utilities (date, currency, numbers)
+
+apps/[app]/lib/l10n/
+├── app_en.arb                    ← English strings (source)
+├── app_fr.arb                    ← French strings
+└── app_localizations.dart        ← Generated (flutter gen-l10n)
+```
 
 ### Configuration pubspec.yaml
 ```yaml
 dependencies:
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.20.0
+  dotlyn_core:
+    path: ../../packages/dotlyn_core
 
 flutter:
   generate: true # Active la génération automatique
+```
+
+### Configuration l10n.yaml
+```yaml
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
 ```
 
 ### Structure fichiers
@@ -46,7 +71,8 @@ apps/[nom]/
 ├── lib/
 │   └── l10n/
 │       ├── app_en.arb  ← Anglais (défaut)
-│       └── app_fr.arb  ← Français
+│       ├── app_fr.arb  ← Français
+│       └── app_localizations.dart ← Généré
 └── l10n.yaml           ← Configuration génération
 ```
 
@@ -70,27 +96,85 @@ apps/[nom]/
 }
 ```
 
+### Générer les localisations
+```bash
+cd apps/[app]
+flutter gen-l10n
+```
+
 ### Usage dans le code
+
+#### Import correct
 ```dart
+// ✅ Correct: relative import
+import 'l10n/app_localizations.dart';
+
+// ❌ Incorrect: package import
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+```
 
-// Dans un widget
+#### Dans un widget
+```dart
 Text(AppLocalizations.of(context)!.appTitle)
+```
 
-// MaterialApp config
-MaterialApp(
-  localizationsDelegates: AppLocalizations.localizationsDelegates,
-  supportedLocales: AppLocalizations.supportedLocales,
-  // ...
-)
+#### Configuration MaterialApp avec Riverpod
+```dart
+import 'package:dotlyn_core/dotlyn_core.dart';
+import 'l10n/app_localizations.dart';
+
+class MyApp extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider); // Reactive locale
+
+    return MaterialApp(
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // ...
+    );
+  }
+}
+```
+
+#### Changer la langue programmatiquement
+```dart
+import 'package:dotlyn_core/dotlyn_core.dart';
+
+// Dans un Settings screen
+final localeNotifier = ref.read(localeProvider.notifier);
+localeNotifier.setLocale(const Locale('fr')); // Switch to French
+```
+
+#### Formater dates/nombres/currency selon locale
+```dart
+import 'package:dotlyn_core/dotlyn_core.dart';
+
+// Format currency
+final formatted = I18nHelpers.formatCurrency(
+  amount: 1234.56,
+  locale: ref.watch(localeProvider),
+);
+
+// Format date
+I18nHelpers.formatDate(DateTime.now(), context);
+
+// Format number
+I18nHelpers.formatNumber(1000, context);
+
+// Format percentage
+I18nHelpers.formatPercent(0.85, context);
 ```
 
 ### Checklist i18n
 - [ ] Tous les strings UI dans ARB files (0 hardcodés)
 - [ ] Supporte en + fr minimum
 - [ ] Plurals gérés (ex: "1 item" vs "2 items")
-- [ ] Dates/nombres formatés selon locale
-- [ ] Changement langue fonctionne sans redémarrage
+- [ ] Dates/nombres formatés selon locale via I18nHelpers
+- [ ] Changement langue fonctionne sans redémarrage (reactive via localeProvider)
+- [ ] Locale persiste entre redémarrages (automatique via LocaleService)
+- [ ] MaterialApp watch localeProvider pour réactivité
 
 ---
 
@@ -339,12 +423,14 @@ Avant de merger une app en `main`, vérifier :
 
 ## 🔗 Références
 
+- **State Management (Riverpod)** : [`STATE_MANAGEMENT_CONVENTIONS.md`](STATE_MANAGEMENT_CONVENTIONS.md)
 - **Guide tests** : [`GUIDE_TDD_TESTS.md`](GUIDE_TDD_TESTS.md)
 - **Secure storage** : [`SECURE_STORAGE_PATTERN.md`](SECURE_STORAGE_PATTERN.md)
 - **Styleguide** : [`dotlyn/STYLEGUIDE.md`](dotlyn/STYLEGUIDE.md)
+- **Icon Workflow** : [`dotlyn/WORKFLOW_ICONS.md`](dotlyn/WORKFLOW_ICONS.md)
 
 ---
 
-**Version** : 1.0  
+**Version** : 1.1  
 **Dernière mise à jour** : 2026-01-01  
 **Maintainer** : @sedounet

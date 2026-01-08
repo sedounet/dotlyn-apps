@@ -26,7 +26,8 @@ final sessionProviderRiverpod = ChangeNotifierProvider<SessionProvider>((ref) {
   return provider;
 });
 
-final gameplayTypeProviderRiverpod = ChangeNotifierProvider<GameplayTypeProvider>((ref) {
+final gameplayTypeProviderRiverpod =
+    ChangeNotifierProvider<GameplayTypeProvider>((ref) {
   final provider = GameplayTypeProvider();
   provider.loadTypes();
   return provider;
@@ -38,7 +39,8 @@ final shipProviderRiverpod = ChangeNotifierProvider<ShipProvider>((ref) {
   return provider;
 });
 
-final resourceProviderRiverpod = ChangeNotifierProvider<ResourceProvider>((ref) {
+final resourceProviderRiverpod =
+    ChangeNotifierProvider<ResourceProvider>((ref) {
   final provider = ResourceProvider();
   provider.loadResources();
   return provider;

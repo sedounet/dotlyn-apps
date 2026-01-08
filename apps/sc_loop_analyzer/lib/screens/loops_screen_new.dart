@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
-    show ConsumerWidget, WidgetRef, Consumer, ConsumerStatefulWidget, ConsumerState;
+    show
+        ConsumerWidget,
+        WidgetRef,
+        Consumer,
+        ConsumerStatefulWidget,
+        ConsumerState;
 import '../models/profile.dart';
 import '../models/gameplay_type.dart';
 import '../models/ship.dart';
@@ -27,7 +32,8 @@ class LoopsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Boucles (workflows)', style: Theme.of(context).textTheme.headlineSmall),
+              Text('Boucles (workflows)',
+                  style: Theme.of(context).textTheme.headlineSmall),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -48,7 +54,8 @@ class LoopsScreen extends ConsumerWidget {
           ),
           const Divider(),
           if (provider.profiles.isEmpty)
-            const Center(child: Text('Aucune boucle. Appuyez sur + pour en créer une.'))
+            const Center(
+                child: Text('Aucune boucle. Appuyez sur + pour en créer une.'))
           else
             ...provider.profiles.map((profile) => ListTile(
                   leading: const Icon(Icons.repeat),
@@ -84,7 +91,9 @@ class LoopsScreen extends ConsumerWidget {
         title: const Text('Reset Database'),
         content: const Text('Supprimer toutes les données et recréer la BDD ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Reset', style: TextStyle(color: Colors.red)),
@@ -120,7 +129,8 @@ class LoopsScreen extends ConsumerWidget {
   void _showEditLoopDialog(BuildContext context, Profile profile) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddLoopScreen(profileToEdit: profile)),
+      MaterialPageRoute(
+          builder: (context) => AddLoopScreen(profileToEdit: profile)),
     );
   }
 }
@@ -168,9 +178,11 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
 
   Future<void> _loadProfileResources() async {
     if (widget.profileToEdit != null) {
-      final resources = await DatabaseService().getProfileResources(widget.profileToEdit!.id);
+      final resources =
+          await DatabaseService().getProfileResources(widget.profileToEdit!.id);
       setState(() {
-        _selectedResources.addAll(resources.map((r) => {'resourceId': r.resourceId}));
+        _selectedResources
+            .addAll(resources.map((r) => {'resourceId': r.resourceId}));
       });
     }
   }
@@ -213,7 +225,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           children: [
             TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom (ex: Salvage)')),
+                decoration:
+                    const InputDecoration(labelText: 'Nom (ex: Salvage)')),
             const SizedBox(height: 8),
             TextField(
                 controller: descController,
@@ -221,7 +234,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
@@ -257,7 +272,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-                controller: nameController, decoration: const InputDecoration(labelText: 'Nom')),
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nom')),
             const SizedBox(height: 8),
             TextField(
                 controller: descController,
@@ -265,7 +281,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
@@ -292,9 +310,12 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmer la suppression'),
-        content: const Text('Voulez-vous vraiment supprimer ce type de gameplay ?'),
+        content:
+            const Text('Voulez-vous vraiment supprimer ce type de gameplay ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Supprimer'),
@@ -325,15 +346,19 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           children: [
             TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom (ex: Vulture)')),
+                decoration:
+                    const InputDecoration(labelText: 'Nom (ex: Vulture)')),
             const SizedBox(height: 8),
             TextField(
                 controller: typeController,
-                decoration: const InputDecoration(labelText: 'Type (ex: Salvage)')),
+                decoration:
+                    const InputDecoration(labelText: 'Type (ex: Salvage)')),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
@@ -369,14 +394,18 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-                controller: nameController, decoration: const InputDecoration(labelText: 'Nom')),
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nom')),
             const SizedBox(height: 8),
             TextField(
-                controller: typeController, decoration: const InputDecoration(labelText: 'Type')),
+                controller: typeController,
+                decoration: const InputDecoration(labelText: 'Type')),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty && context.mounted) {
@@ -405,7 +434,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
         title: const Text('Confirmer la suppression'),
         content: const Text('Voulez-vous vraiment supprimer ce vaisseau ?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Supprimer'),
@@ -442,12 +473,15 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            decoration: const InputDecoration(labelText: 'Ressource'),
+                            decoration:
+                                const InputDecoration(labelText: 'Ressource'),
                             items: provider.resources
                                 .map((r) => DropdownMenuItem(
-                                    value: r.id, child: Text('${r.name} (${r.unit})')))
+                                    value: r.id,
+                                    child: Text('${r.name} (${r.unit})')))
                                 .toList(),
-                            onChanged: (value) => setState(() => selectedResourceId = value),
+                            onChanged: (value) =>
+                                setState(() => selectedResourceId = value),
                           ),
                         ),
                         IconButton(
@@ -464,7 +498,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           },
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () {
               if (selectedResourceId != null) {
@@ -496,15 +532,19 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
           children: [
             TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom (ex: Ruble Salvage)')),
+                decoration: const InputDecoration(
+                    labelText: 'Nom (ex: Ruble Salvage)')),
             const SizedBox(height: 8),
             TextField(
                 controller: unitController,
-                decoration: const InputDecoration(labelText: 'Unité (ex: SCU, kg)')),
+                decoration:
+                    const InputDecoration(labelText: 'Unité (ex: SCU, kg)')),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               if (nameController.text.isNotEmpty &&
@@ -527,7 +567,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
   }
 
   Future<void> _saveBoucle() async {
-    final steps = _stepControllers.map((c) => c.text).where((s) => s.isNotEmpty).toList();
+    final steps =
+        _stepControllers.map((c) => c.text).where((s) => s.isNotEmpty).toList();
     if (_nameController.text.isEmpty || steps.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nom et au moins une étape requis')),
@@ -567,14 +608,17 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
 
     // Save resources if any
     if (_selectedResources.isNotEmpty && profileId != null) {
-      await DatabaseService().setProfileResources(profileId, _selectedResources);
+      await DatabaseService()
+          .setProfileResources(profileId, _selectedResources);
     }
 
     if (mounted) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(widget.profileToEdit != null ? 'Boucle modifiée !' : 'Boucle créée !')),
+            content: Text(widget.profileToEdit != null
+                ? 'Boucle modifiée !'
+                : 'Boucle créée !')),
       );
     }
   }
@@ -587,7 +631,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.profileToEdit != null ? 'Modifier la boucle' : 'Nouvelle boucle'),
+        title: Text(widget.profileToEdit != null
+            ? 'Modifier la boucle'
+            : 'Nouvelle boucle'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -611,7 +657,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
               maxLines: 2,
             ),
             const SizedBox(height: 24),
-            Text('Type de gameplay', style: Theme.of(context).textTheme.titleMedium),
+            Text('Type de gameplay',
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -620,9 +667,11 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
                     decoration: const InputDecoration(labelText: 'Gameplay'),
                     initialValue: _selectedGameplayTypeId,
                     items: gameplayProvider.types
-                        .map((type) => DropdownMenuItem(value: type.id, child: Text(type.name)))
+                        .map((type) => DropdownMenuItem(
+                            value: type.id, child: Text(type.name)))
                         .toList(),
-                    onChanged: (value) => setState(() => _selectedGameplayTypeId = value),
+                    onChanged: (value) =>
+                        setState(() => _selectedGameplayTypeId = value),
                   ),
                 ),
                 IconButton(
@@ -634,12 +683,14 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
                   IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditGameplayTypeDialog(
-                        gameplayProvider.types.firstWhere((t) => t.id == _selectedGameplayTypeId)),
+                        gameplayProvider.types.firstWhere(
+                            (t) => t.id == _selectedGameplayTypeId)),
                     tooltip: 'Modifier',
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () => _deleteGameplayType(_selectedGameplayTypeId!),
+                    onPressed: () =>
+                        _deleteGameplayType(_selectedGameplayTypeId!),
                     tooltip: 'Supprimer',
                   ),
                 ],
@@ -655,9 +706,11 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
                     decoration: const InputDecoration(labelText: 'Vaisseau'),
                     initialValue: _selectedShipId,
                     items: shipProvider.ships
-                        .map((ship) => DropdownMenuItem(value: ship.id, child: Text(ship.name)))
+                        .map((ship) => DropdownMenuItem(
+                            value: ship.id, child: Text(ship.name)))
                         .toList(),
-                    onChanged: (value) => setState(() => _selectedShipId = value),
+                    onChanged: (value) =>
+                        setState(() => _selectedShipId = value),
                   ),
                 ),
                 IconButton(
@@ -668,8 +721,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
                 if (_selectedShipId != null) ...[
                   IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () => _showEditShipDialog(
-                        shipProvider.ships.firstWhere((s) => s.id == _selectedShipId)),
+                    onPressed: () => _showEditShipDialog(shipProvider.ships
+                        .firstWhere((s) => s.id == _selectedShipId)),
                     tooltip: 'Modifier',
                   ),
                   IconButton(
@@ -684,7 +737,8 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Ressources attendues', style: Theme.of(context).textTheme.titleMedium),
+                Text('Ressources attendues',
+                    style: Theme.of(context).textTheme.titleMedium),
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: _showAddResourceDialog,
@@ -760,8 +814,9 @@ class _AddLoopScreenState extends ConsumerState<AddLoopScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _saveBoucle,
-                child: Text(
-                    widget.profileToEdit != null ? 'Modifier la boucle' : 'Enregistrer la boucle'),
+                child: Text(widget.profileToEdit != null
+                    ? 'Modifier la boucle'
+                    : 'Enregistrer la boucle'),
               ),
             ),
           ],

@@ -46,8 +46,7 @@ class ConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final effectiveConfirmColor =
-        confirmColor ??
+    final effectiveConfirmColor = confirmColor ??
         (isDangerous ? theme.colorScheme.error : theme.colorScheme.primary);
 
     return AlertDialog(

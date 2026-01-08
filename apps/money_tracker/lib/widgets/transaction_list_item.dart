@@ -69,9 +69,8 @@ class TransactionListItem extends StatelessWidget {
       trailing: Text(
         currencyFormatter.format(transaction.amount.abs()),
         style: TextStyle(
-          color: isPositive
-              ? theme.colorScheme.tertiary
-              : theme.colorScheme.error,
+          color:
+              isPositive ? theme.colorScheme.tertiary : theme.colorScheme.error,
           fontWeight: FontWeight.bold,
         ),
       ),

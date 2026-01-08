@@ -52,10 +52,12 @@ dotlyn-apps/
 ## ⚙️ Architecture & Stack Technique
 
 ### Stack Standard (Money Tracker)
-- **State Management** : Riverpod 2.4+ (StreamProvider, Provider, NotifierProvider)
+- **State Management** : Riverpod 2.4+ (StreamProvider, Provider, NotifierProvider) — Voir [`_docs/STATE_MANAGEMENT_CONVENTIONS.md`](../_docs/STATE_MANAGEMENT_CONVENTIONS.md) pour les patterns et conventions
 - **Database** : Drift (SQLite) avec migrations versionnées
 - **Code Generation** : build_runner (pour Drift schemas)
 - **Patterns** : Repository pattern pour accès DB
+- **Secure Storage** : flutter_secure_storage pour tokens/credentials — Voir [`_docs/SECURE_STORAGE_PATTERN.md`](../_docs/SECURE_STORAGE_PATTERN.md)
+- **Testing** : Riverpod overrides + Drift mocks — Voir [`_docs/GUIDE_TDD_TESTS.md`](../_docs/GUIDE_TDD_TESTS.md)
 
 ### Structure Data Layer (exemple Money Tracker)
 ```dart
@@ -216,6 +218,7 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
 - Créer de fichier MASTER.md
+- Créer de fichier DECISION_*.md (décisions = commits + updates dans docs existantes)
 - Garder plusieurs versions de prompts (PROMPT_V0.1.md, etc.)
 - Multiplier les fichiers de doc au-delà de APP.md + PITCH.md + USER-NOTES.md + PROMPT_USER.md + PROMPT_AI.md
 
@@ -337,6 +340,7 @@ melos run build:runner
 
 **Brand assets** :
 - Logos, templates → `_docs/dotlyn/brand-assets/`
+- **Workflow icônes** : Voir [`_docs/dotlyn/WORKFLOW_ICONS.md`](../_docs/dotlyn/WORKFLOW_ICONS.md) pour la génération des app icons
 
 ---
 

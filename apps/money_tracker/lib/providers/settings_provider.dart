@@ -23,7 +23,8 @@ final appSettingProvider = StreamProvider.autoDispose.family<String?, String>((
   final database = ref.watch(databaseProvider);
   final stream = (database.select(
     database.appSettings,
-  )..where((s) => s.key.equals(key))).watchSingleOrNull();
+  )..where((s) => s.key.equals(key)))
+      .watchSingleOrNull();
   return stream.map((setting) => setting?.value);
 });
 
@@ -47,14 +48,17 @@ class AppSettingsRepository {
   Future<String?> getSetting(String key) {
     return (_database.select(
       _database.appSettings,
-    )..where((s) => s.key.equals(key))).getSingleOrNull().then((s) => s?.value);
+    )..where((s) => s.key.equals(key)))
+        .getSingleOrNull()
+        .then((s) => s?.value);
   }
 
   /// Set a setting value (creates or updates)
   Future<void> setSetting(String key, String? value) async {
     final existing = await (_database.select(
       _database.appSettings,
-    )..where((s) => s.key.equals(key))).getSingleOrNull();
+    )..where((s) => s.key.equals(key)))
+        .getSingleOrNull();
 
     if (existing != null && value != null) {
       // Update existing
@@ -70,7 +74,8 @@ class AppSettingsRepository {
       // Delete if value is null and setting exists
       await (_database.delete(
         _database.appSettings,
-      )..where((s) => s.key.equals(key))).go();
+      )..where((s) => s.key.equals(key)))
+          .go();
     }
   }
 
@@ -78,7 +83,8 @@ class AppSettingsRepository {
   Future<void> deleteSetting(String key) {
     return (_database.delete(
       _database.appSettings,
-    )..where((s) => s.key.equals(key))).go();
+    )..where((s) => s.key.equals(key)))
+        .go();
   }
 
   /// Clear all settings

@@ -266,7 +266,8 @@ class DatabaseService {
 
   Future<List<Session>> getSessions() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('sessions', orderBy: 'created_at DESC');
+    final List<Map<String, dynamic>> maps =
+        await db.query('sessions', orderBy: 'created_at DESC');
     return List.generate(maps.length, (i) {
       return Session(
         id: maps[i]['id'],
@@ -277,8 +278,10 @@ class DatabaseService {
         totalDuration: maps[i]['total_duration_minutes'],
         quantity: maps[i]['quantity'],
         comments: maps[i]['comments'] ?? '',
-        timestamps: List<Map<String, dynamic>>.from(jsonDecode(maps[i]['timestamps'])),
-        stepDurations: List<Map<String, dynamic>>.from(jsonDecode(maps[i]['step_durations'])),
+        timestamps:
+            List<Map<String, dynamic>>.from(jsonDecode(maps[i]['timestamps'])),
+        stepDurations: List<Map<String, dynamic>>.from(
+            jsonDecode(maps[i]['step_durations'])),
       );
     });
   }
@@ -296,7 +299,8 @@ class DatabaseService {
 
   Future<List<Resource>> getResources() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('resources', orderBy: 'name ASC');
+    final List<Map<String, dynamic>> maps =
+        await db.query('resources', orderBy: 'name ASC');
     return List.generate(maps.length, (i) => Resource.fromMap(maps[i]));
   }
 
@@ -306,10 +310,12 @@ class DatabaseService {
   }
 
   // CRUD Profile Resources
-  Future<void> setProfileResources(int profileId, List<Map<String, dynamic>> resources) async {
+  Future<void> setProfileResources(
+      int profileId, List<Map<String, dynamic>> resources) async {
     final db = await database;
     // Delete existing
-    await db.delete('profile_resources', where: 'profile_id = ?', whereArgs: [profileId]);
+    await db.delete('profile_resources',
+        where: 'profile_id = ?', whereArgs: [profileId]);
     // Insert new
     for (var res in resources) {
       await db.insert('profile_resources', {

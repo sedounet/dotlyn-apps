@@ -7,11 +7,12 @@ import 'database_provider.dart';
 // Watch all favorite accounts (ordered by buttonIndex)
 final favoriteAccountsProvider =
     StreamProvider.autoDispose<List<FavoriteAccount>>((ref) {
-      final database = ref.watch(databaseProvider);
-      return (database.select(
-        database.favoriteAccounts,
-      )..orderBy([(t) => OrderingTerm(expression: t.buttonIndex)])).watch();
-    });
+  final database = ref.watch(databaseProvider);
+  return (database.select(
+    database.favoriteAccounts,
+  )..orderBy([(t) => OrderingTerm(expression: t.buttonIndex)]))
+      .watch();
+});
 
 final favoriteAccountsRepositoryProvider = Provider<FavoriteAccountsRepository>(
   (ref) {
@@ -23,11 +24,12 @@ final favoriteAccountsRepositoryProvider = Provider<FavoriteAccountsRepository>(
 /// Provides the favorite account for a specific button index (0-3)
 final favoriteAccountByIndexProvider = StreamProvider.autoDispose
     .family<FavoriteAccount?, int>((ref, buttonIndex) {
-      final database = ref.watch(databaseProvider);
-      return (database.select(
-        database.favoriteAccounts,
-      )..where((f) => f.buttonIndex.equals(buttonIndex))).watchSingleOrNull();
-    });
+  final database = ref.watch(databaseProvider);
+  return (database.select(
+    database.favoriteAccounts,
+  )..where((f) => f.buttonIndex.equals(buttonIndex)))
+      .watchSingleOrNull();
+});
 
 class FavoriteAccountsRepository {
   FavoriteAccountsRepository(this._database);
@@ -42,7 +44,8 @@ class FavoriteAccountsRepository {
     // Check if this button index already has a favorite
     final existing = await (_database.select(
       _database.favoriteAccounts,
-    )..where((f) => f.buttonIndex.equals(buttonIndex))).getSingleOrNull();
+    )..where((f) => f.buttonIndex.equals(buttonIndex)))
+        .getSingleOrNull();
 
     if (existing != null) {
       // Update existing
@@ -51,9 +54,7 @@ class FavoriteAccountsRepository {
           .write(FavoriteAccountsCompanion(accountId: Value(accountId)));
     } else {
       // Insert new
-      await _database
-          .into(_database.favoriteAccounts)
-          .insert(
+      await _database.into(_database.favoriteAccounts).insert(
             FavoriteAccountsCompanion(
               buttonIndex: Value(buttonIndex),
               accountId: Value(accountId),
@@ -66,7 +67,8 @@ class FavoriteAccountsRepository {
   Future<void> removeFavorite(int buttonIndex) {
     return (_database.delete(
       _database.favoriteAccounts,
-    )..where((f) => f.buttonIndex.equals(buttonIndex))).go();
+    )..where((f) => f.buttonIndex.equals(buttonIndex)))
+        .go();
   }
 
   /// Clear all favorite accounts
