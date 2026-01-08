@@ -42,6 +42,11 @@ flutter_native_splash:
   android: true
   ios: true
   web: true
+  # ⚠️ OBLIGATOIRE pour Android 12+ (API 31+)
+  android_12:
+    image: "assets/DotLyn-logo.png"
+    color: "#F8F8F8"
+    icon_background_color: "#F8F8F8"
 ```
 
 ### Commandes de génération
@@ -100,6 +105,10 @@ flutter pub run flutter_native_splash:create
 ### Fond blanc visible en mode sombre
 **Cause** : Couleur de fond trop claire.  
 **Solution** : Ajuster `adaptive_icon_background` avec une couleur neutre (#F8F8F8 recommandé).
+
+### Android 12+ affiche l'icône au lieu du logo au splash
+**Cause** : Android 12+ (API 31+) nécessite une config spécifique `android_12`.  
+**Solution** : Ajouter la section `android_12:` dans `flutter_native_splash` (voir section 4). Désinstaller complètement l'app (`adb uninstall`) puis réinstaller.
 
 ## 7. Rappel — Standards Dotlyn
 - **Couleurs** : #E36C2D (orange), #2C2C2C (gris foncé), #F8F8F8 (gris clair pour fonds)

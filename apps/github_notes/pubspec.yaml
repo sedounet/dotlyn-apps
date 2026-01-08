@@ -68,3 +68,8 @@ flutter_native_splash:
   android: true
   ios: true
   web: true
+  # Android 12+ specific config (required for API 31+)
+  android_12:
+    image: "assets/DotLyn-logo.png"
+    color: "#F8F8F8"
+    icon_background_color: "#F8F8F8"
