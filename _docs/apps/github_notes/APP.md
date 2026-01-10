@@ -143,8 +143,10 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] Help tooltips (?) sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
 
 **Code Quality & Refactors** :
-- [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit d8b2ac6+)
-- [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit d8b2ac6+)
+- [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit 7ff8f7b)
+- [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit 7ff8f7b)
+- [x] Use githubServiceProvider consistently (replace 3x direct instantiation) — **Done 2026-01-10** (commit NEW)
+- [ ] Extract dialog helpers (9x showDialog patterns)
 - [ ] Extract GitHub file check service (lightweight)
 - [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
 

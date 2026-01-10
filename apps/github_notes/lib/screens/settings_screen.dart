@@ -139,7 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // read token fresh from secure storage to avoid stale provider value
     final storage = ref.read(secureStorageProvider);
     final token = await storage.read(key: 'github_token');
-    final githubService = GitHubService(token: token);
+    final githubService = ref.read(githubServiceProvider);
     final isValid = await githubService.testToken();
 
     setState(() {
@@ -244,9 +244,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // Check if file exists on GitHub
               try {
-                final storage = ref.read(secureStorageProvider);
-                final token = await storage.read(key: 'github_token');
-                final githubService = GitHubService(token: token);
+                final githubService = ref.read(githubServiceProvider);
                 try {
                   await githubService.fetchFile(owner: owner, repo: repo, path: path);
 
@@ -548,9 +546,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   // Check if file exists on GitHub
                   try {
-                    final storage = ref.read(secureStorageProvider);
-                    final token = await storage.read(key: 'github_token');
-                    final githubService = GitHubService(token: token);
+                    final githubService = ref.read(githubServiceProvider);
                     try {
                       await githubService.fetchFile(
                           owner: result.owner, repo: result.repo, path: result.path);
