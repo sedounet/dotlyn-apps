@@ -99,7 +99,7 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Sync bidirectionnel : ✅
   - Multiple files : ✅
   - Conflict detection : ✅
-  - Offline sync error message: verify when device is offline that attempting to Sync shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
+  - Offline sync error message: verify ywhen device is offline that attempting to Snc shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
   - Verify Add File dialog: tooltips/placeholders in Owner/Repository/File Path/Nickname fields — **Done 2026-01-10** ✅ (tap-to-open bottom sheets)
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
@@ -149,9 +149,19 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit 7ff8f7b)
 - [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit 7ff8f7b)
 - [x] Use githubServiceProvider consistently (replace 3x direct instantiation) — **Done 2026-01-10** (commit NEW)
+- [x] **PHASE 1 ATOMIZATION** (2026-01-10, commit d6c7ef6) :
+  - Extracted `SyncService` class (210 → 80 line reduction in file_editor_screen._syncToGitHub)
+  - Created sealed class `SyncResult` with pattern matching (.when() extension)
+  - Created `TokenService` for centralized token management
+  - Created reusable dialogs: `ConfigDialog`, `ConflictDialog`
+  - Created Riverpod providers: `syncServiceProvider`, `tokenServiceProvider`
+  - Refactored file_editor_screen to use SyncService (60% LOC reduction, much cleaner)
+  - Test status: flutter analyze 0 errors, 5 info-level warnings only
 - [ ] Extract dialog helpers (9x showDialog patterns)
-- [ ] Extract GitHub file check service (lightweight)
-- [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
+- [ ] Create `ProjectFileService` for file CRUD operations
+- [ ] Refactor `settings_screen.dart` to use extracted services
+- [ ] Create `AutoSaveMixin` for reusable auto-save behavior
+- [ ] Write unit tests for SyncService, TokenService, ProjectFileService
 
 ### 🔵 P3 — Futur (roadmap long terme)
 
