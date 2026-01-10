@@ -252,6 +252,15 @@ melos bootstrap          # Récupère les dépendances de tous les packages
   - `[timer] fix: crash on Android 12+`
   - `[docs] update: timer APP.md TODO section`
 
+**Workflow Commits (Copilot)** :
+- **NE PAS commiter automatiquement** après chaque modification
+- **PROPOSER** de commiter lorsque :
+  - Une opération importante est terminée (feature complète, bug fixé, refactor majeur)
+  - Plusieurs petites modifications forment un ensemble cohérent
+  - L'utilisateur demande explicitement un commit
+- **Format proposition** : "✅ Changements prêts : [liste fichiers]. Commit avec message `[app] type: description` ?"
+- **Attendre validation** utilisateur avant d'exécuter `git add` / `git commit` / `git push`
+
 **Branches** :
 - `main` = stable (source of truth)
 - Format : `type/[app]-short-description` (ex: `feat/github_notes-add-project-form`)
@@ -434,9 +443,10 @@ Actions Copilot:
 2. Coder dans apps/timer/lib/services/notification_service.dart
 3. Update _docs/apps/timer/APP.md:
    - Déplacer "Notifications enrichies" de P2 vers "En cours"
-4. Commit: "[timer] feat: add rich notifications with actions"
-5. Créer issue si pas existante
-6. Update APP.md avec lien vers issue
+4. Proposer commit: "✅ Changements prêts : notification_service.dart, APP.md. Commit avec message `[timer] feat: add rich notifications with actions` ?"
+5. Après validation utilisateur → commit et push
+6. Créer issue si pas existante
+7. Update APP.md avec lien vers issue
 ```
 
 ### Exemple 2 : Bug critique
@@ -475,9 +485,11 @@ Actions Copilot:
    - TODO P1/P2/P3
 3. Créer _docs/apps/notes/PITCH.md
 4. Créer _docs/apps/notes/USER-NOTES.md (template avec sections 🐛💡📝✅)
-5. Créer label GitHub "notes"
-6. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
-7. Commit: "[notes] init: create new notes app structure"
+4. Créer label GitHub "notes"
+5. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
+6. Proposer commit: "✅ Changements prêts : structure notes/ + docs. Commit avec message `[notes] init: create new notes app structure` ?"
+7. Après validation → commit: "[notes] init: create new notes app structure"
+8. Bootstrap: cd apps/notes && flutter pub get
 8. Bootstrap: cd apps/notes && flutter pub get
 ```
 
@@ -492,18 +504,8 @@ Actions Copilot:
    - Corriger le code ou implémenter l'amélioration
    - Déplacer l'item vers section "✅ Résolu" avec date
    - Ajouter référence dans APP.md TODO si tâche récurrente
-4. Commit: "[app] fix/feat: address user-reported issues from USER-NOTES"
-```
-   └── README.md
-2. Créer _docs/apps/notes/APP.md avec :
-   - Vision
-   - v0.1 MVP (phases si complexe)
-   - TODO P1/P2/P3
-3. Créer _docs/apps/notes/PITCH.md
-4. Créer label GitHub "notes"
-5. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
-6. Commit: "[notes] init: create new notes app structure"
-7. Bootstrap: cd apps/notes && flutter pub get
+4. Proposer commit: "✅ Changements prêts : [liste fichiers]. Commit avec message `[app] fix/feat: address user-reported issues from USER-NOTES` ?"
+5. Après validation → commit et push
 ```
 
 ---
