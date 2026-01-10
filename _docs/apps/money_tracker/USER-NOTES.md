@@ -15,4 +15,4 @@ placer la ligne note au dessus du montant. la date sous le montant. enlever temp
 
 ui : élément de liste d'opération : discuter d'un moyen d'avoir un visuel sur les statuts d'opération (case à cocher, changement de couleur?)
 
-smoke test sync
+smoke pc navigateur vers tel
