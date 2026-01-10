@@ -173,6 +173,13 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 - Liens vers issues GitHub (→ numéro issue)
 - Notes en vrac
 
+#### CHANGELOG.md (historique versions)
+- Format Keep a Changelog (https://keepachangelog.com)
+- Section `[Unreleased]` pour changements en cours
+- Sections par version avec date : `[0.1.0] - 2026-01-10`
+- Catégories : Added, Changed, Fixed, Deprecated, Removed, Security
+- **Workflow** : À chaque fix/feature complété, ajouter entrée dans `[Unreleased]` puis déplacer vers version numérotée lors de release
+
 #### PITCH.md (vision stable)
 - Concept
 - Identité visuelle (référence styleguide)
@@ -443,10 +450,12 @@ Actions Copilot:
 2. Coder dans apps/timer/lib/services/notification_service.dart
 3. Update _docs/apps/timer/APP.md:
    - Déplacer "Notifications enrichies" de P2 vers "En cours"
-4. Proposer commit: "✅ Changements prêts : notification_service.dart, APP.md. Commit avec message `[timer] feat: add rich notifications with actions` ?"
-5. Après validation utilisateur → commit et push
-6. Créer issue si pas existante
-7. Update APP.md avec lien vers issue
+4. Update apps/timer/CHANGELOG.md section [Unreleased]:
+   - Ajouter "### Added" + "- Rich notifications with actions"
+5. Proposer commit: "✅ Changements prêts : notification_service.dart, APP.md, CHANGELOG.md. Commit avec message `[timer] feat: add rich notifications with actions` ?"
+6. Après validation utilisateur → commit et push
+7. Créer issue si pas existante
+8. Update APP.md avec lien vers issue
 ```
 
 ### Exemple 2 : Bug critique

@@ -405,7 +405,7 @@ Avant de merger une app en `main`, vérifier :
 ### MVP (v0.1)
 - [ ] Fonctionnalités core implémentées
 - [ ] Tests unitaires (DB + logique métier)
-- [ ] Docs : APP.md + PITCH.md + USER-NOTES.md
+- [ ] Docs : APP.md + PITCH.md + USER-NOTES.md + CHANGELOG.md
 
 ### Standards Early (v0.2-v0.3)
 - [ ] **Localization** : ARB files en/fr, 0 strings hardcodés

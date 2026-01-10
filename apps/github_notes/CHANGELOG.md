@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-01-10 — Unreleased fixes
+
+- **Fixed**: GitHub token failed in release builds due to missing `INTERNET` permission; token sanitization implemented (trim + remove invisible chars) — validated on device.
+- **Fixed**: Theme persistence (`themeModeProvider` backed by `flutter_secure_storage`).
+- **Fixed**: Android 12+ splash/icon configuration (`flutter_native_splash.android_12` added).
+- **Fixed**: Offline sync error handling — catch `SocketException` and show user-friendly SnackBar on fetch/sync failures.
+- **Added**: Tooltips and clearer placeholders in Add/Edit File form (`Owner`, `Repository`, `File Path`, `Nickname`) to guide repo-relative `path` usage.
+
 _Future improvements and features for v0.2+_
 
 ---

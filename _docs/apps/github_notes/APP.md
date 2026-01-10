@@ -80,14 +80,15 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Sync bidirectionnel : ✅
   - Multiple files : ✅
   - Conflict detection : ✅
+  - Offline sync error message: verify when device is offline that attempting to Sync shows a clear network error (SnackBar) — **To validate**
+  - Verify Add File dialog: tooltips visible on Owner/Repository/File Path/Nickname fields and placeholders show repo-relative examples (e.g. `johndoe`, `myapp`, `README.md`) — **To validate**
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
 - [x] Icons & splash screen (adaptive icons + android_12 config) — **verified API 30/35** ✅
 - [x] Token release fix (INTERNET permission + sanitization) — **Done 2026-01-10** ✅
 - [x] Theme persistence fix (themeModeProvider + secure storage) — **Done 2026-01-10** ✅
-- [ ] GitHub label `github_notes` created
-- [ ] Fix bug P1 sync offline (message erreur) avant release publique
+- [ ] Confirmer Fix bug P1 sync offline (message erreur) avant release publique (inclut vérification des tooltips/placeholders)
 
 **Backend** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
@@ -105,7 +106,6 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 **Release / housekeeping** :
 - [ ] Device smoke test (`flutter run --release`)
-- [ ] GitHub label `github_notes`
 
 **Note** : App mobile uniquement (Android/iOS). Pas de support web/desktop.
 
@@ -124,8 +124,7 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 **Localization & UI** :
 - [ ] Localization (i18n) : ARB files en/fr (per APP_STANDARDS.md)
-- [ ] Help tooltips (?) sur Add File dialog
-- [ ] Remove unused imports (settings_screen.dart)
+- [x] Help tooltips (?) sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
 
 **Code Quality & Refactors** :
 - [ ] Extract GitHub file check service (lightweight)
