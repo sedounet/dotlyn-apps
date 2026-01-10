@@ -37,7 +37,9 @@ class GitHubService {
     required String repo,
     required String path,
   }) async {
-    final url = Uri.parse('$baseUrl/repos/$owner/$repo/contents/$path');
+    final encodedPath = Uri.encodeFull(path);
+    final url = Uri.parse('$baseUrl/repos/$owner/$repo/contents/$encodedPath');
+    print('🔍 GitHub API URL: $url'); // DEBUG
 
     final response = await http.get(url, headers: _headers);
 
@@ -66,20 +68,22 @@ class GitHubService {
 
   /// Update file on GitHub
   /// Requires SHA of current file (for conflict detection)
+  /// If sha is null, creates a new file instead
   Future<String> updateFile({
     required String owner,
     required String repo,
     required String path,
     required String content,
-    required String sha,
+    String? sha, // Made optional for file creation
     String message = 'Update from GitHub Notes app',
   }) async {
-    final url = Uri.parse('$baseUrl/repos/$owner/$repo/contents/$path');
+    final encodedPath = Uri.encodeFull(path);
+    final url = Uri.parse('$baseUrl/repos/$owner/$repo/contents/$encodedPath');
 
     final body = jsonEncode({
       'message': message,
       'content': base64Encode(utf8.encode(content)),
-      'sha': sha,
+      if (sha != null) 'sha': sha, // Only include SHA if updating existing file
     });
 
     final response = await http.put(

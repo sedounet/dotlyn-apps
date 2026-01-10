@@ -67,12 +67,12 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Fix : ajout section android_12 dans pubspec.yaml
   - Status : ✅ Vérifié API 30/35
 
-**Bugs restants (à investiguer)** :
-- [ ] **BUG**: Sync offline pas de message d'erreur
-  - Symptôme : Mode avion, edit fichier, sync → aucun message, statut reste "modified"
-  - Attendu : Toast "No network" ou "Sync failed"
-  - Impact : UX confus, utilisateur ne comprend pas
-  - Fix : try-catch dans file_editor_screen.dart + gestion SocketException
+**Bugs résolus (workflow offline)** :
+- [x] **FIX**: Sync offline pas de message d'erreur — **Done 2026-01-10**
+  - Fix : Gestion SocketException avec message clair "Offline: Cannot sync to GitHub. File saved locally."
+  - Fix : Suppression vérification GitHub lors création fichier (permet création offline)
+  - Fix : Save Local toujours actif (pas de désactivation auto après auto-save)
+  - Status : ✅ Workflow offline complet fonctionnel
 
 **UX Improvements (complétés)** :
 - [x] **FIX**: Field help tooltips remplacées par tap-to-open bottom sheets
@@ -88,7 +88,10 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] **REFACTOR**: Extract reusable FieldHelpButton widget & centralize SnackBar styling
   - Cause : code duplication (IconButton + showModalBottomSheet pattern 4x)
   - Fix : `FieldHelpButton` widget + `SnackHelper` utility (3 static methods: showInfo/showSuccess/showError)
-  - Status : ✅ Implemented, all usages replaced
+  - Status : ✅ Implemented, all usages replaced (commit 92ce174)
+
+- [x] **REFACTOR**: Replace inline tooltips and AlertDialog patterns in `settings_screen.dart` with `FieldHelpButton`, `DialogHelpers` and `SnackHelper`.
+  - Done: 2026-01-10 — commit 92ce174
 
 **Release Checklist** :
 - [x] Device smoke test (`flutter run --release`) — **Done 2026-01-10** ✅

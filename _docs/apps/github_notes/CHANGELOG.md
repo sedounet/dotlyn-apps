@@ -8,19 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Tap-to-open field help**: Replace Tooltip with FieldHelpButton widget (bottom sheet on icon tap) in Add File dialog for all 4 fields (Owner, Repository, File Path, Nickname)
-- **SnackHelper utility**: Centralized SnackBar styling using DotlynColors (error/success/info) — 15+ usages across file_editor_screen and settings_screen
-- **FieldHelpButton widget**: Reusable widget extracting IconButton + showModalBottomSheet pattern, reducing boilerplate by 20-line blocks
+- **Full offline workflow**: Create and edit files without network, sync later when online
+- **Multiline path field**: Long GitHub paths (e.g., `_docs/apps/myapp/FILE.md`) now display fully without truncation
+- **USE_CASES.md**: Comprehensive flowchart documenting all sync scenarios (6 use cases with Mermaid diagram)
 
 ### Changed
-- **Styleguide compliance**: Replace hardcoded Colors.white and Colors.red with theme-derived colors (Theme.of(context).colorScheme.onPrimary, DotlynColors.error)
-- **Offline error messages**: Sync failures now show red SnackBar via SnackHelper.showError instead of generic toast
+- **Simplified file creation**: No GitHub validation on add (create locally, validate at sync time)
+- **Save Local button**: Always enabled (except during sync loading), no auto-disable after auto-save
+- **Sync error messages**: Clear offline detection with "Offline: Cannot sync to GitHub" message
+- **Database queries**: Fix duplicates with `orderBy(localModifiedAt DESC).limit(1)` instead of `getSingleOrNull()`
 
 ### Fixed
-- **Android 12+ splash**: Added android_12 config in flutter_native_splash (see pubspec.yaml)
-- **Token GitHub release**: Added INTERNET permission to AndroidManifest.xml + token sanitization (trim invisible chars)
-- **Theme persistence**: Added themeModeProvider + SecureStorage persistence for app-wide dark/light mode
-- **Deprecated API**: Replaced surfaceVariant → surfaceContainerHighest (Material 3 color scheme update)
+- **Database duplicate crash**: Fixed "Bad state: Too many elements" error with proper orderBy + limit query
+- **Path URL encoding**: Special characters (underscores, slashes) now properly encoded with `Uri.encodeFull()`
+- **SHA nullable for creation**: GitHub file creation now works (SHA optional, null = create new file)
+- **Button disable bug**: Sync button now properly re-enables after error via `finally` block
+- **Auto-fetch removed**: No automatic GitHub fetch on file load (allows offline file opening)
 
 ## [0.1.0] - 2026-01-10
 

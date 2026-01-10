@@ -48,30 +48,35 @@ class AppDatabase extends _$AppDatabase {
   // ProjectFiles queries
   Future<List<ProjectFile>> getAllProjectFiles() => select(projectFiles).get();
 
-  Stream<List<ProjectFile>> watchAllProjectFiles() =>
-      select(projectFiles).watch();
+  Stream<List<ProjectFile>> watchAllProjectFiles() => select(projectFiles).watch();
 
-  Future<int> addProjectFile(ProjectFilesCompanion entry) =>
-      into(projectFiles).insert(entry);
+  Future<int> addProjectFile(ProjectFilesCompanion entry) => into(projectFiles).insert(entry);
 
-  Future<bool> updateProjectFile(ProjectFile entry) =>
-      update(projectFiles).replace(entry);
+  Future<bool> updateProjectFile(ProjectFile entry) => update(projectFiles).replace(entry);
 
   Future<int> deleteProjectFile(int id) =>
       (delete(projectFiles)..where((t) => t.id.equals(id))).go();
 
   // FileContents queries
-  Future<FileContent?> getFileContent(int? projectFileId) {
-    if (projectFileId == null) return Future.value(null);
-    return (select(fileContents)
-          ..where((t) => t.projectFileId.equals(projectFileId)))
-        .getSingleOrNull();
+  Future<FileContent?> getFileContent(int? projectFileId) async {
+    if (projectFileId == null) return null;
+    // Use get() instead of getSingleOrNull() to handle duplicates
+    // Always return the most recent one by localModifiedAt
+    final results = await (select(fileContents)
+          ..where((t) => t.projectFileId.equals(projectFileId))
+          ..orderBy([(t) => OrderingTerm.desc(t.localModifiedAt)])
+          ..limit(1))
+        .get();
+    return results.isEmpty ? null : results.first;
   }
 
   Stream<FileContent?> watchFileContent(int? projectFileId) {
     if (projectFileId == null) return const Stream<FileContent?>.empty();
+    // Use watch() with limit instead of watchSingleOrNull() to handle duplicates
     return (select(fileContents)
-          ..where((t) => t.projectFileId.equals(projectFileId)))
+          ..where((t) => t.projectFileId.equals(projectFileId))
+          ..orderBy([(t) => OrderingTerm.desc(t.localModifiedAt)])
+          ..limit(1))
         .watchSingleOrNull();
   }
 
@@ -79,11 +84,9 @@ class AppDatabase extends _$AppDatabase {
       into(fileContents).insertOnConflictUpdate(entry);
 
   // AppSettings queries
-  Future<AppSetting?> getSettings() =>
-      (select(appSettings)..limit(1)).getSingleOrNull();
+  Future<AppSetting?> getSettings() => (select(appSettings)..limit(1)).getSingleOrNull();
 
-  Stream<AppSetting?> watchSettings() =>
-      (select(appSettings)..limit(1)).watchSingleOrNull();
+  Stream<AppSetting?> watchSettings() => (select(appSettings)..limit(1)).watchSingleOrNull();
 
   Future<void> saveGithubToken(String token) async {
     final existing = await getSettings();

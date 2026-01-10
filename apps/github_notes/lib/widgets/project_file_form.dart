@@ -111,6 +111,8 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
                       'Relative path in the repo (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
                 ),
               ),
+              maxLines: null, // Allow multi-line for long paths
+              keyboardType: TextInputType.multiline,
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter file path' : null,
             ),
             const SizedBox(height: 12),

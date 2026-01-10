@@ -98,7 +98,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _saveThemeMode(String mode) async {
-    
     // Map string -> ThemeMode and persist via provider
     final notifier = ref.read(themeModeProvider.notifier);
     if (mode == 'light') {
@@ -114,7 +113,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _saveLanguage(String lang) async {
-    
     final storage = ref.read(secureStorageProvider);
     await storage.write(key: 'app_language', value: lang);
     if (!mounted) return;
@@ -522,43 +520,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   if (result == null) return; // cancelled
 
-                  // Check if file exists on GitHub
-                  try {
-                    final githubService = ref.read(githubServiceProvider);
-                    try {
-                      await githubService.fetchFile(
-                          owner: result.owner, repo: result.repo, path: result.path);
-
-                      // File exists remotely — confirm with user
-                      if (!mounted) return;
-                      final ctxForDialog = context;
-                      final confirm = await DialogHelpers.showConfirmDialog(
-                        ctxForDialog,
-                        title: 'File exists on GitHub',
-                        message:
-                            'A file already exists at ${result.path} in ${result.owner}/${result.repo}. Add to tracked files anyway?',
-                        yesLabel: 'Add',
-                      );
-
-                      if (confirm != true) return;
-                    } on GitHubApiException catch (e) {
-                      if (e.statusCode == 404) {
-                        // Not found — OK to add
-                      } else {
-                        if (!mounted) return;
-                        // Safe: checked mounted immediately before using context
-                        final ctxForMsg = context;
-                        SnackHelper.showError(ctxForMsg, 'GitHub error: ${e.message}');
-                        return;
-                      }
-                    }
-                  } catch (e) {
-                    if (!mounted) return;
-                    // Safe: checked mounted immediately before using context
-                    final ctxForMsg = context;
-                    SnackHelper.showError(ctxForMsg, 'Error checking GitHub: $e');
-                    return;
-                  }
+                  // No GitHub check: file added locally, validation happens at sync time
 
                   final database = ref.read(databaseProvider);
                   await database.addProjectFile(
