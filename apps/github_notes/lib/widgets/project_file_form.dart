@@ -45,8 +45,7 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
     _ownerController = TextEditingController(text: widget.initial?.owner ?? '');
     _repoController = TextEditingController(text: widget.initial?.repo ?? '');
     _pathController = TextEditingController(text: widget.initial?.path ?? '');
-    _nicknameController =
-        TextEditingController(text: widget.initial?.nickname ?? '');
+    _nicknameController = TextEditingController(text: widget.initial?.nickname ?? '');
   }
 
   @override
@@ -79,45 +78,55 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
           children: [
             TextFormField(
               controller: _ownerController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Owner',
-                hintText: 'e.g., sedounet',
+                hintText: 'e.g., johndoe or my-org',
+                suffixIcon: Tooltip(
+                  message: 'GitHub owner: username or organization (e.g. johndoe)',
+                  child: const Icon(Icons.info_outline),
+                ),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Please enter owner' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter owner' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _repoController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Repository',
-                hintText: 'e.g., dotlyn-apps',
+                hintText: 'e.g., myapp',
+                suffixIcon: Tooltip(
+                  message: 'Repository name inside the owner/org (e.g. myapp)',
+                  child: const Icon(Icons.info_outline),
+                ),
               ),
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Please enter repository'
-                  : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter repository' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _pathController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'File Path',
-                hintText: 'e.g., _docs/apps/money_tracker/PROMPT_USER.md',
+                hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
+                suffixIcon: Tooltip(
+                  message:
+                      'Relative path in the repo (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
+                  child: const Icon(Icons.info_outline),
+                ),
               ),
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Please enter file path'
-                  : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter file path' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _nicknameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nickname',
-                hintText: 'e.g., Money Tracker - User Prompt',
+                hintText: 'e.g., MyApp - User Prompt',
+                suffixIcon: Tooltip(
+                  message: 'Friendly name shown in the app (not used by GitHub)',
+                  child: const Icon(Icons.info_outline),
+                ),
               ),
-              validator: (v) => (v == null || v.trim().isEmpty)
-                  ? 'Please enter a nickname'
-                  : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a nickname' : null,
             ),
             const SizedBox(height: 16),
             Row(

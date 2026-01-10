@@ -172,33 +172,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               TextField(
                 controller: ownerController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Owner',
-                  hintText: 'e.g., sedounet',
+                  hintText: 'e.g., johndoe or my-org',
+                  suffixIcon: Tooltip(
+                    message: 'Owner is the GitHub username or organization (e.g. johndoe)',
+                    child: const Icon(Icons.info_outline),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: repoController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Repository',
-                  hintText: 'e.g., dotlyn-apps',
+                  hintText: 'e.g., myapp',
+                  suffixIcon: Tooltip(
+                    message: 'Repository name inside the owner/org (e.g. myapp)',
+                    child: const Icon(Icons.info_outline),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: pathController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'File Path',
-                  hintText: 'e.g., _docs/apps/money_tracker/PROMPT_USER.md',
+                  hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
+                  suffixIcon: Tooltip(
+                    message:
+                        'Relative path within the repository (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
+                    child: const Icon(Icons.info_outline),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: nicknameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nickname',
-                  hintText: 'e.g., Money Tracker - User Prompt',
+                  hintText: 'e.g., MyApp - User Prompt',
+                  suffixIcon: Tooltip(
+                    message: 'Friendly display name for this tracked file',
+                    child: const Icon(Icons.info_outline),
+                  ),
                 ),
               ),
             ],
