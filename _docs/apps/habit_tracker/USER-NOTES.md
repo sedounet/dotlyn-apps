@@ -1,30 +1,7 @@
-# Habit Tracker — Notes Utilisateur
+# User Notes — Habit Tracker
 
-> **Usage** : Notes personnelles d'utilisation, bugs rencontrés, améliorations à apporter
-> **Date création** : 2026-01-01
-
----
-
-## 🐛 Bugs Rencontrés
-
-<!-- Ajouter ici les bugs observés lors de l'utilisation quotidienne -->
-<!-- Format: - [Date] Description du bug + contexte -->
+*Espace perso pour mes notes d'utilisation quotidienne*
 
 ---
 
-## 💡 Améliorations Souhaitées
-
-<!-- Ajouter ici les idées d'amélioration au fur et à mesure de l'utilisation -->
-<!-- Format: - [Date] Idée + pourquoi c'est utile -->
-
----
-
-## 📝 Notes d'Usage
-
-<!-- Notes générales, observations, comportements inattendus, etc. -->
-
----
-
-## ✅ Résolu
-
-<!-- Déplacer ici les bugs/améliorations une fois traités -->
+[Aucune note pour l'instant - app en conception]

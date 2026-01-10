@@ -26,6 +26,7 @@ class GitHubService {
 
   Map<String, String> get _headers => {
         'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'GitHubNotes-Flutter-App',
         if (token != null) 'Authorization': 'Bearer $token',
       };
 
