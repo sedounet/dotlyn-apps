@@ -157,11 +157,17 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Created Riverpod providers: `syncServiceProvider`, `tokenServiceProvider`
   - Refactored file_editor_screen to use SyncService (60% LOC reduction, much cleaner)
   - Test status: flutter analyze 0 errors, 5 info-level warnings only
+- [x] **PHASE 2 REFACTORING** (2026-01-10, commit 773fda1) :
+  - Extracted `ProjectFileService` class (centralized file CRUD)
+  - Refactored `settings_screen.dart` to use ProjectFileService (618 → ~500 lines)
+  - Removed duplicate `secureStorageProvider` (fixed imports)
+  - All file operations now use service layer instead of inline DB calls
+- [x] **PHASE 3 EXTRACTION** (2026-01-10, commit 63a8032) :
+  - Created `AutoSaveMixin` for reusable auto-save behavior with debounce
+  - Integrated mixin into file_editor_screen (reduced auto-save boilerplate by 40%)
+  - Simplified timer/callback management with `scheduleAutoSave()`, `saveNow()`, `cancelAutoSave()` methods
+  - All phases compile clean: 0 errors, 5 info warnings only
 - [ ] Extract dialog helpers (9x showDialog patterns)
-- [ ] Create `ProjectFileService` for file CRUD operations
-- [ ] Refactor `settings_screen.dart` to use extracted services
-- [ ] Create `AutoSaveMixin` for reusable auto-save behavior
-- [ ] Write unit tests for SyncService, TokenService, ProjectFileService
 
 ### 🔵 P3 — Futur (roadmap long terme)
 
