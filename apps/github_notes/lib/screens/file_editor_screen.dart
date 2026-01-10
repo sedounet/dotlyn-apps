@@ -8,6 +8,7 @@ import 'package:github_notes/data/database/app_database.dart' as db;
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/providers/github_provider.dart';
 import 'package:github_notes/services/github_service.dart';
+import 'package:github_notes/utils/snack_helper.dart';
 
 class FileEditorScreen extends ConsumerStatefulWidget {
   final db.ProjectFile projectFile;
@@ -99,19 +100,13 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('File loaded from GitHub')),
-      );
+      SnackHelper.showInfo(context, 'File loaded from GitHub');
     } on SocketException catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Network error: please check your connection')),
-      );
+      SnackHelper.showError(context, 'Network error: please check your connection');
     } on GitHubApiException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.message}')),
-      );
+      SnackHelper.showError(context, 'Error: ${e.message}');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -142,9 +137,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
     if (!auto) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved locally')),
-      );
+      SnackHelper.showInfo(context, 'Saved locally');
     }
   }
 
@@ -238,9 +231,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
               ),
             );
             if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Fetched remote content')),
-            );
+            SnackHelper.showInfo(context, 'Fetched remote content');
             return;
           }
         }
@@ -281,12 +272,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Synced to GitHub successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      SnackHelper.showSuccess(context, 'Synced to GitHub successfully!');
     } on SocketException catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -452,7 +438,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                               label: const Text('Sync GitHub'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: DotlynColors.primary,
-                                foregroundColor: Colors.white,
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:github_notes/widgets/field_help_button.dart';
 
 /// Minimal data class used by the form dialog.
 class ProjectFileData {
@@ -81,9 +82,8 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
               decoration: InputDecoration(
                 labelText: 'Owner',
                 hintText: 'e.g., johndoe or my-org',
-                suffixIcon: Tooltip(
+                suffixIcon: const FieldHelpButton(
                   message: 'GitHub owner: username or organization (e.g. johndoe)',
-                  child: const Icon(Icons.info_outline),
                 ),
               ),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter owner' : null,
@@ -94,9 +94,8 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
               decoration: InputDecoration(
                 labelText: 'Repository',
                 hintText: 'e.g., myapp',
-                suffixIcon: Tooltip(
+                suffixIcon: const FieldHelpButton(
                   message: 'Repository name inside the owner/org (e.g. myapp)',
-                  child: const Icon(Icons.info_outline),
                 ),
               ),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter repository' : null,
@@ -107,10 +106,9 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
               decoration: InputDecoration(
                 labelText: 'File Path',
                 hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
-                suffixIcon: Tooltip(
+                suffixIcon: const FieldHelpButton(
                   message:
                       'Relative path in the repo (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
-                  child: const Icon(Icons.info_outline),
                 ),
               ),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter file path' : null,
@@ -121,9 +119,8 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
               decoration: InputDecoration(
                 labelText: 'Nickname',
                 hintText: 'e.g., MyApp - User Prompt',
-                suffixIcon: Tooltip(
+                suffixIcon: const FieldHelpButton(
                   message: 'Friendly name shown in the app (not used by GitHub)',
-                  child: const Icon(Icons.info_outline),
                 ),
               ),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a nickname' : null,

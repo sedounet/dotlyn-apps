@@ -12,6 +12,7 @@ import 'package:github_notes/providers/github_provider.dart';
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
 import '../providers/theme_provider.dart';
+import 'package:github_notes/utils/snack_helper.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -147,12 +148,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     });
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isValid ? 'Token is valid!' : 'Token is invalid'),
-        backgroundColor: isValid ? DotlynColors.success : DotlynColors.error,
-      ),
-    );
+    if (isValid) {
+      SnackHelper.showSuccess(context, 'Token is valid!');
+    } else {
+      SnackHelper.showError(context, 'Token is invalid');
+    }
   }
 
   void _showAddFileDialog({ProjectFile? prefill}) {
@@ -228,16 +228,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final messenger = ScaffoldMessenger.of(parentContext);
               final navigator = Navigator.of(parentContext);
 
               if (ownerController.text.isEmpty ||
                   repoController.text.isEmpty ||
                   pathController.text.isEmpty ||
                   nicknameController.text.isEmpty) {
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('All fields are required')),
-                );
+                SnackHelper.showError(parentContext, 'All fields are required');
                 return;
               }
 
@@ -277,17 +274,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     // Not found — OK to add
                   } else {
                     if (!mounted) return;
-                    messenger.showSnackBar(
-                      SnackBar(content: Text('GitHub error: ${e.message}')),
-                    );
+                    SnackHelper.showError(parentContext, 'GitHub error: ${e.message}');
                     return;
                   }
                 }
               } catch (e) {
                 if (!mounted) return;
-                messenger.showSnackBar(
-                  SnackBar(content: Text('Error checking GitHub: $e')),
-                );
+                SnackHelper.showError(parentContext, 'Error checking GitHub: $e');
                 return;
               }
 
@@ -305,9 +298,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               if (!mounted) return;
               navigator.pop();
-              messenger.showSnackBar(
-                const SnackBar(content: Text('File added successfully')),
-              );
+              SnackHelper.showSuccess(context, 'File added successfully');
             },
             child: const Text('Add'),
           ),
@@ -347,9 +338,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       if (!mounted) return;
       final navigator = Navigator.of(context);
-      final messenger = ScaffoldMessenger.of(context);
       navigator.pop();
-      messenger.showSnackBar(const SnackBar(content: Text('File updated successfully')));
+      SnackHelper.showSuccess(context, 'File updated successfully');
     });
   }
 
@@ -594,8 +584,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (!mounted) return;
                         // Safe: checked mounted immediately before using context
                         final ctxForMsg = context;
-                        ScaffoldMessenger.of(ctxForMsg)
-                            .showSnackBar(SnackBar(content: Text('GitHub error: ${e.message}')));
+                        SnackHelper.showError(ctxForMsg, 'GitHub error: ${e.message}');
                         return;
                       }
                     }
@@ -603,8 +592,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (!mounted) return;
                     // Safe: checked mounted immediately before using context
                     final ctxForMsg = context;
-                    ScaffoldMessenger.of(ctxForMsg)
-                        .showSnackBar(SnackBar(content: Text('Error checking GitHub: $e')));
+                    SnackHelper.showError(ctxForMsg, 'Error checking GitHub: $e');
                     return;
                   }
 
@@ -623,9 +611,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   if (!mounted) return;
                   // Safe: checked mounted immediately before using context
                   final navigator = Navigator.of(context);
-                  final messenger = ScaffoldMessenger.of(context);
                   navigator.pop();
-                  messenger.showSnackBar(const SnackBar(content: Text('File added successfully')));
+                  SnackHelper.showSuccess(context, 'File added successfully');
                 },
                 icon: const Icon(Icons.add_circle, color: DotlynColors.primary),
                 tooltip: 'Add file',

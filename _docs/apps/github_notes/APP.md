@@ -74,21 +74,37 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Impact : UX confus, utilisateur ne comprend pas
   - Fix : try-catch dans file_editor_screen.dart + gestion SocketException
 
+**UX Improvements (complétés)** :
+- [x] **FIX**: Field help tooltips remplacées par tap-to-open bottom sheets
+  - Cause : Tooltip widget peu fiable sur mobile
+  - Fix : `FieldHelpButton` widget (IconButton → showModalBottomSheet)
+  - Status : ✅ Implemented in Add File dialog for Owner/Repository/File Path/Nickname fields
+  
+- [x] **FIX**: SnackBar colors non-conformes au styleguide
+  - Cause : hardcoded Colors.red au lieu de DotlynColors.error
+  - Fix : création `SnackHelper` utility class + remplacement 15+ call sites
+  - Status : ✅ Integrated across file_editor_screen & settings_screen
+
+- [x] **REFACTOR**: Extract reusable FieldHelpButton widget & centralize SnackBar styling
+  - Cause : code duplication (IconButton + showModalBottomSheet pattern 4x)
+  - Fix : `FieldHelpButton` widget + `SnackHelper` utility (3 static methods: showInfo/showSuccess/showError)
+  - Status : ✅ Implemented, all usages replaced
+
 **Release Checklist** :
 - [x] Device smoke test (`flutter run --release`) — **Done 2026-01-10** ✅
   - Token invalid/sanitize : ✅
   - Sync bidirectionnel : ✅
   - Multiple files : ✅
   - Conflict detection : ✅
-  - Offline sync error message: verify when device is offline that attempting to Sync shows a clear network error (SnackBar) — **To validate**
-  - Verify Add File dialog: tooltips visible on Owner/Repository/File Path/Nickname fields and placeholders show repo-relative examples (e.g. `johndoe`, `myapp`, `README.md`) — **To validate**
+  - Offline sync error message: verify when device is offline that attempting to Sync shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
+  - Verify Add File dialog: tooltips/placeholders in Owner/Repository/File Path/Nickname fields — **Done 2026-01-10** ✅ (tap-to-open bottom sheets)
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
 - [x] Icons & splash screen (adaptive icons + android_12 config) — **verified API 30/35** ✅
 - [x] Token release fix (INTERNET permission + sanitization) — **Done 2026-01-10** ✅
 - [x] Theme persistence fix (themeModeProvider + secure storage) — **Done 2026-01-10** ✅
-- [ ] Confirmer Fix bug P1 sync offline (message erreur) avant release publique (inclut vérification des tooltips/placeholders)
+- [x] Confirmer Fix bug P1 sync offline (message erreur) avant release publique (inclut vérification des tooltips/placeholders) — **Done 2026-01-10** ✅
 
 **Backend** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
@@ -127,6 +143,8 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] Help tooltips (?) sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
 
 **Code Quality & Refactors** :
+- [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit d8b2ac6+)
+- [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit d8b2ac6+)
 - [ ] Extract GitHub file check service (lightweight)
 - [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
 
