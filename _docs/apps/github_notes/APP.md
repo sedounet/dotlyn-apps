@@ -1,8 +1,8 @@
 # GitHub Notes — Documentation
 
 **Status** : 🚧 En développement  
-**Version actuelle** : v0.1 MVP  
-**Dernière update** : 2026-01-03  
+**Version actuelle** : v0.1 MVP (stable)  
+**Dernière update** : 2026-01-10  
 **Roadmap** : Voir section TODO pour le plan détaillé des versions
 
 ---
@@ -51,17 +51,28 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 ### 🔴 P1 — Bugs bloquants & Release v0.1
 
-**Bugs identifiés (smoke tests 2026-01-10)** :
+**Fixes récents (2026-01-08 → 01-10)** :
+- [x] **FIX**: Token GitHub ne fonctionnait pas en release build
+  - Cause : manque permission `INTERNET` dans AndroidManifest.xml
+  - Fix : ajout permission + sanitization token (trim, enlever invisible chars)
+  - Status : ✅ Validé sur device physique
+  
+- [x] **FIX**: Theme switch ne persistait pas
+  - Cause : pas de provider pour theme mode
+  - Fix : `themeModeProvider` + FlutterSecureStorage persistence
+  - Status : ✅ Theme persiste après redémarrage
+  
+- [x] **FIX**: Splash Android 12+ affichait icône au lieu du logo
+  - Cause : manque config `android_12` dans flutter_native_splash
+  - Fix : ajout section android_12 dans pubspec.yaml
+  - Status : ✅ Vérifié API 30/35
+
+**Bugs restants (à investiguer)** :
 - [ ] **BUG**: Sync offline pas de message d'erreur
   - Symptôme : Mode avion, edit fichier, sync → aucun message, statut reste "modified"
   - Attendu : Toast "No network" ou "Sync failed"
   - Impact : UX confus, utilisateur ne comprend pas
   - Fix : try-catch dans file_editor_screen.dart + gestion SocketException
-  
-- [ ] **BUG**: Theme change ne s'applique pas visuellement
-  - Symptôme : Settings → Light → message OK mais UI reste en mode système
-  - Cause probable : MaterialApp ne watch pas theme provider ou besoin restart
-  - Fix : Vérifier main.dart reactive theme + test hot restart
 
 **Release Checklist** :
 - [x] Device smoke test (`flutter run --release`) — **Done 2026-01-10** ✅
@@ -73,8 +84,10 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
 - [x] Icons & splash screen (adaptive icons + android_12 config) — **verified API 30/35** ✅
+- [x] Token release fix (INTERNET permission + sanitization) — **Done 2026-01-10** ✅
+- [x] Theme persistence fix (themeModeProvider + secure storage) — **Done 2026-01-10** ✅
 - [ ] GitHub label `github_notes` created
-- [ ] Fix 2 bugs P1 ci-dessus avant release publique
+- [ ] Fix bug P1 sync offline (message erreur) avant release publique
 
 **Backend** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
@@ -118,16 +131,38 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [ ] Extract GitHub file check service (lightweight)
 - [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
 
-### 🔵 P3 — Futur (optionnel, complexe)
+### 🔵 P3 — Futur (roadmap long terme)
 
-- [ ] Background sync (chaque 15min si connecté)
-- [ ] Bidirectional sync (pull/push/merge conflict resolution UI)
+**v0.3 — Early Standards** (prioritaire, voir APP_STANDARDS.md) :
+- [ ] **Localization (i18n)** : ARB files en/fr, externaliser strings
+- [ ] **Analytics** : service abstraction + events clés + opt-out UI
+- [ ] **Ads Placeholder** : widget banner 50-60dp + feature flag
+
+**v0.4 — Auto-sync & Conflict UX** :
+- [ ] Auto-sync optionnel (toggle + interval)
+- [ ] Background sync service (WorkManager)
+- [ ] Conflict resolution UI améliorée (diff view)
 - [ ] Historique versions locales (rollback)
+
+**v0.5 — OAuth & Multi-compte** :
+- [ ] OAuth GitHub flow (remplace PAT)
+- [ ] Stockage tokens par compte
+- [ ] Account switcher UI
+- [ ] Support orgas GitHub
+
+**v1.0 — Release Publique** :
+- [ ] Tests complets (>80% coverage) + CI/CD
+- [ ] Privacy policy + Terms
+- [ ] Store listings (screenshots, descriptions)
+- [ ] Analytics opérationnelles + Ads SDK
+
+**Autres (optionnel)** :
 - [ ] Preview markdown avancé (flutter_markdown renderer)
-- [ ] OAuth GitHub flow complet
-- [ ] Support multi-comptes GitHub
 - [ ] Édition collaborative (notif si autre commit)
 - [ ] Export local (.md file)
+- [ ] Widget home screen (quick add note)
+- [ ] Search/filter fichiers
+- [ ] Tags/labels pour organisation
 
 ---
 

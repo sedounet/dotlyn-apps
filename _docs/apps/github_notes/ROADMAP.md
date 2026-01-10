@@ -1,84 +1,23 @@
 # GitHub Notes — Roadmap
 
-> **Objectif** : Évolution progressive de l'app avec intégration early des standards Dotlyn (analytics, localization, ads)  
-> **Référence standards** : [`_docs/APP_STANDARDS.md`](../../APP_STANDARDS.md)
+> **Vision stratégique** : Plan d'évolution long terme de l'app  
+> **Référence** : Voir [`APP.md`](APP.md) pour le TODO détaillé et l'état actuel
 
 ---
 
-## 🎯 Vision Long Terme
+## 🎯 État Actuel
 
-**v0.1** : MVP (édition offline, sync manuel)  
-**v0.2** : UX/Polish (dark theme, editor)  
-**v0.3** : Early Standards (i18n + analytics + ads placeholder) ⭐ **PRIORITAIRE**  
-**v0.4** : Auto-sync + conflict UI  
-**v0.5** : OAuth + multi-compte  
-**v1.0** : Release publique (tests, CI, polish)
+**v0.2** : UX/Theme (Done 2026-01-10)  
+→ Détails complets dans [`APP.md`](APP.md)
+
+**Next** : v0.3 → Standards Dotlyn (i18n + analytics + ads)
 
 ---
 
-## ✅ v0.1 — MVP (DONE)
+## ⭐ v0.3 — Early Standards (NEXT)
 
-**Date** : 2026-01-01  
-**Objectif** : Édition offline + sync manuel GitHub
-
-### Fonctionnalités
-- ✅ Base de données locale (Drift) : `ProjectFiles`, `FileContents`, `AppSettings`
-- ✅ CRUD fichiers markdown (ajout/édition/suppression)
-- ✅ Sync manuel vers GitHub (push/pull avec SHA conflict detection)
-- ✅ Stockage sécurisé du token (flutter_secure_storage)
-- ✅ UI Material 3 : Files list + Editor + Settings
-- ✅ Tests unitaires DB (6 tests passing)
-
-### Livrables
-- Code : `apps/github_notes/lib/`
-- Tests : `apps/github_notes/test/database_test.dart`
-- Docs : `APP.md`, `PITCH.md`, `USER-NOTES.md`
-
----
-
-## 🚧 v0.2 — UX & Theming
-
-**Objectif** : Dark theme complet + polish editor
-
-### P1 (Bloquant)
-- [ ] Dark theme persistant (DotlynTheme.darkTheme appliqué correctement)
-- [ ] Theme switcher dans Settings avec sauvegarde en DB
-- [ ] Correction des contrastes en mode sombre (couleurs texte/fond)
-- [x] Theme switcher implemented and persisted (implemented on dev branch)
-- [x] Replace hard-coded semantic colors with `DotlynColors` tokens
-
-### QA Checklist (P1 completed - required verification)
-
-- [ ] Verify theme toggle applies instantly without restart (use Settings > Theme)
-- [ ] Verify saved mode persists after app restart (system/light/dark)
-- [ ] Check files list screen contrast (light & dark) — text readable, buttons visible
-- [ ] Check editor screen contrast (caret, selection, text color, background)
-- [ ] Check Settings snackbars and icons use semantic tokens (success/error)
-- [ ] Run `flutter analyze` and `flutter test` for `apps/github_notes`
-- [ ] Manual smoke: run on device/emulator and toggle theme while open editor
-
-Notes:
-- Implementation added `themeModeProvider` (`apps/github_notes/lib/providers/theme_provider.dart`) and wired `MaterialApp.themeMode` to it.
-- Settings now uses the provider to persist and apply changes (secure storage backed).
-- A feature branch `fix/github-notes-p1-theme-switch` was created and pushed with the changes and token color fixes.
-
-
-### P2 (Important)
-- [ ] Scrollbar visible dans l'éditeur
-- [ ] Caret aligné en haut après chargement fichier
-- [ ] Markdown quick-help modal (bouton ?)
-- [ ] Animations de transition (navigation screens)
-
-### Critères de succès
-- Theme toggle fonctionne et persiste après redémarrage
-- Pas de problème de lisibilité en dark mode
-- Éditeur fluide et confortable
-
----
-
-## ⭐ v0.3 — Early Standards (i18n + Analytics + Ads)
-
-**Objectif** : Intégrer dès maintenant les standards Dotlyn obligatoires
+**Objectif** : Intégrer standards Dotlyn obligatoires (i18n + analytics + ads placeholder)  
+**Référence** : [`APP_STANDARDS.md`](../../APP_STANDARDS.md)
 
 ### P1 (Bloquant release)
 - [ ] **Localization (i18n)** :
@@ -212,6 +151,6 @@ Notes:
 
 ---
 
-**Version** : 1.0  
-**Dernière mise à jour** : 2026-01-01  
+**Version** : 1.2  
+**Dernière mise à jour** : 2026-01-10  
 **Maintainer** : @sedounet
