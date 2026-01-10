@@ -238,6 +238,8 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 
 ### 3. Workflow Git & Issues
 
+**Convention de branchage** : Voir [`_docs/BRANCHING.md`](../_docs/BRANCHING.md) pour la convention complète.
+
 **Issues GitHub** :
 - Une issue = Un bug OU Une feature
 - Labels obligatoires : `[nom-app]` + `bug` ou `feature`
@@ -251,9 +253,11 @@ melos bootstrap          # Récupère les dépendances de tous les packages
   - `[docs] update: timer APP.md TODO section`
 
 **Branches** :
-- `main` = stable
-- `feat/[app]-[feature]` = nouvelle feature
-- `fix/[app]-[bug]` = correction bug
+- `main` = stable (source of truth)
+- Format : `type/[app]-short-description` (ex: `feat/github_notes-add-project-form`)
+- Types : `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `hotfix`
+- Workflow : branch → commits → test local → merge direct → suppression branche
+- Pas de PR obligatoire (merge direct après vérification locale)
 
 ---
 
