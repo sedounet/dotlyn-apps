@@ -152,9 +152,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
       // Ensure config is set
       var projectFile = widget.projectFile;
-      if (projectFile.owner.isEmpty ||
-          projectFile.repo.isEmpty ||
-          projectFile.path.isEmpty) {
+      if (projectFile.owner.isEmpty || projectFile.repo.isEmpty || projectFile.path.isEmpty) {
         if (!mounted) return;
 
         final updated = await ConfigDialog.show(context, projectFile: projectFile);
@@ -179,9 +177,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
           // Update DB with new SHA
           await database.upsertFileContent(
             db.FileContentsCompanion(
-              id: existing == null
-                  ? const drift.Value.absent()
-                  : drift.Value(existing.id),
+              id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
               projectFileId: drift.Value(projectFile.id),
               content: drift.Value(_controller.text),
               githubSha: drift.Value(syncSuccess.sha),
@@ -203,14 +199,11 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
           );
         },
         conflict: (conflict) async {
-          if (conflict.userChoice == ConflictChoice.fetchRemote &&
-              conflict.remoteContent != null) {
+          if (conflict.userChoice == ConflictChoice.fetchRemote && conflict.remoteContent != null) {
             _controller.text = conflict.remoteContent!;
             await database.upsertFileContent(
               db.FileContentsCompanion(
-                id: existing == null
-                    ? const drift.Value.absent()
-                    : drift.Value(existing.id),
+                id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
                 projectFileId: drift.Value(projectFile.id),
                 content: drift.Value(conflict.remoteContent!),
                 githubSha: drift.Value(conflict.remoteSha),

@@ -7,7 +7,7 @@ class TokenService {
 
   TokenService({
     required FlutterSecureStorage storage,
-  })  : _storage = storage;
+  }) : _storage = storage;
 
   /// Load token from secure storage
   Future<String?> loadToken() async {

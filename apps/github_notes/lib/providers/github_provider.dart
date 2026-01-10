@@ -1,11 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:github_notes/services/github_service.dart';
-
-/// Secure storage instance provider
-final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
-  return const FlutterSecureStorage();
-});
+import 'package:github_notes/providers/token_provider.dart';
 
 /// Async provider that reads the GitHub token from secure storage
 final githubTokenProvider = FutureProvider<String?>((ref) async {
