@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
@@ -101,6 +102,11 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('File loaded from GitHub')),
       );
+    } on SocketException catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Network error: please check your connection')),
+      );
     } on GitHubApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -167,6 +173,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         );
         remoteSha = remote.sha;
         remoteContent = remote.content;
+      } on SocketException catch (_) {
+        // Network error while fetching remote
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Network error: unable to reach GitHub')),
+        );
       } on GitHubApiException catch (_) {
         // If fetch fails and we have no local SHA, re-fetch on initial sync attempt
         if (existing?.githubSha == null) {
@@ -279,6 +291,14 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
         const SnackBar(
           content: Text('Synced to GitHub successfully!'),
           backgroundColor: Colors.green,
+        ),
+      );
+    } on SocketException catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Network error: please check your connection'),
+          backgroundColor: Colors.red,
         ),
       );
     } on GitHubApiException catch (e) {
