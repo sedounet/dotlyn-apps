@@ -79,10 +79,10 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
           children: [
             TextFormField(
               controller: _ownerController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Owner',
                 hintText: 'e.g., johndoe or my-org',
-                suffixIcon: const FieldHelpButton(
+                suffixIcon: FieldHelpButton(
                   message: 'GitHub owner: username or organization (e.g. johndoe)',
                 ),
               ),
@@ -91,10 +91,10 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _repoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Repository',
                 hintText: 'e.g., myapp',
-                suffixIcon: const FieldHelpButton(
+                suffixIcon: FieldHelpButton(
                   message: 'Repository name inside the owner/org (e.g. myapp)',
                 ),
               ),
@@ -103,10 +103,10 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _pathController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'File Path',
                 hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
-                suffixIcon: const FieldHelpButton(
+                suffixIcon: FieldHelpButton(
                   message:
                       'Relative path in the repo (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
                 ),
@@ -116,10 +116,10 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _nicknameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Nickname',
                 hintText: 'e.g., MyApp - User Prompt',
-                suffixIcon: const FieldHelpButton(
+                suffixIcon: FieldHelpButton(
                   message: 'Friendly name shown in the app (not used by GitHub)',
                 ),
               ),

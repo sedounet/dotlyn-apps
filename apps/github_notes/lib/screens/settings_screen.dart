@@ -13,6 +13,8 @@ import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
 import '../providers/theme_provider.dart';
 import 'package:github_notes/utils/snack_helper.dart';
+import 'package:github_notes/utils/dialog_helpers.dart';
+import 'package:github_notes/utils/token_helper.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -74,9 +76,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     try {
       // Sanitize token: trim, remove whitespace/newlines and zero-width spaces
-      var token = _tokenController.text.trim();
-      token = token.replaceAll(RegExp(r'\s+'), '');
-      token = token.replaceAll('\u200B', '');
+      var token = TokenHelper.sanitizeToken(_tokenController.text);
 
       await storage.write(key: 'github_token', value: token);
       // also persist in DB for compatibility
@@ -136,9 +136,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _tokenValid = null;
     });
 
-    // read token fresh from secure storage to avoid stale provider value
-    final storage = ref.read(secureStorageProvider);
-    final token = await storage.read(key: 'github_token');
+    // Use the provider to get the service with fresh token
     final githubService = ref.read(githubServiceProvider);
     final isValid = await githubService.testToken();
 
@@ -172,49 +170,49 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               TextField(
                 controller: ownerController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Owner',
                   hintText: 'e.g., johndoe or my-org',
                   suffixIcon: Tooltip(
                     message: 'Owner is the GitHub username or organization (e.g. johndoe)',
-                    child: const Icon(Icons.info_outline),
+                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: repoController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Repository',
                   hintText: 'e.g., myapp',
                   suffixIcon: Tooltip(
                     message: 'Repository name inside the owner/org (e.g. myapp)',
-                    child: const Icon(Icons.info_outline),
+                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: pathController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'File Path',
                   hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
                   suffixIcon: Tooltip(
                     message:
                         'Relative path within the repository (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
-                    child: const Icon(Icons.info_outline),
+                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: nicknameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nickname',
                   hintText: 'e.g., MyApp - User Prompt',
                   suffixIcon: Tooltip(
                     message: 'Friendly display name for this tracked file',
-                    child: const Icon(Icons.info_outline),
+                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
@@ -250,20 +248,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   // File exists remotely — confirm with user
                   if (!mounted) return;
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('File exists on GitHub'),
-                      content: Text(
-                          'A file already exists at $path in $owner/$repo. Add to tracked files anyway?'),
-                      actions: [
-                        TextButton(
-                            onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Cancel')),
-                        ElevatedButton(
-                            onPressed: () => Navigator.pop(ctx, true), child: const Text('Add')),
-                      ],
-                    ),
+                  final confirm = await DialogHelpers.showConfirmDialog(
+                    context,
+                    title: 'File exists on GitHub',
+                    message:
+                        'A file already exists at $path in $owner/$repo. Add to tracked files anyway?',
+                    yesLabel: 'Add',
                   );
 
                   if (confirm != true) return;
