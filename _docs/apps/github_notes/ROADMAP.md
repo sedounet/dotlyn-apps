@@ -44,6 +44,24 @@
 - [ ] Dark theme persistant (DotlynTheme.darkTheme appliqué correctement)
 - [ ] Theme switcher dans Settings avec sauvegarde en DB
 - [ ] Correction des contrastes en mode sombre (couleurs texte/fond)
+- [x] Theme switcher implemented and persisted (implemented on dev branch)
+- [x] Replace hard-coded semantic colors with `DotlynColors` tokens
+
+### QA Checklist (P1 completed - required verification)
+
+- [ ] Verify theme toggle applies instantly without restart (use Settings > Theme)
+- [ ] Verify saved mode persists after app restart (system/light/dark)
+- [ ] Check files list screen contrast (light & dark) — text readable, buttons visible
+- [ ] Check editor screen contrast (caret, selection, text color, background)
+- [ ] Check Settings snackbars and icons use semantic tokens (success/error)
+- [ ] Run `flutter analyze` and `flutter test` for `apps/github_notes`
+- [ ] Manual smoke: run on device/emulator and toggle theme while open editor
+
+Notes:
+- Implementation added `themeModeProvider` (`apps/github_notes/lib/providers/theme_provider.dart`) and wired `MaterialApp.themeMode` to it.
+- Settings now uses the provider to persist and apply changes (secure storage backed).
+- A feature branch `fix/github-notes-p1-theme-switch` was created and pushed with the changes and token color fixes.
+
 
 ### P2 (Important)
 - [ ] Scrollbar visible dans l'éditeur
