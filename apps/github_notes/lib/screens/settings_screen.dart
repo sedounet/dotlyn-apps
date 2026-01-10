@@ -149,7 +149,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isValid ? 'Token is valid!' : 'Token is invalid'),
-        backgroundColor: isValid ? Colors.green : Colors.red,
+        backgroundColor: isValid ? DotlynColors.success : DotlynColors.error,
       ),
     );
   }
@@ -377,9 +377,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (_tokenValid != null)
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(
+                          child: Icon(
                           _tokenValid! ? Icons.check_circle : Icons.error,
-                          color: _tokenValid! ? Colors.green : Colors.red,
+                          color: _tokenValid! ? DotlynColors.success : DotlynColors.error,
                           size: 20,
                         ),
                       ),
@@ -651,7 +651,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: DotlynColors.error),
                             onPressed: () async {
                               final parentContext = context;
                               final messenger = ScaffoldMessenger.of(parentContext);
@@ -668,7 +668,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     ElevatedButton(
                                       onPressed: () => Navigator.pop(dialogContext, true),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: DotlynColors.error,
                                       ),
                                       child: const Text('Delete'),
                                     ),
