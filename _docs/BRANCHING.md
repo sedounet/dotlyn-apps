@@ -73,6 +73,12 @@ Options de merge
 - **Merge standard** (`git merge --no-ff`) : conserve l'historique détaillé des commits dans `main` (recommandé si tu veux trace complète).
 - **Squash merge** (`git merge --squash`) : compresse tous les commits en un seul dans `main` (plus propre si beaucoup de micro-commits).
 
+Labels GitHub (issues/PR)
+- **Quand créer** : créer les labels une fois que les premières issues utilisateurs ou collaborateurs sont ouvertes.
+- **Labels recommandés** : `github_notes` (app), `bug`/`feature`/`chore`/`docs` (type), `P1`/`P2`/`P3` (priorité).
+- **Règle** : toujours ajouter le label app + type + priorité si applicable.
+- **Workflow simple** : extraire item de USER-NOTES.md → ajouter dans APP.md TODO → ouvrir issue si nécessaire → appliquer labels.
+
 Conseil
 - Rester simple : le but est de ne pas perdre de temps sur la gestion des branches.
 

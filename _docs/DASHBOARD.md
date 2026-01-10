@@ -48,16 +48,16 @@
 
 ## 📊 Vue globale
 
-| App           | Version | Status       | Note                   |
-| ------------- | ------- | ------------ | ---------------------- |
-| Design Lab    | -       | ✅ Interne    | Outil de développement |
-| Money Tracker | -       | 🚧 En dev     | Gestion comptes perso  |
-| Habit Tracker | -       | 🔵 Conception | Tracker d'habitudes    |
-| GitHub Notes  | v0.1    | 🚧 En dev     | Notes sync GitHub      |
-| GitHub Notes  | v0.1    | 🚧 En dev     | P1 theme switch implemented (dev branch)
-| Timer         | 0.2.0   | ⚰️ Abandonné  | Code archivé           |
-| Pomodoro      | -       | ⚰️ Abandonné  | Supprimé               |
-| Tabata        | -       | ⚰️ Abandonné  | Supprimé               |
+| App           | Version | Status       | Note                                     |
+| ------------- | ------- | ------------ | ---------------------------------------- |
+| Design Lab    | -       | ✅ Interne    | Outil de développement                   |
+| Money Tracker | -       | 🚧 En dev     | Gestion comptes perso                    |
+| Habit Tracker | -       | 🔵 Conception | Tracker d'habitudes                      |
+| GitHub Notes  | v0.1    | 🚧 En dev     | Notes sync GitHub                        |
+| GitHub Notes  | v0.1    | 🚧 En dev     | P1 theme switch implemented (dev branch) |
+| Timer         | 0.2.0   | ⚰️ Abandonné  | Code archivé                             |
+| Pomodoro      | -       | ⚰️ Abandonné  | Supprimé                                 |
+| Tabata        | -       | ⚰️ Abandonné  | Supprimé                                 |
 
 ---
 
