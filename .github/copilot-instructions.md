@@ -259,14 +259,35 @@ melos bootstrap          # Récupère les dépendances de tous les packages
   - `[timer] fix: crash on Android 12+`
   - `[docs] update: timer APP.md TODO section`
 
-**Workflow Commits (Copilot)** :
-- **NE PAS commiter automatiquement** après chaque modification
-- **PROPOSER** de commiter lorsque :
-  - Une opération importante est terminée (feature complète, bug fixé, refactor majeur)
-  - Plusieurs petites modifications forment un ensemble cohérent
-  - L'utilisateur demande explicitement un commit
-- **Format proposition** : "✅ Changements prêts : [liste fichiers]. Commit avec message `[app] type: description` ?"
-- **Attendre validation** utilisateur avant d'exécuter `git add` / `git commit` / `git push`
+**Workflow Commits (Copilot) — STRICT** :
+
+**⚠️ CRITICAL** : TOUJOURS suivre [`_docs/PRE_COMMIT_CHECKLIST.md`](../_docs/PRE_COMMIT_CHECKLIST.md) AVANT de proposer un commit.
+
+**Phases obligatoires (dans l'ordre)** :
+
+**Phase 1 — Vérification Code** :
+1. Lancer `flutter analyze` sur les fichiers modifiés → **MUST PASS** (0 errors)
+2. Si imports modifiés/supprimés : `grep_search` pour vérifier usage AVANT suppression
+3. Si tests existent : lancer `flutter test` → **MUST PASS**
+
+**Phase 2 — Documentation** :
+1. Mettre à jour `APP.md` TODO (cocher items terminés, ajouter nouveaux)
+2. Mettre à jour `CHANGELOG.md` section `[Unreleased]` avec changements
+3. Vérifier `USER-NOTES.md` : ne pas modifier sans validation utilisateur
+
+**Phase 3 — Proposition Commit** :
+1. Lister TOUS les fichiers modifiés (`git status`)
+2. Formater message commit : `[app] type: description`
+3. **PROPOSER** : "✅ Changements prêts : [liste fichiers]. Commit avec message `[message]` ?"
+4. **ATTENDRE validation utilisateur**
+5. Exécuter `git add` / `git commit` / `git push` UNIQUEMENT après validation
+
+**⛔ NE JAMAIS** :
+- Commiter sans exécuter `flutter analyze` d'abord
+- Marquer items "fait" dans APP.md avant que tests passent
+- Proposer commit si analyzer a des erreurs
+- Supprimer imports sans `grep_search` pour vérifier usage
+- Commiter automatiquement (toujours attendre validation utilisateur)
 
 **Branches** :
 - `main` = stable (source of truth)
@@ -431,11 +452,18 @@ MaterialApp(
 
 ## ✅ Checklist Avant Commit
 
-- [ ] Code lint-free (`flutter analyze`)
-- [ ] Tests passent (si existants)
-- [ ] Doc à jour (APP.md si changement de features/bugs)
+**⚠️ CRITICAL** : Voir [`_docs/PRE_COMMIT_CHECKLIST.md`](../_docs/PRE_COMMIT_CHECKLIST.md) pour le workflow complet.
+
+**Résumé strict** :
+- [ ] `flutter analyze` passe (0 errors) sur fichiers modifiés
+- [ ] Si imports modifiés : `grep_search` vérifie usage avant suppression
+- [ ] Tests passent (si existants) : `flutter test`
+- [ ] `APP.md` TODO à jour (items cochés si terminés)
+- [ ] `CHANGELOG.md` section `[Unreleased]` mise à jour
+- [ ] `USER-NOTES.md` non modifié (lecture seule)
 - [ ] Commit message respecte format `[app] type: description`
-- [ ] Issue liée si applicable (closes numéro)
+- [ ] Issue liée si applicable (closes #numéro)
+- [ ] **Validation utilisateur obtenue** avant `git commit`
 
 ---
 
@@ -445,38 +473,53 @@ MaterialApp(
 ```
 User: "Ajoute les notifications enrichies au timer"
 
-Actions Copilot:
+Actions Copilot (ORDRE STRICT) :
 1. Créer branche: feat/timer-rich-notifications
 2. Coder dans apps/timer/lib/services/notification_service.dart
-3. Update _docs/apps/timer/APP.md:
-   - Déplacer "Notifications enrichies" de P2 vers "En cours"
-4. Update apps/timer/CHANGELOG.md section [Unreleased]:
-   - Ajouter "### Added" + "- Rich notifications with actions"
-5. Proposer commit: "✅ Changements prêts : notification_service.dart, APP.md, CHANGELOG.md. Commit avec message `[timer] feat: add rich notifications with actions` ?"
-6. Après validation utilisateur → commit et push
-7. Créer issue si pas existante
-8. Update APP.md avec lien vers issue
+3. VÉRIFICATION CODE (Phase 1) :
+   - Lancer: flutter analyze apps/timer/lib/services/
+   - Vérifier: 0 errors
+   - Si tests existent: flutter test apps/timer/test/
+4. DOCUMENTATION (Phase 2) :
+   - Update _docs/apps/timer/APP.md TODO:
+     * Cocher "[ ] Notifications enrichies" en "[x] Notifications enrichies"
+   - Update _docs/apps/timer/CHANGELOG.md section [Unreleased]:
+     * Ajouter "### Added" + "- Rich notifications with actions"
+5. PROPOSITION COMMIT (Phase 3) :
+   - Lister fichiers modifiés: git status
+   - Proposer: "✅ Changements prêts : notification_service.dart, APP.md, CHANGELOG.md. Commit avec message `[timer] feat: add rich notifications with actions` ?"
+6. ATTENDRE validation utilisateur
+7. Après validation → git add + git commit + git push
 ```
 
 ### Exemple 2 : Bug critique
 ```
 User: "Le timer crash sur Android 12+"
 
-Actions Copilot:
+Actions Copilot (ORDRE STRICT) :
 1. Créer issue GitHub: "[P1] Timer crash on Android 12+"
 2. Label: timer, bug, P1
 3. Update _docs/apps/timer/APP.md section "🔴 P1":
-   - [ ] Bug: Timer crash Android 12+ (lien issue)
+   - Ajouter: "- [ ] Bug: Timer crash Android 12+ → #[numéro issue]"
 4. Créer branche: fix/timer-android12-crash
-5. Investiguer + fix
-6. Commit: "[timer] fix: resolve crash on Android 12+ (closes issue)"
+5. Investiguer + coder le fix dans apps/timer/lib/...
+6. VÉRIFICATION CODE (Phase 1) :
+   - flutter analyze apps/timer/
+   - flutter test apps/timer/ (si tests existent)
+7. DOCUMENTATION (Phase 2) :
+   - APP.md: Cocher item P1 "[x] Bug: Timer crash Android 12+"
+   - CHANGELOG.md [Unreleased]: Ajouter "### Fixed" + "- Crash on Android 12+ (closes #X)"
+8. PROPOSITION COMMIT (Phase 3) :
+   - git status → lister fichiers
+   - Proposer: "✅ Changements prêts : [fichiers]. Commit avec message `[timer] fix: resolve crash on Android 12+ (closes #X)` ?"
+9. ATTENDRE validation → git add + commit + push
 ```
 
 ### Exemple 3 : Nouvelle app
 ```
 User: "Créer une nouvelle app Notes"
 
-Actions Copilot:
+Actions Copilot (ORDRE STRICT) :
 1. Créer apps/notes/ avec structure standard :
    ├── lib/
    │   ├── main.dart
@@ -493,13 +536,21 @@ Actions Copilot:
    - v0.1 MVP (phases si complexe)
    - TODO P1/P2/P3
 3. Créer _docs/apps/notes/PITCH.md
-4. Créer _docs/apps/notes/USER-NOTES.md (template avec sections 🐛💡📝✅)
-4. Créer label GitHub "notes"
-5. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
-6. Proposer commit: "✅ Changements prêts : structure notes/ + docs. Commit avec message `[notes] init: create new notes app structure` ?"
-7. Après validation → commit: "[notes] init: create new notes app structure"
-8. Bootstrap: cd apps/notes && flutter pub get
-8. Bootstrap: cd apps/notes && flutter pub get
+4. Créer _docs/apps/notes/CHANGELOG.md (template Keep a Changelog)
+5. Créer _docs/apps/notes/USER-NOTES.md (template avec sections 🐛💡📝✅)
+6. Créer label GitHub "notes" (si applicable)
+7. Update _docs/DASHBOARD.md (ajouter Notes dans tableau)
+8. VÉRIFICATION CODE (Phase 1) :
+   - cd apps/notes && flutter pub get
+   - flutter analyze apps/notes/
+9. DOCUMENTATION (Phase 2) :
+   - Vérifier tous les docs créés (APP.md, PITCH.md, CHANGELOG.md, USER-NOTES.md)
+   - DASHBOARD.md à jour
+10. PROPOSITION COMMIT (Phase 3) :
+   - git status → lister fichiers
+   - Proposer: "✅ Changements prêts : structure notes/ + docs. Commit avec message `[notes] init: create new notes app structure` ?"
+11. ATTENDRE validation → git add + commit + push
+12. Bootstrap: cd apps/notes && flutter pub get
 ```
 
 ### Exemple 4 : Traiter notes utilisateur
