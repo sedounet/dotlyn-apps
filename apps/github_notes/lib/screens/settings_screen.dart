@@ -55,16 +55,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadToken() async {
     final tokenService = ref.read(tokenServiceProvider);
     final token = await tokenService.loadToken();
-    
+
     // load preferences from secure storage
     final storage = ref.read(secureStorageProvider);
     final theme = await storage.read(key: 'theme_mode');
     final lang = await storage.read(key: 'app_language');
-    
+
     if (token != null) {
       _tokenController.text = token;
     }
-    
+
     setState(() {
       _themeMode = theme ?? 'system';
       _language = lang ?? 'system';

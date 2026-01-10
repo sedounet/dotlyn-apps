@@ -15,8 +15,7 @@ class ProjectFileService {
 
   /// Get a single project file by ID
   Future<db.ProjectFile?> getFileById(int id) async {
-    final query = _database.select(_database.projectFiles)
-      ..where((t) => t.id.equals(id));
+    final query = _database.select(_database.projectFiles)..where((t) => t.id.equals(id));
     return query.getSingleOrNull();
   }
 
@@ -60,13 +59,9 @@ class ProjectFileService {
   /// Delete a project file and its content
   Future<void> deleteFile(int id) async {
     // Delete content first (foreign key constraint)
-    await (_database.delete(_database.fileContents)
-          ..where((t) => t.projectFileId.equals(id)))
-        .go();
+    await (_database.delete(_database.fileContents)..where((t) => t.projectFileId.equals(id))).go();
     // Then delete the file
-    await (_database.delete(_database.projectFiles)
-          ..where((t) => t.id.equals(id)))
-        .go();
+    await (_database.delete(_database.projectFiles)..where((t) => t.id.equals(id))).go();
   }
 
   /// Duplicate a project file with a new nickname
@@ -98,7 +93,8 @@ class ProjectFileService {
   Future<db.FileContent?> getFileContent(int projectFileId) async {
     final query = _database.select(_database.fileContents)
       ..where((t) => t.projectFileId.equals(projectFileId))
-      ..orderBy([(t) => drift.OrderingTerm(expression: t.localModifiedAt, mode: drift.OrderingMode.desc)])
+      ..orderBy(
+          [(t) => drift.OrderingTerm(expression: t.localModifiedAt, mode: drift.OrderingMode.desc)])
       ..limit(1);
     return query.getSingleOrNull();
   }
@@ -127,10 +123,9 @@ class ProjectFileService {
     final content = await getFileContent(projectFileId);
     if (content == null) return;
 
-    await (_database.update(_database.fileContents)
-          ..where((t) => t.id.equals(content.id)))
+    await (_database.update(_database.fileContents)..where((t) => t.id.equals(content.id)))
         .write(db.FileContentsCompanion(
-          githubSha: drift.Value(newSha),
-        ));
+      githubSha: drift.Value(newSha),
+    ));
   }
 }

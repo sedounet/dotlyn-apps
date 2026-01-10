@@ -12,6 +12,7 @@ import 'package:github_notes/providers/github_provider.dart';
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/utils/snack_helper.dart';
 import 'package:github_notes/widgets/config_dialog.dart';
+import 'package:github_notes/mixins/auto_save_mixin.dart';
 
 class FileEditorScreen extends ConsumerStatefulWidget {
   final db.ProjectFile projectFile;
@@ -22,13 +23,10 @@ class FileEditorScreen extends ConsumerStatefulWidget {
   ConsumerState<FileEditorScreen> createState() => _FileEditorScreenState();
 }
 
-class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
+class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSaveMixin {
   late TextEditingController _controller;
   late ScrollController _scrollController;
   bool _isLoading = false;
-  bool _hasLocalChanges = false;
-  Timer? _autoSaveTimer;
-  final Duration _autoSaveDelay = const Duration(seconds: 2);
 
   @override
   void initState() {
@@ -40,17 +38,15 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
   @override
   void dispose() {
-    _autoSaveTimer?.cancel();
+    cancelAutoSave();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _scheduleAutoSave() {
-    _autoSaveTimer?.cancel();
-    _autoSaveTimer = Timer(_autoSaveDelay, () {
-      if (_hasLocalChanges) _saveLocal(auto: true);
-    });
+  @override
+  Future<void> performAutoSave(String content) async {
+    await _saveLocal(content, auto: true);
   }
 
   Future<void> _loadContent() async {
@@ -113,7 +109,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
     }
   }
 
-  Future<void> _saveLocal({bool auto = false}) async {
+  Future<void> _saveLocal(String content, {bool auto = false}) async {
     final database = ref.read(databaseProvider);
     final existing = await database.getFileContent(widget.projectFile.id);
 
@@ -121,20 +117,13 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       db.FileContentsCompanion(
         id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
         projectFileId: drift.Value(widget.projectFile.id),
-        content: drift.Value(_controller.text),
+        content: drift.Value(content),
         githubSha: drift.Value(existing?.githubSha),
         syncStatus: const drift.Value('modified'),
         lastSyncAt: drift.Value(existing?.lastSyncAt ?? DateTime.now()),
         localModifiedAt: drift.Value(DateTime.now()),
       ),
     );
-
-    if (mounted) {
-      setState(() => _hasLocalChanges = false);
-    } else {
-      // If unmounted, just reset flag locally
-      _hasLocalChanges = false;
-    }
 
     if (!auto) {
       if (!mounted) return;
@@ -243,8 +232,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
     return WillPopScope(
       onWillPop: () async {
         // If there are local changes, save them before popping
-        if (_hasLocalChanges) {
-          await _saveLocal();
+        if (hasUnsavedChanges) {
+          await saveNow(_controller.text);
         }
         return true;
       },
@@ -339,8 +328,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                               border: InputBorder.none,
                             ),
                             onChanged: (_) {
-                              setState(() => _hasLocalChanges = true);
-                              _scheduleAutoSave();
+                              scheduleAutoSave(_controller.text);
                             },
                           ),
                         ),
@@ -366,7 +354,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                              onPressed: !_isLoading ? _saveLocal : null,
+                              onPressed: !_isLoading
+                                  ? () async => await saveNow(_controller.text)
+                                  : null,
                               icon: const Icon(Icons.save),
                               label: const Text('Save Local'),
                             ),
