@@ -11,6 +11,7 @@ import 'package:github_notes/providers/github_provider.dart';
 
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
+import '../providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -101,8 +102,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveThemeMode(String mode) async {
     final messenger = ScaffoldMessenger.of(context);
-    final storage = ref.read(secureStorageProvider);
-    await storage.write(key: 'theme_mode', value: mode);
+    // Map string -> ThemeMode and persist via provider
+    final notifier = ref.read(themeModeProvider.notifier);
+    if (mode == 'light') {
+      await notifier.setMode(ThemeMode.light);
+    } else if (mode == 'dark') {
+      await notifier.setMode(ThemeMode.dark);
+    } else {
+      await notifier.setMode(ThemeMode.system);
+    }
     if (!mounted) return;
     setState(() => _themeMode = mode);
     messenger.showSnackBar(
@@ -142,7 +150,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isValid ? 'Token is valid!' : 'Token is invalid'),
-        backgroundColor: isValid ? Colors.green : Colors.red,
+        backgroundColor: isValid ? DotlynColors.success : DotlynColors.error,
       ),
     );
   }
@@ -372,7 +380,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         padding: const EdgeInsets.only(right: 8.0),
                         child: Icon(
                           _tokenValid! ? Icons.check_circle : Icons.error,
-                          color: _tokenValid! ? Colors.green : Colors.red,
+                          color: _tokenValid! ? DotlynColors.success : DotlynColors.error,
                           size: 20,
                         ),
                       ),
@@ -644,7 +652,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: DotlynColors.error),
                             onPressed: () async {
                               final parentContext = context;
                               final messenger = ScaffoldMessenger.of(parentContext);
@@ -661,7 +669,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     ElevatedButton(
                                       onPressed: () => Navigator.pop(dialogContext, true),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: DotlynColors.error,
                                       ),
                                       child: const Text('Delete'),
                                     ),
