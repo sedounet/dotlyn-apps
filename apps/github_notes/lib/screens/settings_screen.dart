@@ -101,8 +101,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveThemeMode(String mode) async {
     final messenger = ScaffoldMessenger.of(context);
-    final storage = ref.read(secureStorageProvider);
-    await storage.write(key: 'theme_mode', value: mode);
+    // Map string -> ThemeMode and persist via provider
+    final notifier = ref.read(themeModeProvider.notifier);
+    if (mode == 'light') {
+      await notifier.setMode(ThemeMode.light);
+    } else if (mode == 'dark') {
+      await notifier.setMode(ThemeMode.dark);
+    } else {
+      await notifier.setMode(ThemeMode.system);
+    }
     if (!mounted) return;
     setState(() => _themeMode = mode);
     messenger.showSnackBar(
