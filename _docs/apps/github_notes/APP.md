@@ -49,21 +49,32 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 ## 📝 TODO
 
-### 🔴 P1 — MVP v0.1 (Finalisation)
+### 🔴 P1 — Bugs bloquants & Release v0.1
 
-**Refactors (Completed for v0.1)**
-- [x] **Extract form widget** — `lib/widgets/project_file_form.dart` (ProjectFileForm)
-  - Description: Reusable Add/Edit form with validation for `owner`, `repo`, `path`, `nickname`.
-  - Tests: `test/widgets/project_file_form_test.dart` (validation + successful submit) — **passed**.
-  - Branch: `feat/githubnotes-refactor-form` — **merged (2026-01-03)**
+**Bugs identifiés (smoke tests 2026-01-10)** :
+- [ ] **BUG**: Sync offline pas de message d'erreur
+  - Symptôme : Mode avion, edit fichier, sync → aucun message, statut reste "modified"
+  - Attendu : Toast "No network" ou "Sync failed"
+  - Impact : UX confus, utilisateur ne comprend pas
+  - Fix : try-catch dans file_editor_screen.dart + gestion SocketException
+  
+- [ ] **BUG**: Theme change ne s'applique pas visuellement
+  - Symptôme : Settings → Light → message OK mais UI reste en mode système
+  - Cause probable : MaterialApp ne watch pas theme provider ou besoin restart
+  - Fix : Vérifier main.dart reactive theme + test hot restart
 
 **Release Checklist** :
-- [ ] Device smoke test (`flutter run --release` on Android/iOS) — **full smoke pending**
+- [x] Device smoke test (`flutter run --release`) — **Done 2026-01-10** ✅
+  - Token invalid/sanitize : ✅
+  - Sync bidirectionnel : ✅
+  - Multiple files : ✅
+  - Conflict detection : ✅
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
 - [x] CHANGELOG.md updated — **done** ✅
-- [x] Icons & splash screen (adaptive icons + android_12 config) — **verified on emulator API 30 + device API 35 (2026-01-08)** ✅
+- [x] Icons & splash screen (adaptive icons + android_12 config) — **verified API 30/35** ✅
 - [ ] GitHub label `github_notes` created
+- [ ] Fix 2 bugs P1 ci-dessus avant release publique
 
 **Backend** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
@@ -85,22 +96,27 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 **Note** : App mobile uniquement (Android/iOS). Pas de support web/desktop.
 
-### 🟡 P2 — Améliorations légères v0.2
+### 🟡 P2 — Améliorations UX & Code Quality
 
-**Code Quality & Refactors** :
-- [ ] Extract GitHub file check service (lightweight) — `lib/services/file_check_service.dart`
-  - Goal: Testable wrapper for file existence check (200/404/401/5xx/network)
-  - Branch: `feat/githubnotes-filecheck-service`
-- [ ] ProjectFilesNotifier (Riverpod Notifier) — `lib/providers/project_files_notifier.dart`
-  - Goal: Move DB operations out of widgets into a Notifier with unit tests
-  - Branch: `feat/githubnotes-notifier`
+**Features demandées (USER-NOTES 2026-01-10)** :
+- [ ] **Export settings** (backup config)
+  - Description : JSON exportable via Share/clipboard
+  - Contenu : Liste fichiers + token (optionnel)
+  - Cas usage : Réinstall app, multi-device
+  
+- [ ] **Refactor Settings : sections foldables**
+  - ExpansionTile pour : GitHub Token, Fichiers Suivis, Préférences
+  - Bouton "Afficher token" → icône œil dans TextField
+  - Justification : Settings devient long
 
 **Localization & UI** :
 - [ ] Localization (i18n) : ARB files en/fr (per APP_STANDARDS.md)
-- [ ] Theme switcher + language picker (settings screen)
-- [ ] UI tweaks : edit/delete icons visibility
 - [ ] Help tooltips (?) sur Add File dialog
-- [ ] Remove unused imports / fix analyzer warnings (settings_screen.dart)
+- [ ] Remove unused imports (settings_screen.dart)
+
+**Code Quality & Refactors** :
+- [ ] Extract GitHub file check service (lightweight)
+- [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
 
 ### 🔵 P3 — Futur (optionnel, complexe)
 

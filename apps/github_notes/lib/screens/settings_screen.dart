@@ -25,6 +25,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _tokenController = TextEditingController();
   bool _isTestingToken = false;
   bool? _tokenValid;
+  bool _showToken = true; // Show token by default (hide disabled)
+  bool _isSavingToken = false;
   String _themeMode = 'system';
   String _language = 'system';
 
@@ -63,19 +65,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveToken() async {
     final database = ref.read(databaseProvider);
-    final token = _tokenController.text.trim();
     final messenger = ScaffoldMessenger.of(context);
     final storage = ref.read(secureStorageProvider);
-    await storage.write(key: 'github_token', value: token);
-    // also persist in DB for compatibility
-    await database.saveGithubToken(token);
-    // refresh token provider so consumers use the new value
-    ref.invalidate(githubTokenProvider);
 
-    if (!mounted) return;
-    messenger.showSnackBar(
-      const SnackBar(content: Text('GitHub token saved (secure)')),
-    );
+    setState(() => _isSavingToken = true);
+
+    try {
+      // Sanitize token: trim, remove whitespace/newlines and zero-width spaces
+      var token = _tokenController.text.trim();
+      token = token.replaceAll(RegExp(r'\s+'), '');
+      token = token.replaceAll('\u200B', '');
+
+      await storage.write(key: 'github_token', value: token);
+      // also persist in DB for compatibility
+      await database.saveGithubToken(token);
+      // refresh token provider so consumers use the new value
+      ref.invalidate(githubTokenProvider);
+
+      // Update UI controller with sanitized token
+      if (mounted) _tokenController.text = token;
+
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('GitHub token saved (secure) — ${token.length} chars')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Error saving token: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSavingToken = false);
+    }
   }
 
   Future<void> _saveThemeMode(String mode) async {
@@ -339,14 +360,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               labelText: 'GitHub Token',
               hintText: 'ghp_xxxxxxxxxxxx',
               border: const OutlineInputBorder(),
-              suffixIcon: _tokenValid != null
-                  ? Icon(
-                      _tokenValid! ? Icons.check_circle : Icons.error,
-                      color: _tokenValid! ? Colors.green : Colors.red,
-                    )
-                  : null,
+              // Right side: validation icon + visibility icon button
+              suffixIcon: SizedBox(
+                width: 96,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_tokenValid != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(
+                          _tokenValid! ? Icons.check_circle : Icons.error,
+                          color: _tokenValid! ? Colors.green : Colors.red,
+                          size: 20,
+                        ),
+                      ),
+                    IconButton(
+                      icon: Icon(_showToken ? Icons.visibility_off : Icons.visibility),
+                      tooltip: _showToken ? 'Masquer le token' : 'Montrer le token',
+                      onPressed: () => setState(() => _showToken = !_showToken),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            obscureText: true,
+            obscureText: !_showToken,
           ),
           const SizedBox(height: 12),
           Row(
@@ -366,8 +405,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _saveToken,
-                  child: const Text('Save Token'),
+                  onPressed: _isSavingToken ? null : _saveToken,
+                  child: _isSavingToken
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Save Token'),
                 ),
               ),
             ],

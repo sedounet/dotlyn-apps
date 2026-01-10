@@ -149,41 +149,56 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Types paiement SI demandé
 - [ ] Polish splash screen
 - [ ] Tests complets
-- UI recherche rapide (1-2 clics)
-
 ---
 
 ## 📋 TODO
-Analytics & Onboarding (Prochaines phases)
 
-#### Phase 0.1e - Analytics & Pub (À venir)
-- [ ] Firebase Analytics + Crashlytics
-- [ ] Events tracking
+### 🔴 P1 — ASAP (Finalisation MVP v0.1)
+
+**Phase 0.1e - Analytics & Pub** :
+- [ ] Firebase Analytics + Crashlytics setup
+- [ ] Events tracking basiques (app_open, transaction_created, account_created)
 - [ ] AdMob bannière bottom
+- [ ] Flag isFirstLaunch pour Analytics
 
-#### Phase 0.1f - Onboarding (À venir)
-- [ ] Détection 1er lancement
-- [ ] Choix profil catégories (Simple/Standard/Détaillé)
-- [ ] Seed catégories selon profil
+**Phase 0.1f - UX Lean & Polish** :
+- [ ] Simplifier transaction_form_sheet : masquer/rendre optionnel catégorie & bénéficiaire
+- [ ] Retirer navigation vers écrans catégories/bénéficiaires du drawer
+- [ ] Polish UI home : alléger, focus actions essentielles
+- [ ] SafeArea vérification (bannière pub)
+- [ ] Tests rapides flux utilisateur
 
-### 🟡 P2 — Polish UI/UX (Optionnel)
+**Bugs/améliorations USER-NOTES** :
+- [ ] Refactoriser dialog ajout opération : bouton switch type au lieu dropdown
+- [ ] Revoir layout dialog : note au-dessus montant, date sous montant
+- [ ] Améliorer visuel statut opération (case à cocher vs couleur)
+- [ ] Vérifier taille/couleur FAB cohérence avec github-notes
+
+### 🟡 P2 — Post-Beta (selon feedback utilisateur)
+
+**Features à réintroduire SI demandé** :
+- [ ] Catégories personnalisées (création/édition/suppression)
+- [ ] Bénéficiaires actifs (CRUD complet visible)
+- [ ] Types de paiement (Carte/Virement/Chèque/Espèces)
+- [ ] Onboarding guidé (si confusion constatée)
+- [ ] Prélèvements automatiques / Opérations récurrentes
+- [ ] Solde prévisionnel
+
+**Polish UI/UX** :
 - [ ] Optimiser splash screen (actuellement 3-4s)
-- [ ] Vérifier SafeArea pour bannière pub (ne doit pas chevaucher navigation)
-- [ ] Compacter/réduire certains éléments d'interface
-- [ ] Tests complets flux utilisateur (création, édition, suppression, validation toggle)Screen (à finaliser)
-- [ ] Phase 0.1f : Onboarding
+- [ ] Compacter éléments d'interface selon feedback
 
 ### 🔵 P3 — Versions futures
 
 - [ ] v0.2 : Prélèvements automatiques
 - [ ] v0.3 : Import/Export + Sécurité
-- [ ] v0.4 : Graphiques + Analytics
+- [ ] v0.4 : Graphiques + Analytics avancés
 
 ---
 
 ## 🐛 Bugs Connus
 
-(Aucun pour l'instant)
+(Aucun pour l'instant - voir USER-NOTES.md pour notes d'utilisation)
 
 ---
 

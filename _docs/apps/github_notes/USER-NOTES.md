@@ -1,21 +1,41 @@
 # User Notes — GitHub Notes
 
-*Remplir au fil de l'utilisation — tags optionnels : [UI], [BUG], [IDÉE], [PERF], [UX]*
+*Espace perso pour mes notes d'utilisation quotidienne*
 
 ---
 
-[Tes notes ici...]
+## 10/01/26 - Tests smoke v0.1
 
-- [ ] refactorer les paramètres pour avoir des sections foldables. l'une d'elles devra contenir le token et ses paramètres. nous remplacerons le bouton "afficher le token" par. une icône oeil dans dans la barre de saisie du token
-- [ ] la liste des fichiers suivis devra elle aussi être foldables.
-- [ ] des paramètres généraux tels que  theme (clair/sombre/système) la langue de l'App doivent apparaître (non exhaustive)
-- [ ] dans la fenêtre de configuration de fichier suivi, mettre des petits ? au droit des zones de saisie avec l'aide sur les éléments atendus
-- [ ] ajouter en todo la conception de l'icône et l'insertion dans l'appli 
-- [ ] ajouter d'autres plateformes que guitle dans une version ultérieure je ne sais pas laquelle exactement c'était déterminé et ce sera dans longtemps optionnel 
-- [ ] prévoir la possibilité de copier-coller un fichier suivi de manière à pouvoir le modifier après et récupérer les infos déjà existantes je vois bien un bouton dupliquer qui duplique directement le les éléments en question et pour une nouvelle fenêtre pour faire le modif tout de suite
-- [ ] vérifier la correspondance des couleurs avec le thème dotlyn pour le mode sombre et clair. le theme sombre est lisible sur github notes mais pas money tracker. uniquement verifier la concordance des themes entre les deux applications pour définir la marche a suivre
+**Ce qui marche** :
+- Token invalide détecté OK
+- Sync tel <-> github OK
+- Duplicate file OK (ouvre dialog avec prefill)
+- 2 fichiers configurés, chacun sync indépendamment
 
+**Bugs trouvés** :
+- Sync en mode avion : pas de message d'erreur, fichier reste "modified"
+- Theme switch : message "light activé" mais UI change pas
 
-3/1/25 ajouts user
+**Idées amélio** :
+- Export settings (backup config en JSON)
+- Refactorer Settings avec sections foldables (token, files, prefs)
+- Petits ? d'aide sur les champs du dialog Add File
 
-deplacer le message de succès de config au dessus des boutons ou de[lacer les boutons au-dessus de manière à ne pas c
+---
+
+## 03/01/26 - Notes vrac
+
+- Message succès config masqué par boutons → déplacer snackbar ou boutons
+- Duplicate button implémenté ✅
+- Vérifier concordance themes entre github_notes et money_tracker (dark mode)
+- Support autres plateformes (GitLab, etc.) → long terme, pas prioritaire
+
+---
+
+## 08/01/26 - Icons
+
+Adaptive icons + android_12 testés sur emu API 30 + device API 35 → OK
+
+---
+
+[Autres notes...]

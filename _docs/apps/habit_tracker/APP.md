@@ -42,14 +42,19 @@
 ---
 
 ## ✅ TODO
+---
 
-### 🔴 P1 — ASAP (Conception)
+## 📋 TODO
+
+### 🔴 P1 — Conception MVP
+
 - [ ] Valider architecture données (modèle Habit)
 - [ ] Valider UX quick tap (wireframes ?)
 - [ ] Décider stockage : local (Hive/SQLite) ou cloud ?
 - [ ] Définir tracking positif vs négatif (UI différenciée ?)
 
 ### 🟡 P2 — v0.2+
+
 - [ ] Routines (séquences d'actions)
 - [ ] Time blocking horaires
 - [ ] Stats et graphiques
@@ -57,6 +62,7 @@
 - [ ] Mode avancé quantités
 
 ### 🔵 P3 — Plus tard
+
 - [ ] Export données (CSV, PDF)
 - [ ] Thèmes / personnalisation
 - [ ] Backup cloud
@@ -64,28 +70,9 @@
 
 ---
 
-## 🤔 Questions ouvertes
-
-**Architecture** :
-- Modèle unifié Habit ou types distincts (Counter/Binary/Quantity) ?
-- Catégories habitudes (bien-être, travail...) dès MVP ?
-- Gestion objectifs : par habitude ou globale ?
-
-**UX** :
-- Vue par défaut : liste ou cards ?
-- Quick actions : tap simple ou swipe ?
-- Affichage tracking négatif : compteur inversé ? warning visuel ?
-
-**Données** :
-- Historique : combien de jours conserver ?
-- Streaks : calculés à la volée ou stockés ?
-- Soft delete ou suppression définitive ?
-
----
-
 ## 🐛 Bugs Connus
 
-_Aucun bug pour le moment_
+(Aucun - app en conception. Voir USER-NOTES.md pour notes au fil du développement)
 
 ---
 

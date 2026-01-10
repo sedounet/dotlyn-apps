@@ -180,17 +180,19 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 - Différenciation
 - Métriques succès
 
-#### USER-NOTES.md (notes d'utilisation) ⭐ NOUVEAU
+#### USER-NOTES.md (notes d'utilisation) ⭐
 - **Usage** : Notes personnelles de l'utilisateur au fil de l'utilisation quotidienne
-- **Sections** :
-  - 🐛 Bugs Rencontrés : Bugs observés avec date + contexte
-  - 💡 Améliorations Souhaitées : Idées d'amélioration + justification
-  - 📝 Notes d'Usage : Observations générales, comportements inattendus
-  - ✅ Résolu : Bugs/améliorations traités (archive)
+- **Format** : Simple, non structuré, style carnet de notes perso
+- **Contenu typique** :
+  - Bugs observés avec date + contexte
+  - Idées d'amélioration + justification
+  - Observations générales, comportements inattendus
+  - Notes en vrac
 - **Workflow Copilot** :
-  - Lire USER-NOTES.md régulièrement pour identifier les tâches à traiter
-  - Déplacer les items traités vers section "✅ Résolu"
-  - Utiliser comme source pour mise à jour APP.md TODO
+  - **LECTURE SEULE** : Lire USER-NOTES.md pour identifier bugs/features à traiter
+  - **NE PAS MODIFIER** : L'utilisateur gère ce fichier lui-même
+  - **Action** : Transférer les items dans APP.md TODO section avec priorisation (P1/P2/P3)
+  - Exemple : Bug identifié → créer item dans APP.md P1 avec référence USER-NOTES date
 
 #### PROMPT_USER.md (demande utilisateur)
 - Fichier en langage naturel (1-2 chapitres max)
@@ -210,10 +212,16 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 4. Fichiers vidés/supprimés pour la prochaine demande
 
 **Workflow USER-NOTES.md** :
-1. Utilisateur prend des notes au fil de l'utilisation (bugs, idées, observations)
+1. Utilisateur prend des notes au fil de l'utilisation (bugs, idées, observations) — **fichier perso**
 2. Copilot lit USER-NOTES.md lors des sessions de travail sur l'app
-3. Copilot identifie les tâches prioritaires et les traite
-4. Items résolus déplacés vers section "✅ Résolu" avec date de résolution
+3. Copilot identifie les tâches prioritaires et **les ajoute dans APP.md TODO** (ne modifie pas USER-NOTES)
+4. Utilisateur décide quand nettoyer/archiver ses notes perso
+
+**⚠️ Gestion Git des USER-NOTES.md** :
+- **AVANT de commit/push** : Toujours vérifier `git show origin/main:_docs/apps/[app]/USER-NOTES.md` pour comparer avec version locale
+- **Si notes plus récentes sur main** : Fusionner manuellement avant commit (ne pas écraser)
+- **Raison** : USER-NOTES créés/modifiés directement sur main (via app mobile sync) peuvent être plus récents que branche locale
+- **Commande check** : `git diff HEAD origin/main -- _docs/apps/*/USER-NOTES.md`
 
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
@@ -221,6 +229,8 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 - Créer de fichier DECISION_*.md (décisions = commits + updates dans docs existantes)
 - Garder plusieurs versions de prompts (PROMPT_V0.1.md, etc.)
 - Multiplier les fichiers de doc au-delà de APP.md + PITCH.md + USER-NOTES.md + PROMPT_USER.md + PROMPT_AI.md
+- **Modifier USER-NOTES.md (lecture seule pour Copilot)**
+- **Écraser USER-NOTES.md sans vérifier version main d'abord**
 
 ---
 
