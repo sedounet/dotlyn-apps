@@ -11,6 +11,7 @@ import 'package:github_notes/providers/github_provider.dart';
 
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
+import 'package:github_notes/widgets/field_help_button.dart';
 import '../providers/theme_provider.dart';
 import 'package:github_notes/utils/snack_helper.dart';
 import 'package:github_notes/utils/dialog_helpers.dart';
@@ -69,7 +70,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveToken() async {
     final database = ref.read(databaseProvider);
-    final messenger = ScaffoldMessenger.of(context);
     final storage = ref.read(secureStorageProvider);
 
     setState(() => _isSavingToken = true);
@@ -88,21 +88,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (mounted) _tokenController.text = token;
 
       if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text('GitHub token saved (secure) — ${token.length} chars')),
-      );
+      SnackHelper.showSuccess(context, 'GitHub token saved (secure) — ${token.length} chars');
     } catch (e) {
       if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text('Error saving token: $e')),
-      );
+      SnackHelper.showError(context, 'Error saving token: $e');
     } finally {
       if (mounted) setState(() => _isSavingToken = false);
     }
   }
 
   Future<void> _saveThemeMode(String mode) async {
-    final messenger = ScaffoldMessenger.of(context);
+    
     // Map string -> ThemeMode and persist via provider
     final notifier = ref.read(themeModeProvider.notifier);
     if (mode == 'light') {
@@ -114,20 +110,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (!mounted) return;
     setState(() => _themeMode = mode);
-    messenger.showSnackBar(
-      SnackBar(content: Text('Theme set to $mode')),
-    );
+    SnackHelper.showSuccess(context, 'Theme set to $mode');
   }
 
   Future<void> _saveLanguage(String lang) async {
-    final messenger = ScaffoldMessenger.of(context);
+    
     final storage = ref.read(secureStorageProvider);
     await storage.write(key: 'app_language', value: lang);
     if (!mounted) return;
     setState(() => _language = lang);
-    messenger.showSnackBar(
-      SnackBar(content: Text('Language set to $lang (no translations yet)')),
-    );
+    SnackHelper.showSuccess(context, 'Language set to $lang (no translations yet)');
   }
 
   Future<void> _testToken() async {
@@ -173,9 +165,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Owner',
                   hintText: 'e.g., johndoe or my-org',
-                  suffixIcon: Tooltip(
+                  suffixIcon: FieldHelpButton(
                     message: 'Owner is the GitHub username or organization (e.g. johndoe)',
-                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
@@ -185,9 +176,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Repository',
                   hintText: 'e.g., myapp',
-                  suffixIcon: Tooltip(
+                  suffixIcon: FieldHelpButton(
                     message: 'Repository name inside the owner/org (e.g. myapp)',
-                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
@@ -197,10 +187,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 decoration: const InputDecoration(
                   labelText: 'File Path',
                   hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
-                  suffixIcon: Tooltip(
+                  suffixIcon: FieldHelpButton(
                     message:
                         'Relative path within the repository (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
-                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
@@ -210,9 +199,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Nickname',
                   hintText: 'e.g., MyApp - User Prompt',
-                  suffixIcon: Tooltip(
+                  suffixIcon: FieldHelpButton(
                     message: 'Friendly display name for this tracked file',
-                    child: Icon(Icons.info_outline),
                   ),
                 ),
               ),
@@ -543,23 +531,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                       // File exists remotely — confirm with user
                       if (!mounted) return;
-                      // File exists remotely — confirm with user
                       final ctxForDialog = context;
-                      final confirm = await showDialog<bool>(
-                        context: ctxForDialog,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text('File exists on GitHub'),
-                          content: Text(
-                              'A file already exists at ${result.path} in ${result.owner}/${result.repo}. Add to tracked files anyway?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: const Text('Cancel')),
-                            ElevatedButton(
-                                onPressed: () => Navigator.pop(ctx, true),
-                                child: const Text('Add')),
-                          ],
-                        ),
+                      final confirm = await DialogHelpers.showConfirmDialog(
+                        ctxForDialog,
+                        title: 'File exists on GitHub',
+                        message:
+                            'A file already exists at ${result.path} in ${result.owner}/${result.repo}. Add to tracked files anyway?',
+                        yesLabel: 'Add',
                       );
 
                       if (confirm != true) return;
@@ -645,35 +623,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             icon: const Icon(Icons.delete, color: DotlynColors.error),
                             onPressed: () async {
                               final parentContext = context;
-                              final messenger = ScaffoldMessenger.of(parentContext);
-                              final confirm = await showDialog<bool>(
-                                context: parentContext,
-                                builder: (dialogContext) => AlertDialog(
-                                  title: const Text('Delete File?'),
-                                  content: Text('Remove "${file.nickname}" from tracked files?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(dialogContext, false),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () => Navigator.pop(dialogContext, true),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: DotlynColors.error,
-                                      ),
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
-                                ),
+                              final confirm = await DialogHelpers.showConfirmDialog(
+                                parentContext,
+                                title: 'Delete File?',
+                                message: 'Remove "${file.nickname}" from tracked files?',
+                                yesLabel: 'Delete',
                               );
 
                               if (!mounted) return;
                               if (confirm == true) {
                                 await ref.read(databaseProvider).deleteProjectFile(file.id);
                                 if (!mounted) return;
-                                messenger.showSnackBar(
-                                  const SnackBar(content: Text('File removed')),
-                                );
+                                SnackHelper.showSuccess(parentContext, 'File removed');
                               }
                             },
                           ),
