@@ -169,7 +169,7 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 ## 🔗 Liens
 
 - PITCH.md : [`PITCH.md`](PITCH.md)
-- USER-NOTES.md : [`USER-NOTES.md`](USER-NOTES.md)
+- USER-NOTES.md : [`USER-NOTES.md`](USER-NOTES.md) (lecture seule — notes perso extraites vers TODO)
 - Repo GitHub : `dotlyn-apps/apps/github_notes`
 
 ---
