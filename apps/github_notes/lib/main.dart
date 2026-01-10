@@ -4,6 +4,7 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:dotlyn_core/dotlyn_core.dart';
 
 import 'l10n/app_localizations.dart';
+import 'providers/theme_provider.dart';
 import 'screens/files_list_screen.dart';
 
 void main() async {

@@ -11,6 +11,7 @@ import 'package:github_notes/providers/github_provider.dart';
 
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
+import '../providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -377,7 +378,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (_tokenValid != null)
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                          child: Icon(
+                        child: Icon(
                           _tokenValid! ? Icons.check_circle : Icons.error,
                           color: _tokenValid! ? DotlynColors.success : DotlynColors.error,
                           size: 20,
