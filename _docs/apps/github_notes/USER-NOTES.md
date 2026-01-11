@@ -6,5 +6,6 @@
 
 ---
 
-[Tes notes ici...]
+UI/SÉCURITÉ :  mettre la visibilité du token a off par défaut, remettre a off une fois sorti de la page setting du token
+
 
