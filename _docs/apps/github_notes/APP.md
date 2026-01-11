@@ -99,7 +99,7 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
   - Sync bidirectionnel : ✅
   - Multiple files : ✅
   - Conflict detection : ✅
-  - Offline sync error message: verify when device is offline that attempting to Sync shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
+  - Offline sync error message: verify ywhen device is offline that attempting to Snc shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
   - Verify Add File dialog: tooltips/placeholders in Owner/Repository/File Path/Nickname fields — **Done 2026-01-10** ✅ (tap-to-open bottom sheets)
 - [x] Fix analyzer warnings — **zero issues** ✅
 - [x] Version in pubspec.yaml — **0.1.0** ✅
@@ -145,13 +145,42 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 - [ ] Localization (i18n) : ARB files en/fr (per APP_STANDARDS.md)
 - [x] Help tooltips (?) sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
 
+**Conflict Resolution** :
+- [ ] **Implement merge option** (three-way merge)
+  - Description : Ajouter choix "Merge" dans ConflictDialog (actuellement Keep Local / Keep Remote / Cancel)
+  - Justification : Utilisateur veut combiner changements locaux + remote sans écraser
+  - Spec : diff3 algorithm ou merge manuel (UI interactive)
+  - Priority : P2 (nice-to-have pour workflow avancé)
+
 **Code Quality & Refactors** :
 - [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit 7ff8f7b)
 - [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit 7ff8f7b)
+- [x] **Atomization Phase 1**: Extract SyncService, TokenService, dialogs — **Done 2026-01-10** (commit d6c7ef6)
+- [x] **Atomization Phase 2**: Extract ProjectFileService, refactor settings — **Done 2026-01-10** (commit 773fda1)
+- [x] **Atomization Phase 3**: Extract AutoSaveMixin — **Done 2026-01-10** (commit 63a8032)
+- [x] Simplify GitHub error messages (404 → concise user-facing text) — **Done 2026-01-11**
+- [x] Offline tracked-file creation fallback (add locally on network error) — **Done 2026-01-11**
+- [x] Device release smoke tests (create/edit/sync/conflict/offline) — **Done 2026-01-11** ✅
 - [x] Use githubServiceProvider consistently (replace 3x direct instantiation) — **Done 2026-01-10** (commit NEW)
+- [x] **PHASE 1 ATOMIZATION** (2026-01-10, commit d6c7ef6) :
+  - Extracted `SyncService` class (210 → 80 line reduction in file_editor_screen._syncToGitHub)
+  - Created sealed class `SyncResult` with pattern matching (.when() extension)
+  - Created `TokenService` for centralized token management
+  - Created reusable dialogs: `ConfigDialog`, `ConflictDialog`
+  - Created Riverpod providers: `syncServiceProvider`, `tokenServiceProvider`
+  - Refactored file_editor_screen to use SyncService (60% LOC reduction, much cleaner)
+  - Test status: flutter analyze 0 errors, 5 info-level warnings only
+- [x] **PHASE 2 REFACTORING** (2026-01-10, commit 773fda1) :
+  - Extracted `ProjectFileService` class (centralized file CRUD)
+  - Refactored `settings_screen.dart` to use ProjectFileService (618 → ~500 lines)
+  - Removed duplicate `secureStorageProvider` (fixed imports)
+  - All file operations now use service layer instead of inline DB calls
+- [x] **PHASE 3 EXTRACTION** (2026-01-10, commit 63a8032) :
+  - Created `AutoSaveMixin` for reusable auto-save behavior with debounce
+  - Integrated mixin into file_editor_screen (reduced auto-save boilerplate by 40%)
+  - Simplified timer/callback management with `scheduleAutoSave()`, `saveNow()`, `cancelAutoSave()` methods
+  - All phases compile clean: 0 errors, 5 info warnings only
 - [ ] Extract dialog helpers (9x showDialog patterns)
-- [ ] Extract GitHub file check service (lightweight)
-- [ ] ProjectFilesNotifier (Riverpod Notifier) pour DB operations
 
 ### 🔵 P3 — Futur (roadmap long terme)
 

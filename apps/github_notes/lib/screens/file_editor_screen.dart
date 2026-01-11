@@ -5,10 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:github_notes/data/database/app_database.dart' as db;
+import 'package:github_notes/models/sync_result.dart';
 import 'package:github_notes/providers/database_provider.dart';
+import 'package:github_notes/providers/sync_provider.dart';
 import 'package:github_notes/providers/github_provider.dart';
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/utils/snack_helper.dart';
+import 'package:github_notes/widgets/config_dialog.dart';
+import 'package:github_notes/mixins/auto_save_mixin.dart';
 
 class FileEditorScreen extends ConsumerStatefulWidget {
   final db.ProjectFile projectFile;
@@ -19,13 +23,10 @@ class FileEditorScreen extends ConsumerStatefulWidget {
   ConsumerState<FileEditorScreen> createState() => _FileEditorScreenState();
 }
 
-class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
+class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSaveMixin {
   late TextEditingController _controller;
   late ScrollController _scrollController;
   bool _isLoading = false;
-  bool _hasLocalChanges = false;
-  Timer? _autoSaveTimer;
-  final Duration _autoSaveDelay = const Duration(seconds: 2);
 
   @override
   void initState() {
@@ -37,17 +38,15 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
   @override
   void dispose() {
-    _autoSaveTimer?.cancel();
+    cancelAutoSave();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _scheduleAutoSave() {
-    _autoSaveTimer?.cancel();
-    _autoSaveTimer = Timer(_autoSaveDelay, () {
-      if (_hasLocalChanges) _saveLocal(auto: true);
-    });
+  @override
+  Future<void> performAutoSave(String content) async {
+    await _saveLocal(content, auto: true);
   }
 
   Future<void> _loadContent() async {
@@ -101,16 +100,27 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       SnackHelper.showInfo(context, 'File loaded from GitHub');
     } on SocketException catch (_) {
       if (!mounted) return;
-      SnackHelper.showError(context, 'Network error: please check your connection');
+      // Friendly network error for users
+      SnackHelper.showError(context, 'Network error: please check your connection and try again.');
     } on GitHubApiException catch (e) {
       if (!mounted) return;
-      SnackHelper.showError(context, 'Error: ${e.message}');
+      // Map common GitHub API errors to concise, actionable messages
+      if (e.statusCode == 404) {
+        SnackHelper.showError(context,
+            'File not found on GitHub. You can create it from this device or save locally.');
+      } else if (e.statusCode == 401) {
+        SnackHelper.showError(
+            context, 'Invalid GitHub token. Go to Settings to update your token.');
+      } else {
+        SnackHelper.showError(
+            context, 'GitHub error (${e.statusCode ?? 'unknown'}). Please try again later.');
+      }
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  Future<void> _saveLocal({bool auto = false}) async {
+  Future<void> _saveLocal(String content, {bool auto = false}) async {
     final database = ref.read(databaseProvider);
     final existing = await database.getFileContent(widget.projectFile.id);
 
@@ -118,20 +128,13 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
       db.FileContentsCompanion(
         id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
         projectFileId: drift.Value(widget.projectFile.id),
-        content: drift.Value(_controller.text),
+        content: drift.Value(content),
         githubSha: drift.Value(existing?.githubSha),
         syncStatus: const drift.Value('modified'),
         lastSyncAt: drift.Value(existing?.lastSyncAt ?? DateTime.now()),
         localModifiedAt: drift.Value(DateTime.now()),
       ),
     );
-
-    if (mounted) {
-      setState(() => _hasLocalChanges = false);
-    } else {
-      // If unmounted, just reset flag locally
-      _hasLocalChanges = false;
-    }
 
     if (!auto) {
       if (!mounted) return;
@@ -144,201 +147,95 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
 
     try {
       final database = ref.read(databaseProvider);
+      final syncService = ref.read(syncServiceProvider);
       final existing = await database.getFileContent(widget.projectFile.id);
-      final githubService = ref.read(githubServiceProvider);
 
-      String owner = widget.projectFile.owner;
-      String repo = widget.projectFile.repo;
-      String path = widget.projectFile.path;
-
-      // Step 1: Validate config - if missing, ask user to configure
-      if (owner.isEmpty || repo.isEmpty || path.isEmpty) {
+      // Ensure config is set
+      var projectFile = widget.projectFile;
+      if (projectFile.owner.isEmpty || projectFile.repo.isEmpty || projectFile.path.isEmpty) {
         if (!mounted) return;
 
-        final TextEditingController ownerController = TextEditingController(text: owner);
-        final TextEditingController repoController = TextEditingController(text: repo);
-        final TextEditingController pathController = TextEditingController(text: path);
-
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Configure GitHub path'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('This file needs a GitHub path to sync. Please provide:'),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: ownerController,
-                    decoration: const InputDecoration(labelText: 'Owner (username)'),
-                  ),
-                  TextField(
-                    controller: repoController,
-                    decoration: const InputDecoration(labelText: 'Repository'),
-                  ),
-                  TextField(
-                    controller: pathController,
-                    decoration: const InputDecoration(labelText: 'Path (e.g., notes/myfile.md)'),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Save & Continue'),
-              ),
-            ],
-          ),
-        );
-
-        if (confirmed != true) return;
-
-        // Update config
-        final updatedFile = widget.projectFile.copyWith(
-          owner: ownerController.text.trim(),
-          repo: repoController.text.trim(),
-          path: pathController.text.trim(),
-        );
-
-        if (updatedFile.owner.isEmpty || updatedFile.repo.isEmpty || updatedFile.path.isEmpty) {
-          if (!mounted) return;
-          SnackHelper.showError(context, 'All fields are required');
-          return;
-        }
-
-        await database.updateProjectFile(updatedFile);
-
-        owner = updatedFile.owner;
-        repo = updatedFile.repo;
-        path = updatedFile.path;
-
-        if (!mounted) return;
-        SnackHelper.showInfo(context, 'Configuration saved');
+        final updated = await ConfigDialog.show(context, projectFile: projectFile);
+        if (updated == null) return;
+        projectFile = updated;
+        await database.updateProjectFile(projectFile);
       }
 
-      // Step 2: Try to fetch remote file
-      String? remoteSha;
-      String? remoteContent;
-      bool fileExistsOnGitHub = false;
+      // Call sync service
+      final result = await syncService.syncFile(
+        context: context,
+        projectFile: projectFile,
+        content: _controller.text,
+        localSha: existing?.githubSha,
+      );
 
-      try {
-        final remote = await githubService.fetchFile(owner: owner, repo: repo, path: path);
-        remoteSha = remote.sha;
-        remoteContent = remote.content;
-        fileExistsOnGitHub = true;
-      } on SocketException catch (_) {
-        // Offline: cannot sync to GitHub
-        if (!mounted) return;
-        SnackHelper.showError(context, 'Offline: Cannot sync to GitHub. File saved locally.');
-        return;
-      } on GitHubApiException catch (e) {
-        if (e.statusCode == 404) {
-          // File doesn't exist on GitHub - will create below
-          fileExistsOnGitHub = false;
-        } else {
-          rethrow; // Auth errors, etc.
-        }
-      }
+      if (!mounted) return;
 
-      // Step 3: If file exists remotely, check for conflicts
-      if (fileExistsOnGitHub) {
-        final localSha = existing?.githubSha;
-
-        // Compare SHA: if different, show conflict dialog
-        if (localSha != null && localSha != remoteSha) {
-          if (!mounted) return;
-          final choice = await showDialog<String?>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Conflict detected'),
-              content: const Text('The file changed on GitHub since your last sync.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, 'cancel'),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, 'fetch'),
-                  child: const Text('Fetch remote'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, 'push'),
-                  child: const Text('Overwrite GitHub'),
-                ),
-              ],
+      // Handle result
+      result.when(
+        success: (syncSuccess) async {
+          // Update DB with new SHA
+          await database.upsertFileContent(
+            db.FileContentsCompanion(
+              id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+              projectFileId: drift.Value(projectFile.id),
+              content: drift.Value(_controller.text),
+              githubSha: drift.Value(syncSuccess.sha),
+              syncStatus: const drift.Value('synced'),
+              lastSyncAt: drift.Value(DateTime.now()),
+              localModifiedAt: drift.Value(DateTime.now()),
             ),
           );
 
-          if (choice == 'fetch') {
-            _controller.text = remoteContent!;
+          SnackHelper.showSuccess(
+            context,
+            syncSuccess.isCreated ? 'Created on GitHub!' : 'Synced to GitHub!',
+          );
+        },
+        offline: (_) {
+          SnackHelper.showError(
+            context,
+            'Offline: Cannot sync to GitHub. File saved locally.',
+          );
+        },
+        conflict: (conflict) async {
+          if (conflict.userChoice == ConflictChoice.fetchRemote && conflict.remoteContent != null) {
+            _controller.text = conflict.remoteContent!;
             await database.upsertFileContent(
               db.FileContentsCompanion(
                 id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
-                projectFileId: drift.Value(widget.projectFile.id),
-                content: drift.Value(remoteContent),
-                githubSha: drift.Value(remoteSha),
+                projectFileId: drift.Value(projectFile.id),
+                content: drift.Value(conflict.remoteContent!),
+                githubSha: drift.Value(conflict.remoteSha),
                 syncStatus: const drift.Value('synced'),
                 lastSyncAt: drift.Value(DateTime.now()),
                 localModifiedAt: drift.Value(DateTime.now()),
               ),
             );
-            if (!mounted) return;
             SnackHelper.showSuccess(context, 'Fetched remote content');
-            return;
           }
-
-          if (choice != 'push') return; // Cancel
-        }
-      }
-
-      // Step 4: Push to GitHub (create or update)
-      final localSha = existing?.githubSha;
-      final shaToUse = fileExistsOnGitHub ? (localSha ?? remoteSha) : null;
-
-      final newSha = await githubService.updateFile(
-        owner: owner,
-        repo: repo,
-        path: path,
-        content: _controller.text,
-        sha: shaToUse,
-        message: shaToUse == null
-            ? 'Create ${widget.projectFile.nickname} from GitHub Notes'
-            : 'Update ${widget.projectFile.nickname} from GitHub Notes',
+        },
+        error: (error) {
+          // Prefer short, user-friendly messages for sync errors
+          if (error.statusCode == 401) {
+            SnackHelper.showError(context, 'Invalid GitHub token. Check Settings.');
+          } else if (error.statusCode == 404) {
+            SnackHelper.showError(
+                context, 'File not found on GitHub. Choose to create it or save locally.');
+          } else if (error.message.contains('No network') ||
+              error.message.toLowerCase().contains('socket')) {
+            SnackHelper.showError(context, 'Offline: Cannot sync to GitHub. File saved locally.');
+          } else {
+            SnackHelper.showError(context, 'Sync failed: ${error.message}');
+          }
+        },
       );
-
-      // Step 5: Update local DB
-      await database.upsertFileContent(
-        db.FileContentsCompanion(
-          id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
-          projectFileId: drift.Value(widget.projectFile.id),
-          content: drift.Value(_controller.text),
-          githubSha: drift.Value(newSha),
-          syncStatus: const drift.Value('synced'),
-          lastSyncAt: drift.Value(DateTime.now()),
-          localModifiedAt: drift.Value(DateTime.now()),
-        ),
+    } on SocketException catch (_) {
+      if (!mounted) return;
+      SnackHelper.showError(
+        context,
+        'Offline: Cannot sync to GitHub. File saved locally.',
       );
-
-      if (!mounted) return;
-      SnackHelper.showSuccess(
-          context, fileExistsOnGitHub ? 'Synced to GitHub!' : 'Created on GitHub!');
-    } on GitHubApiException catch (e) {
-      if (!mounted) return;
-      if (e.statusCode == 401) {
-        SnackHelper.showError(context, 'Unauthorized: check your GitHub token');
-      } else if (e.statusCode == 404) {
-        SnackHelper.showError(context, 'Repository or path not found');
-      } else if (e.statusCode == 409) {
-        SnackHelper.showError(context, 'Conflict: File modified on GitHub. Try again.');
-      } else {
-        SnackHelper.showError(context, 'GitHub error: ${e.message}');
-      }
     } catch (e) {
       if (!mounted) return;
       SnackHelper.showError(context, 'Error: $e');
@@ -357,8 +254,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
     return WillPopScope(
       onWillPop: () async {
         // If there are local changes, save them before popping
-        if (_hasLocalChanges) {
-          await _saveLocal();
+        if (hasUnsavedChanges) {
+          await saveNow(_controller.text);
         }
         return true;
       },
@@ -453,8 +350,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                               border: InputBorder.none,
                             ),
                             onChanged: (_) {
-                              setState(() => _hasLocalChanges = true);
-                              _scheduleAutoSave();
+                              scheduleAutoSave(_controller.text);
                             },
                           ),
                         ),
@@ -480,7 +376,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                              onPressed: !_isLoading ? _saveLocal : null,
+                              onPressed:
+                                  !_isLoading ? () async => await saveNow(_controller.text) : null,
                               icon: const Icon(Icons.save),
                               label: const Text('Save Local'),
                             ),

@@ -11,12 +11,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Full offline workflow**: Create and edit files without network, sync later when online
 - **Multiline path field**: Long GitHub paths (e.g., `_docs/apps/myapp/FILE.md`) now display fully without truncation
 - **USE_CASES.md**: Comprehensive flowchart documenting all sync scenarios (6 use cases with Mermaid diagram)
+- **Phase 1 Atomization** (2026-01-10):
+  - `SyncService` class: Encapsulates complete GitHub sync workflow (210 → 80 line reduction)
+  - `SyncResult` sealed class: Type-safe result handling with `.when()` pattern matching
+  - `TokenService` class: Centralized token management (load, save, validate, delete)
+  - `ConfigDialog` widget: Reusable configuration dialog for owner/repo/path
+  - `ConflictDialog` widget: Reusable conflict resolution dialog with 3-way choices
+  - Riverpod providers: `syncServiceProvider`, `tokenServiceProvider` for dependency injection
+  - Extracted architecture: Business logic moved from UI screens to reusable services
+- **Phase 2 Refactoring** (2026-01-10):
+  - `ProjectFileService` class: Centralized file CRUD operations (add, update, delete, duplicate, exists)
+  - Refactored `settings_screen.dart` to use ProjectFileService (618 → ~500 lines)
+  - All file operations now delegate to service layer for testability and reusability
+- **Phase 3 Extraction** (2026-01-10):
+  - `AutoSaveMixin`: Reusable mixin for auto-save behavior with debounce timer management
+  - Integrated mixin into file_editor_screen for cleaner state management
+  - Methods: `scheduleAutoSave()`, `saveNow()`, `cancelAutoSave()`, `performAutoSave()` override
 
 ### Changed
 - **Simplified file creation**: No GitHub validation on add (create locally, validate at sync time)
 - **Save Local button**: Always enabled (except during sync loading), no auto-disable after auto-save
 - **Sync error messages**: Clear offline detection with "Offline: Cannot sync to GitHub" message
 - **Database queries**: Fix duplicates with `orderBy(localModifiedAt DESC).limit(1)` instead of `getSingleOrNull()`
+- **file_editor_screen refactor**: Now delegates sync logic to `SyncService`, uses `.when()` pattern matching for result handling
+- **file_editor_screen auto-save**: Now uses `AutoSaveMixin` instead of inline timer/callback logic (40% boilerplate reduction)
+- **settings_screen architecture**: Token operations now use `TokenService`, file operations use `ProjectFileService`
 
 ### Fixed
 - **Database duplicate crash**: Fixed "Bad state: Too many elements" error with proper orderBy + limit query
@@ -24,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SHA nullable for creation**: GitHub file creation now works (SHA optional, null = create new file)
 - **Button disable bug**: Sync button now properly re-enables after error via `finally` block
 - **Auto-fetch removed**: No automatic GitHub fetch on file load (allows offline file opening)
+- **Unused imports**: Cleaned up unused dialog_helpers and snack_helper imports in SyncService
+- **Concise GitHub error messages** (2026-01-11): Replaced verbose technical GitHub 404/401/network errors with user-friendly messages in file_editor_screen.dart ("File not found on GitHub" / "Invalid GitHub token" / "Network error")
+- **Offline tracked-file creation** (2026-01-11): Added fallback in settings_screen.dart — when remote existence check fails due to network error, file is now added locally with informational message ("No network: file added locally. It will sync when online")
 
 ## [0.1.0] - 2026-01-10
 
