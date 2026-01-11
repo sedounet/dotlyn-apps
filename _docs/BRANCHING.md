@@ -18,7 +18,10 @@ Exemples
 - `fix/money-tracker-amount-rounding`
 - `chore/update-deps`
 
-Workflow pratique (solo, sans PR obligatoire)
+Workflow pratique (solo, **sans PRs**)
+
+**⚠️ IMPORTANT** : On ne fait **PAS de Pull Requests** pour ce dépôt. Workflow : branch → merge direct → push.
+
 1. Créer branche depuis `main` :
    ```bash
    git checkout main
@@ -33,7 +36,7 @@ Workflow pratique (solo, sans PR obligatoire)
    # Répéter pour chaque unité logique (ex: plusieurs P1)
    ```
 
-3. Pousser la branche (sauvegarde) :
+3. Pousser la branche (sauvegarde optionnelle) :
    ```bash
    git push -u origin feat/<app>-short-desc
    ```
@@ -44,7 +47,7 @@ Workflow pratique (solo, sans PR obligatoire)
    flutter test         # Si tests présents
    ```
 
-5. Merger dans `main` (direct, pas de PR nécessaire) :
+5. Merger dans `main` (direct, **PAS de PR**) :
    ```bash
    git checkout main
    git pull origin main
@@ -58,7 +61,10 @@ Workflow pratique (solo, sans PR obligatoire)
    git push origin --delete feat/<app>-short-desc
    ```
 
-Note : PR optionnelle — utile si tu veux CI GitHub Actions automatique ou garder trace discussion, mais pas obligatoire pour solo.
+**Pourquoi pas de PRs ?**
+- Workflow solo : friction inutile, les PRs n'apportent rien pour le moment.
+- On privilégie la rapidité : branch → validation locale → merge direct.
+- Si besoin de review ou CI plus tard, on réactivera les PRs avec un process adapté.
 
 Suppression des branches
 - Locale : `git branch -d <branch>` (ou `-D` si besoin).
