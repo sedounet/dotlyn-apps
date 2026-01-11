@@ -166,19 +166,33 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 
 #### APP.md (fichier de travail)
 - Versions (v0.1 MVP, v0.2, v0.3+)
-- TODO avec priorités :
-  - 🔴 P1 = ASAP (bugs bloquants + débloqueurs techniques)
-  - 🟡 P2 = Prochaine version
-  - 🔵 P3 = Plus tard
-- Liens vers issues GitHub (→ numéro issue)
-- Notes en vrac
+- TODO avec structure claire :
+  - 🚧 **In Progress** : Items en cours (max 3-5) avec branche + ETA
+  - 🔴 **P1** : ASAP (bugs bloquants + débloqueurs techniques)
+  - 🟡 **P2** : Next release (prochaine version planifiée)
+  - 🔵 **P3** : Backlog (long terme, nice-to-have)
+  - 🗨️ **Parking Lot** : Ajouts organiques en session (à trier en fin de session)
+  - ✅ **Recently Done** : 15 derniers items ou 2 semaines (format strict avec SHA)
+  - 📦 **Pre-Workflow Archive** : Items historiques dans collapsible (tag "Pre-Workflow")
+- **Issues locales #N** : Numérotation séquentielle (ex: #1, #2, #10)
+- **⛔ GitHub issues (GH#N) désactivées** : Feature verrouillée par défaut
+- Format strict Recently Done : `- [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR)`
 
 #### CHANGELOG.md (historique versions)
 - Format Keep a Changelog (https://keepachangelog.com)
 - Section `[Unreleased]` pour changements en cours
 - Sections par version avec date : `[0.1.0] - 2026-01-10`
-- Catégories : Added, Changed, Fixed, Deprecated, Removed, Security
-- **Workflow** : À chaque fix/feature complété, ajouter entrée dans `[Unreleased]` puis déplacer vers version numérotée lors de release
+- Catégories avec emojis : Added 🆕, Changed ✨, Fixed 🐛, Code Quality 🛠️, Security 🔒
+- **Format store-ready** : Headline user-facing + Technical + Benefit/Impact + commit SHA
+- **Workflow** : À chaque fix/feature complété, ajouter entrée dans `[Unreleased]` format strict
+- Format strict : 
+  ```markdown
+  - **User-facing headline** (max 80 chars)
+    - Technical: Implementation details
+    - User benefit: Why it matters
+    - (commit abc1234, from issue #5)
+  ```
+- **Release Notes** : Section copie-coller pour stores (Google Play 500 chars, App Store 4000 chars)
 
 #### PITCH.md (vision stable)
 - Concept
@@ -231,6 +245,7 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 - **Si notes plus récentes sur main** : Fusionner manuellement avant commit (ne pas écraser)
 - **Raison** : USER-NOTES créés/modifiés directement sur main (via app mobile sync) peuvent être plus récents que branche locale
 - **Commande check** : `git diff HEAD origin/main -- _docs/apps/*/USER-NOTES.md`
+- **TODO Workflow (2026-01-11)** : Avant tout commit sur branche, systématiquement exclure USER-NOTES.md du staging si modifiés localement ET vérifier version main en premier. Pattern: `git restore --staged _docs/apps/*/USER-NOTES.md` puis `git diff origin/main -- _docs/apps/*/USER-NOTES.md` → merger manuellement si conflit détecté.
 
 **NE JAMAIS** :
 - Créer de fichier TODO.md séparé
@@ -463,6 +478,7 @@ MaterialApp(
 - [ ] `USER-NOTES.md` non modifié (lecture seule)
 - [ ] Commit message respecte format `[app] type: description`
 - [ ] Issue liée si applicable (closes #numéro)
+- [ ] **Validation utilisateur obtenue** avant `git commit`
 - [ ] **Validation utilisateur obtenue** avant `git commit`
 
 ---

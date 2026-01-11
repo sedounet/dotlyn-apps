@@ -1,8 +1,10 @@
 # Workflow Proposals — Index
 
-> **Statut** : BROUILLONS — Fichiers d'étude à valider avant application  
+> **Statut** : ✅ MIGRATION COMPLÈTE (github_notes) — 2026-01-11  
 > **Date création** : 2026-01-11  
 > **Objectif** : Améliorer workflow APP.md + CHANGELOG pour scalabilité et store-readiness
+
+**Migration github_notes** : Les 4 étapes (M1-M4) ont été appliquées avec succès. Ces fichiers restent comme référence pour migration d'autres apps (money_tracker, sc_loop_analyzer).
 
 ---
 
@@ -139,14 +141,14 @@
 
 ## � Récap décisions clés
 
-| Aspect | Décision |
-|--------|----------|
-| **Issues** | ⛔ Locales (#N) UNIQUEMENT — GitHub (GH#N) VERROUILLÉ |
-| **Archive Done** | CHANGELOG après 15 items ou 2 semaines |
-| **Versioning** | Semantic (MAJOR.MINOR.PATCH) strict |
-| **Store notes** | Copier-coller manuel depuis CHANGELOG |
-| **Parking Lot** | Ajouts organiques, trier en fin session |
-| **Commit SHA** | 7 chars obligatoire dans Recently Done |
+| Aspect           | Décision                                             |
+| ---------------- | ---------------------------------------------------- |
+| **Issues**       | ⛔ Locales (#N) UNIQUEMENT — GitHub (GH#N) VERROUILLÉ |
+| **Archive Done** | CHANGELOG après 15 items ou 2 semaines               |
+| **Versioning**   | Semantic (MAJOR.MINOR.PATCH) strict                  |
+| **Store notes**  | Copier-coller manuel depuis CHANGELOG                |
+| **Parking Lot**  | Ajouts organiques, trier en fin session              |
+| **Commit SHA**   | 7 chars obligatoire dans Recently Done               |
 
 **⛔ IMPORTANT** : Issues GitHub (GH#N) désactivées par défaut. Ne pas utiliser sans activation manuelle explicite.
 

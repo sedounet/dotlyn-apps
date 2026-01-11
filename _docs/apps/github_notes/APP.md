@@ -49,171 +49,142 @@ App de prise de notes GitHub-sync pour faciliter le workflow de développement a
 
 ## 📝 TODO
 
-### 🔴 P1 — Bugs bloquants & Release v0.1
+<!-- 
+RÈGLES :
+- Issues locales = #N (numéro séquentiel, pas GitHub)
+- Commit SHA = 7 premiers chars (ex: abc1234)
+- Date format = YYYY-MM-DD
+- Recently Done = garder max 15 items ou 2 semaines
+-->
 
-**Fixes récents (2026-01-08 → 01-10)** :
-- [x] **FIX**: Token GitHub ne fonctionnait pas en release build
-  - Cause : manque permission `INTERNET` dans AndroidManifest.xml
-  - Fix : ajout permission + sanitization token (trim, enlever invisible chars)
-  - Status : ✅ Validé sur device physique
-  
-- [x] **FIX**: Theme switch ne persistait pas
-  - Cause : pas de provider pour theme mode
-  - Fix : `themeModeProvider` + FlutterSecureStorage persistence
-  - Status : ✅ Theme persiste après redémarrage
-  
-- [x] **FIX**: Splash Android 12+ affichait icône au lieu du logo
-  - Cause : manque config `android_12` dans flutter_native_splash
-  - Fix : ajout section android_12 dans pubspec.yaml
-  - Status : ✅ Vérifié API 30/35
+### 🚧 In Progress (max 3-5 items actifs)
 
-**Bugs résolus (workflow offline)** :
-- [x] **FIX**: Sync offline pas de message d'erreur — **Done 2026-01-10**
-  - Fix : Gestion SocketException avec message clair "Offline: Cannot sync to GitHub. File saved locally."
-  - Fix : Suppression vérification GitHub lors création fichier (permet création offline)
-  - Fix : Save Local toujours actif (pas de désactivation auto après auto-save)
-  - Status : ✅ Workflow offline complet fonctionnel
+<!-- Items en cours de développement avec branche + ETA -->
 
-**UX Improvements (complétés)** :
-- [x] **FIX**: Field help tooltips remplacées par tap-to-open bottom sheets
-  - Cause : Tooltip widget peu fiable sur mobile
-  - Fix : `FieldHelpButton` widget (IconButton → showModalBottomSheet)
-  - Status : ✅ Implemented in Add File dialog for Owner/Repository/File Path/Nickname fields
-  
-- [x] **FIX**: SnackBar colors non-conformes au styleguide
-  - Cause : hardcoded Colors.red au lieu de DotlynColors.error
-  - Fix : création `SnackHelper` utility class + remplacement 15+ call sites
-  - Status : ✅ Integrated across file_editor_screen & settings_screen
+_Aucun item en cours actuellement._
 
-- [x] **REFACTOR**: Extract reusable FieldHelpButton widget & centralize SnackBar styling
-  - Cause : code duplication (IconButton + showModalBottomSheet pattern 4x)
-  - Fix : `FieldHelpButton` widget + `SnackHelper` utility (3 static methods: showInfo/showSuccess/showError)
-  - Status : ✅ Implemented, all usages replaced (commit 92ce174)
+---
 
-- [x] **REFACTOR**: Replace inline tooltips and AlertDialog patterns in `settings_screen.dart` with `FieldHelpButton`, `DialogHelpers` and `SnackHelper`.
-  - Done: 2026-01-10 — commit 92ce174
+### 🔴 P1 — ASAP (bugs bloquants, débloqueurs techniques)
 
-**Release Checklist** :
-- [x] Device smoke test (`flutter run --release`) — **Done 2026-01-10** ✅
+- [ ] #1: Token visibility default off in Settings; auto-hide when leaving token settings (from USER-NOTES 2026-01-11)
+- [ ] #2: Investigate intermittent first-click Sync failure in editor (possible race condition) (from USER-NOTES 2026-01-11)
+
+**⛔ Issues GitHub DÉSACTIVÉES** (feature verrouillée) :
+<!-- NE PAS utiliser GitHub issues (GH#N) tant que feature non activée -->
+
+---
+
+### 🟡 P2 — Next release (prochaine version planifiée)
+
+**Features demandées (USER-NOTES 2026-01-10)** :
+- [ ] #10: Export settings (backup config as JSON via Share/clipboard)
+- [ ] #11: Refactor Settings with foldable sections (ExpansionTile for GitHub Token, Files, Preferences)
+- [ ] #12: Adjust SnackBar placement above action buttons (from USER-NOTES 2026-01-11)
+
+**Conflict Resolution** :
+- [ ] #13: Implement three-way merge option in ConflictDialog (add "Merge" choice alongside Keep Local/Remote)
+
+**Code Quality** :
+- [ ] #14: Extract dialog helpers (9x showDialog patterns remain)
+
+---
+
+### 🔵 P3 — Backlog (long terme, nice-to-have)
+
+**v0.3 — Early Standards** (per APP_STANDARDS.md) :
+- [ ] #20: Localization (i18n) — ARB files en/fr, externaliser strings
+- [ ] #21: Analytics — service abstraction + events clés + opt-out UI
+- [ ] #22: Ads Placeholder — widget banner 50-60dp + feature flag
+
+**v0.4 — Auto-sync & Conflict UX** :
+- [ ] #30: Auto-sync optionnel (toggle + interval)
+- [ ] #31: Background sync service (WorkManager)
+- [ ] #32: Conflict resolution UI améliorée (diff view)
+- [ ] #33: Historique versions locales (rollback)
+
+**v0.5 — OAuth & Multi-compte** :
+- [ ] #40: OAuth GitHub flow (remplace PAT)
+- [ ] #41: Stockage tokens par compte
+- [ ] #42: Account switcher UI
+- [ ] #43: Support orgas GitHub
+
+**v1.0 — Release Publique** :
+- [ ] #50: Tests complets (>80% coverage) + CI/CD
+- [ ] #51: Privacy policy + Terms
+- [ ] #52: Store listings (screenshots, descriptions)
+- [ ] #53: Analytics opérationnelles + Ads SDK
+
+**Autres (optionnel)** :
+- [ ] #60: Preview markdown avancé (flutter_markdown renderer)
+- [ ] #61: Édition collaborative (notif si autre commit)
+- [ ] #62: Export local (.md file)
+- [ ] #63: Widget home screen (quick add note)
+- [ ] #64: Search/filter fichiers
+- [ ] #65: Tags/labels pour organisation
+
+---
+
+### ✅ Recently Done (last 15 items or 2 weeks)
+
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+- [x] #15: Simplify GitHub error messages (404 → concise text) — Done 2026-01-11 (commit unknown)
+- [x] #14: Offline tracked-file creation fallback — Done 2026-01-11 (commit unknown)
+- [x] #13: Device release smoke tests (create/edit/sync/conflict/offline) — Done 2026-01-11 (commit unknown)
+- [x] #12: Use githubServiceProvider consistently (replace 3x direct) — Done 2026-01-10 (commit unknown)
+- [x] #11: AutoSaveMixin extraction (Phase 3 Atomization) — Done 2026-01-10 (commit 63a8032)
+- [x] #10: ProjectFileService extraction (Phase 2 Refactoring) — Done 2026-01-10 (commit 773fda1)
+- [x] #9: SyncService extraction (Phase 1 Atomization) — Done 2026-01-10 (commit d6c7ef6)
+- [x] #8: Replace inline tooltips/AlertDialog patterns in settings_screen — Done 2026-01-10 (commit 92ce174)
+- [x] #7: Extract FieldHelpButton widget + SnackHelper utility — Done 2026-01-10 (commit 7ff8f7b)
+- [x] #6: Fix SnackBar colors (use DotlynColors.error) — Done 2026-01-10 (commit 7ff8f7b)
+- [x] #5: Replace tooltip widgets with tap-to-open bottom sheets — Done 2026-01-10 (commit d8b2ac6)
+- [x] #4: Fix sync offline error message (SocketException handling) — Done 2026-01-10 (commit unknown)
+- [x] #3: Fix splash Android 12+ (add android_12 config) — Done 2026-01-10 (commit unknown)
+- [x] #2: Fix theme persistence (themeModeProvider + secure storage) — Done 2026-01-10 (commit unknown)
+- [x] #1: Fix token GitHub release build (INTERNET permission + sanitization) — Done 2026-01-10 (commit unknown)
+
+---
+
+<details>
+<summary><strong>📦 Pre-Workflow Archive (items avant 2026-01-11)</strong></summary>
+
+<!-- Items complétés avant l'adoption du nouveau workflow (tag: Pre-Workflow) -->
+
+**Release v0.1 MVP Checklist** :
+- [x] Device smoke test (`flutter run --release`) — Done 2026-01-10
   - Token invalid/sanitize : ✅
   - Sync bidirectionnel : ✅
   - Multiple files : ✅
   - Conflict detection : ✅
-  - Offline sync error message: verify ywhen device is offline that attempting to Snc shows a clear network error (SnackBar) — **Done 2026-01-10** ✅ (red SnackBar via SnackHelper)
-  - Verify Add File dialog: tooltips/placeholders in Owner/Repository/File Path/Nickname fields — **Done 2026-01-10** ✅ (tap-to-open bottom sheets)
-- [x] Fix analyzer warnings — **zero issues** ✅
-- [x] Version in pubspec.yaml — **0.1.0** ✅
-- [x] CHANGELOG.md updated — **done** ✅
-- [x] Icons & splash screen (adaptive icons + android_12 config) — **verified API 30/35** ✅
-- [x] Token release fix (INTERNET permission + sanitization) — **Done 2026-01-10** ✅
-- [x] Theme persistence fix (themeModeProvider + secure storage) — **Done 2026-01-10** ✅
-- [x] Confirmer Fix bug P1 sync offline (message erreur) avant release publique (inclut vérification des tooltips/placeholders) — **Done 2026-01-10** ✅
+  - Offline sync error message : ✅ (red SnackBar via SnackHelper)
+  - Verify Add File dialog tooltips/placeholders : ✅ (tap-to-open bottom sheets)
+- [x] Fix analyzer warnings — zero issues ✅
+- [x] Version in pubspec.yaml — 0.1.0 ✅
+- [x] CHANGELOG.md updated — done ✅
+- [x] Icons & splash screen (adaptive icons + android_12 config) — verified API 30/35 ✅
+- [x] Token release fix (INTERNET permission + sanitization) — Done 2026-01-10 ✅
+- [x] Theme persistence fix (themeModeProvider + secure storage) — Done 2026-01-10 ✅
+- [x] Confirmer Fix bug P1 sync offline (message erreur) — Done 2026-01-10 ✅
 
-**Backend** :
+**Backend v0.1** :
 - [x] Models: `ProjectFile`, `FileContent`, `SyncStatus`
 - [x] Drift schema: tables + migrations
 - [x] GitHub API service: `fetchFile()`, `updateFile()`, `testToken()`
 - [x] Providers: `projectFilesProvider`, `fileContentProvider`, `githubServiceProvider`
 - [x] Secure storage: token storage via `flutter_secure_storage`
 
-**UI** :
+**UI v0.1** :
 - [x] Screen: Files list (home)
 - [x] Screen: File editor (scrollbar + markdown help)
 - [x] Screen: Settings (GitHub token + add/remove/edit files)
 - [x] Widget: FileCard extracted → `lib/widgets/file_card.dart` (status badge + popup menu duplicate)
 - [x] Settings: use `ProjectFileForm` for Add/Edit; theme & language pickers added
 
-**Release / housekeeping** :
-- [ ] Device smoke test (`flutter run --release`)
-
 **Note** : App mobile uniquement (Android/iOS). Pas de support web/desktop.
 
-### 🟡 P2 — Améliorations UX & Code Quality
-
-**Features demandées (USER-NOTES 2026-01-10)** :
-- [ ] **Export settings** (backup config)
-  - Description : JSON exportable via Share/clipboard
-  - Contenu : Liste fichiers + token (optionnel)
-  - Cas usage : Réinstall app, multi-device
-  
-- [ ] **Refactor Settings : sections foldables**
-  - ExpansionTile pour : GitHub Token, Fichiers Suivis, Préférences
-  - Bouton "Afficher token" → icône œil dans TextField
-  - Justification : Settings devient long
-
-**Localization & UI** :
-- [ ] Localization (i18n) : ARB files en/fr (per APP_STANDARDS.md)
-- [x] Help tooltips (?) sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
-
-**Conflict Resolution** :
-- [ ] **Implement merge option** (three-way merge)
-  - Description : Ajouter choix "Merge" dans ConflictDialog (actuellement Keep Local / Keep Remote / Cancel)
-  - Justification : Utilisateur veut combiner changements locaux + remote sans écraser
-  - Spec : diff3 algorithm ou merge manuel (UI interactive)
-  - Priority : P2 (nice-to-have pour workflow avancé)
-
-**Code Quality & Refactors** :
-- [x] Extract reusable FieldHelpButton widget — **Done 2026-01-10** (commit 7ff8f7b)
-- [x] Centralize SnackBar styling via SnackHelper utility — **Done 2026-01-10** (commit 7ff8f7b)
-- [x] **Atomization Phase 1**: Extract SyncService, TokenService, dialogs — **Done 2026-01-10** (commit d6c7ef6)
-- [x] **Atomization Phase 2**: Extract ProjectFileService, refactor settings — **Done 2026-01-10** (commit 773fda1)
-- [x] **Atomization Phase 3**: Extract AutoSaveMixin — **Done 2026-01-10** (commit 63a8032)
-- [x] Simplify GitHub error messages (404 → concise user-facing text) — **Done 2026-01-11**
-- [x] Offline tracked-file creation fallback (add locally on network error) — **Done 2026-01-11**
-- [x] Device release smoke tests (create/edit/sync/conflict/offline) — **Done 2026-01-11** ✅
-- [x] Use githubServiceProvider consistently (replace 3x direct instantiation) — **Done 2026-01-10** (commit NEW)
-- [x] **PHASE 1 ATOMIZATION** (2026-01-10, commit d6c7ef6) :
-  - Extracted `SyncService` class (210 → 80 line reduction in file_editor_screen._syncToGitHub)
-  - Created sealed class `SyncResult` with pattern matching (.when() extension)
-  - Created `TokenService` for centralized token management
-  - Created reusable dialogs: `ConfigDialog`, `ConflictDialog`
-  - Created Riverpod providers: `syncServiceProvider`, `tokenServiceProvider`
-  - Refactored file_editor_screen to use SyncService (60% LOC reduction, much cleaner)
-  - Test status: flutter analyze 0 errors, 5 info-level warnings only
-- [x] **PHASE 2 REFACTORING** (2026-01-10, commit 773fda1) :
-  - Extracted `ProjectFileService` class (centralized file CRUD)
-  - Refactored `settings_screen.dart` to use ProjectFileService (618 → ~500 lines)
-  - Removed duplicate `secureStorageProvider` (fixed imports)
-  - All file operations now use service layer instead of inline DB calls
-- [x] **PHASE 3 EXTRACTION** (2026-01-10, commit 63a8032) :
-  - Created `AutoSaveMixin` for reusable auto-save behavior with debounce
-  - Integrated mixin into file_editor_screen (reduced auto-save boilerplate by 40%)
-  - Simplified timer/callback management with `scheduleAutoSave()`, `saveNow()`, `cancelAutoSave()` methods
-  - All phases compile clean: 0 errors, 5 info warnings only
-- [ ] Extract dialog helpers (9x showDialog patterns)
-
-### 🔵 P3 — Futur (roadmap long terme)
-
-**v0.3 — Early Standards** (prioritaire, voir APP_STANDARDS.md) :
-- [ ] **Localization (i18n)** : ARB files en/fr, externaliser strings
-- [ ] **Analytics** : service abstraction + events clés + opt-out UI
-- [ ] **Ads Placeholder** : widget banner 50-60dp + feature flag
-
-**v0.4 — Auto-sync & Conflict UX** :
-- [ ] Auto-sync optionnel (toggle + interval)
-- [ ] Background sync service (WorkManager)
-- [ ] Conflict resolution UI améliorée (diff view)
-- [ ] Historique versions locales (rollback)
-
-**v0.5 — OAuth & Multi-compte** :
-- [ ] OAuth GitHub flow (remplace PAT)
-- [ ] Stockage tokens par compte
-- [ ] Account switcher UI
-- [ ] Support orgas GitHub
-
-**v1.0 — Release Publique** :
-- [ ] Tests complets (>80% coverage) + CI/CD
-- [ ] Privacy policy + Terms
-- [ ] Store listings (screenshots, descriptions)
-- [ ] Analytics opérationnelles + Ads SDK
-
-**Autres (optionnel)** :
-- [ ] Preview markdown avancé (flutter_markdown renderer)
-- [ ] Édition collaborative (notif si autre commit)
-- [ ] Export local (.md file)
-- [ ] Widget home screen (quick add note)
-- [ ] Search/filter fichiers
-- [ ] Tags/labels pour organisation
+</details>
 
 ---
 

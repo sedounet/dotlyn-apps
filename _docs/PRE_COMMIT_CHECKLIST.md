@@ -37,22 +37,46 @@ flutter test
 ### Phase 2 : Documentation
 
 **2.1 Marquer l'item comme fait dans APP.md**
-- Cocher `[x]` dans section TODO P1/P2/P3
-- Ajouter date + commit SHA (optionnel mais recommandé)
+- Cocher `[x]` dans section "✅ Recently Done" (max 15 items)
+- Format STRICT : `- [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR)`
+- SHA = 7 premiers caractères (OBLIGATOIRE)
+- Si > 15 items dans Recently Done → déplacer les plus anciens vers CHANGELOG.md
 
 Exemple :
 ```markdown
-- [x] Help tooltips sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
+- [x] #8: Help tooltips sur Add File dialog — Done 2026-01-10 (commit d8b2ac6)
 ```
 
-**2.2 Mettre à jour CHANGELOG.md (section Unreleased)**
+**⚠️ Issues locales #N uniquement** : Ne pas utiliser GitHub issues (GH#N) sauf si feature activée explicitement.
+
+**2.2 Mettre à jour CHANGELOG.md (section [Unreleased])**
+Format store-ready avec emojis + headline + technical + benefit + commit SHA :
+
 ```markdown
 ## [Unreleased]
 
-### 2026-01-10 — Brief description
-- **Fixed**: Short description of fix
-- **Added**: Short description of feature
+### Added 🆕
+- **User-facing headline** (max 80 chars)
+  - Technical: Implementation details
+  - User benefit: Why it matters for users
+  - (commit abc1234, from issue #5)
+
+### Changed ✨
+_Aucun changement pour l'instant._
+
+### Fixed 🐛
+- **Bug fix headline**
+  - Technical: Root cause + solution
+  - Impact: What works now
+  - (commit def5678, closes #3)
 ```
+
+**Format STRICT** :
+- Headline = user-facing (stores-ready)
+- Technical = détails techniques
+- Benefit/Impact = explication utilisateur
+- Commit SHA = 7 chars (abc1234)
+- Issue référence = closes #N ou from issue #N
 
 **2.3 Vérifier USER-NOTES.md (si applicable)**
 - Si l'item vient de USER-NOTES → **NE PAS supprimer automatiquement**

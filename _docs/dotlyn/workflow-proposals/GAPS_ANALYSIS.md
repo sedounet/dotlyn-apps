@@ -242,11 +242,13 @@ Après (obligatoire) :
 - Récupérer SHA : git log -1 --pretty=format:"%h"
 ```
 
----
-
 ## 🔄 Plan de migration (github_notes)
 
-### Étape M1 : Nettoyer APP.md (30 min)
+**✅ MIGRATION COMPLÈTE — 2026-01-11**
+
+### Étape M1 : Nettoyer APP.md (30 min) ✅ DONE
+
+**Status** : Complété 2026-01-11
 
 **Action** :
 1. Créer section "📦 Pre-Workflow Archive" collapsible
@@ -263,7 +265,9 @@ Après (obligatoire) :
 
 ---
 
-### Étape M2 : Standardiser CHANGELOG.md (15 min)
+### Étape M2 : Standardiser CHANGELOG.md (15 min) ✅ DONE
+
+**Status** : Complété 2026-01-11
 
 **Action** :
 1. Vérifier [Unreleased] : supprimer dates si présentes
@@ -278,7 +282,9 @@ Après (obligatoire) :
 
 ---
 
-### Étape M3 : Update PRE_COMMIT_CHECKLIST.md (10 min)
+### Étape M3 : Update PRE_COMMIT_CHECKLIST.md (10 min) ✅ DONE
+
+**Status** : Complété 2026-01-11
 
 **Action** :
 1. Commit SHA : "optionnel" → "OBLIGATOIRE"
@@ -293,7 +299,9 @@ Après (obligatoire) :
 
 ---
 
-### Étape M4 : Update copilot-instructions.md (10 min)
+### Étape M4 : Update copilot-instructions.md (10 min) ✅ DONE
+
+**Status** : Complété 2026-01-11
 
 **Action** :
 1. Ajouter section "Issues locales (#N) par défaut"
@@ -310,16 +318,16 @@ Après (obligatoire) :
 
 ## 📊 Comparaison avant/après
 
-| Aspect | Avant (organique) | Après (cadré) |
-|--------|-------------------|---------------|
-| **APP.md lignes** | 298 (pollué) | ~150 (propre) |
-| **Done items visibles** | 50+ dans P1/P2 | 10-15 max Recently Done |
-| **Issues tracking** | Aucun système | #N locales séquentielles |
-| **Commit SHA** | Optionnel | OBLIGATOIRE |
-| **In Progress** | N/A | Section dédiée |
-| **Historique** | Mélangé partout | Archive collapsible |
-| **CHANGELOG format** | Technique seul | User headline + technical |
-| **Store-ready** | Non | Oui (copier-coller) |
+| Aspect                  | Avant (organique) | Après (cadré)             |
+| ----------------------- | ----------------- | ------------------------- |
+| **APP.md lignes**       | 298 (pollué)      | ~150 (propre)             |
+| **Done items visibles** | 50+ dans P1/P2    | 10-15 max Recently Done   |
+| **Issues tracking**     | Aucun système     | #N locales séquentielles  |
+| **Commit SHA**          | Optionnel         | OBLIGATOIRE               |
+| **In Progress**         | N/A               | Section dédiée            |
+| **Historique**          | Mélangé partout   | Archive collapsible       |
+| **CHANGELOG format**    | Technique seul    | User headline + technical |
+| **Store-ready**         | Non               | Oui (copier-coller)       |
 
 ---
 
