@@ -1,0 +1,111 @@
+# [APP_NAME] — Documentation
+
+**Status** : 🔵 En conception  
+**Version actuelle** : v0.1 (conception)  
+**Dernière update** : YYYY-MM-DD
+
+---
+
+## 📋 Vision
+
+[Description courte de l'app — 2-3 phrases max]
+
+**Objectif** : [Pourquoi cette app existe]
+
+---
+
+## 🎯 Versions
+
+### v0.1 MVP — [Nom phase]
+
+**Fonctionnalités cibles** :
+- Feature A
+- Feature B
+- Feature C
+
+**Specs techniques** :
+- **State** : Riverpod
+- **DB** : Drift (si nécessaire)
+- **UI** : dotlyn_ui + Material Icons
+- **Platform** : Mobile/Desktop/Web
+
+**Non inclus v0.1** :
+- ❌ Feature future X
+- ❌ Feature future Y
+
+---
+
+## 📝 TODO
+
+<!-- 
+RÈGLES :
+- Issues locales = #N (numéro séquentiel, pas GitHub)
+- Commit SHA = 7 premiers chars obligatoire dans Recently Done
+- Date format = YYYY-MM-DD
+- Recently Done = garder max 15 items ou 2 semaines
+-->
+
+### 🚧 In Progress (max 3-5 items actifs)
+
+_Aucun item en cours (app en conception)._
+
+---
+
+### 🔴 P1 — ASAP (MVP v0.1)
+
+- [ ] #1: [Description courte feature critique]
+- [ ] #2: [Description courte feature critique]
+
+---
+
+### 🟡 P2 — Prochaine version (v0.2)
+
+- [ ] #10: [Feature importante mais non bloquante]
+- [ ] #11: [Feature importante mais non bloquante]
+
+---
+
+### 🔵 P3 — Versions futures (v0.3+)
+
+- [ ] #20: [Feature long terme]
+- [ ] #21: [Feature long terme]
+
+---
+
+### 🅿️ Parking Lot (idées organiques)
+
+<!-- Idées spontanées pendant dev, à trier régulièrement (1x/semaine) -->
+
+_Vide (app en conception)._
+
+---
+
+### ✅ Recently Done (last 15 items or 2 weeks)
+
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+_Aucun item terminé (app en conception)._
+
+---
+
+## 🔗 Liens
+
+- PITCH.md : [`PITCH.md`](PITCH.md)
+- CHANGELOG.md : [`../../../apps/[app_name]/CHANGELOG.md`](../../../apps/[app_name]/CHANGELOG.md)
+- USER-NOTES.md : [`USER-NOTES.md`](USER-NOTES.md) (lecture seule — notes perso)
+
+---
+
+## 📌 Notes Techniques
+
+### Architecture
+- [Notes sur architecture, patterns, choix tech]
+
+### Conventions
+- App respecte conventions Dotlyn Apps (voir APP_STANDARDS.md)
+
+---
+
+**Version** : 2.0  
+**Dernière mise à jour** : YYYY-MM-DD  
+**Maintainer** : @sedounet

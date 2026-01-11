@@ -1,8 +1,9 @@
-# Habit Tracker — Documentation Technique
+# Habit Tracker — Documentation
 
 **Status** : 🔵 En conception  
 **Version actuelle** : -  
-**Dernière update** : 2025-12-27
+**Dernière update** : 2026-01-11  
+**Roadmap** : Voir section TODO
 
 ---
 
@@ -41,38 +42,65 @@
 
 ---
 
-## ✅ TODO
----
+## 📝 TODO
 
-## 📋 TODO
+<!-- 
+RÈGLES :
+- Issues locales = #N (numéro séquentiel, pas GitHub)
+- Commit SHA = 7 premiers chars (ex: abc1234)
+- Date format = YYYY-MM-DD
+- Recently Done = garder max 15 items ou 2 semaines
+-->
 
-### 🔴 P1 — Conception MVP
+### 🚧 In Progress (max 3-5 items actifs)
 
-- [ ] Valider architecture données (modèle Habit)
-- [ ] Valider UX quick tap (wireframes ?)
-- [ ] Décider stockage : local (Hive/SQLite) ou cloud ?
-- [ ] Définir tracking positif vs négatif (UI différenciée ?)
-
-### 🟡 P2 — v0.2+
-
-- [ ] Routines (séquences d'actions)
-- [ ] Time blocking horaires
-- [ ] Stats et graphiques
-- [ ] Notifications / rappels
-- [ ] Mode avancé quantités
-
-### 🔵 P3 — Plus tard
-
-- [ ] Export données (CSV, PDF)
-- [ ] Thèmes / personnalisation
-- [ ] Backup cloud
-- [ ] Partage / social (?)
+_Aucun item en cours actuellement._
 
 ---
 
-## 🐛 Bugs Connus
+### 🔴 P1 — ASAP (Conception MVP)
 
-(Aucun - app en conception. Voir USER-NOTES.md pour notes au fil du développement)
+- [ ] #1: Valider architecture données (modèle Habit)
+- [ ] #2: Valider UX quick tap (wireframes ?)
+- [ ] #3: Décider stockage : local (Hive/SQLite) ou cloud ?
+- [ ] #4: Définir tracking positif vs négatif (UI différenciée ?)
+
+**⛔ Issues GitHub DÉSACTIVÉES** (feature verrouillée) :
+<!-- NE PAS utiliser GitHub issues (GH#N) tant que feature non activée -->
+
+---
+
+### 🟡 P2 — Next release (v0.2+)
+
+- [ ] #10: Routines (séquences d'actions)
+- [ ] #11: Time blocking horaires
+- [ ] #12: Stats et graphiques
+- [ ] #13: Notifications / rappels
+- [ ] #14: Mode avancé quantités
+
+---
+
+### 🔵 P3 — Backlog (long terme)
+
+- [ ] #20: Export données (CSV, PDF)
+- [ ] #21: Thèmes / personnalisation
+- [ ] #22: Backup cloud
+- [ ] #23: Partage / social (?)
+
+---
+
+### ✅ Recently Done (last 15 items or 2 weeks)
+
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+_Aucun item terminé pour l'instant (app en conception)._
+
+---
+
+## � Liens
+
+- PITCH.md : [`PITCH.md`](PITCH.md)
+- CHANGELOG.md : [`../../../apps/habit_tracker/CHANGELOG.md`](../../../apps/habit_tracker/CHANGELOG.md)
 
 ---
 

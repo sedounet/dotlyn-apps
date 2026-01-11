@@ -9,16 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### 2026-01-10 — Unreleased fixes
+### Unreleased — Work in progress
 
-- **Fixed**: GitHub token failed in release builds due to missing `INTERNET` permission; token sanitization implemented (trim + remove invisible chars) — validated on device.
-- **Fixed**: Theme persistence (`themeModeProvider` backed by `flutter_secure_storage`).
-- **Fixed**: Android 12+ splash/icon configuration (`flutter_native_splash.android_12` added).
-- **Fixed**: Offline sync error handling — catch `SocketException` and show user-friendly SnackBar on fetch/sync failures.
-- **Added**: Tooltips and clearer placeholders in Add/Edit File form (`Owner`, `Repository`, `File Path`, `Nickname`) to guide repo-relative `path` usage.
-- **Chore**: Code formatting cleanup in `file_editor_screen.dart` (dartfmt auto-format).
+- **Hidden token by default** — GitHub token input is hidden by default and automatically hidden when leaving Settings.
+  - Technical: `settings_screen.dart` now defaults `_showToken = false` and hides token on dispose.
+  - Benefit: Reduces accidental token exposure in shared/dev devices.
 
-_Future improvements and features for v0.2+_
+- **First-click sync retry** — Defensively retry first sync after short delay when token/loading latency or transient network errors occur.
+  - Technical: `file_editor_screen.dart` waits briefly for `githubTokenProvider` on first click, passes a `GitHubService(token: ...)` override to `SyncService`, and performs one retry after ~800ms when receiving transient `SyncError`.
+  - Benefit: Reduces user-facing failures on initial sync after app start.
+
+- **Floating SnackBar positioned above action buttons** — Snackbars are now floating and placed above the bottom action bar for better visibility.
+  - Technical: `utils/snack_helper.dart` uses `SnackBarBehavior.floating` with a bottom margin computed from `MediaQuery`.
+  - Benefit: Prevents SnackBars from being occluded by bottom action buttons.
+
+_Other minor fixes and refactors included in this work_
 
 ---
 

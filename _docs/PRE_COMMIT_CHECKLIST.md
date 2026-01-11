@@ -37,21 +37,51 @@ flutter test
 ### Phase 2 : Documentation
 
 **2.1 Marquer l'item comme fait dans APP.md**
-- Cocher `[x]` dans section TODO P1/P2/P3
-- Ajouter date + commit SHA (optionnel mais recommandé)
 
-Exemple :
+**⚠️ CRITICAL** : Format Recently Done STRICT :
+
 ```markdown
-- [x] Help tooltips sur Add File dialog — **Done 2026-01-10** (commit d8b2ac6)
+### ✅ Recently Done (last 15 items or 2 weeks)
+
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+- [x] #5: Help tooltips sur Add File dialog — Done 2026-01-10 (commit d8b2ac6)
 ```
 
-**2.2 Mettre à jour CHANGELOG.md (section Unreleased)**
+**Règles STRICTES** :
+- Déplacer item de P1/P2/P3 vers Recently Done
+- **SHA OBLIGATOIRE** : 7 premiers caractères du commit (ex: `d8b2ac6`)
+- Date format : YYYY-MM-DD
+- Supprimer items > 15 ou > 2 semaines
+- Si item sans SHA (pre-workflow) : noter `(commit: pre-workflow migration)`
+
+**Exemple complet** :
+```markdown
+### 🔴 P1 — ASAP
+- [ ] #5: Help tooltips  ← Supprimer après done
+
+### ✅ Recently Done
+- [x] #5: Help tooltips sur Add File dialog — Done 2026-01-10 (commit d8b2ac6)  ← Ajouter ici
+```
+
+**2.2 Mettre à jour CHANGELOG.md (section [Unreleased])**
+
+⚠️ **PAS de dates dans [Unreleased]** (ajoutées uniquement au release)
+
 ```markdown
 ## [Unreleased]
 
-### 2026-01-10 — Brief description
-- **Fixed**: Short description of fix
-- **Added**: Short description of feature
+### Added
+- **User-facing headline**
+  - Technical details
+  - User benefit
+  - (commit abc1234, closes #5)
+
+### Fixed
+- **Bug fix headline**
+  - Technical: root cause + solution
+  - Impact: what works now
+  - (commit def5678, closes #3)
 ```
 
 **2.3 Vérifier USER-NOTES.md (si applicable)**

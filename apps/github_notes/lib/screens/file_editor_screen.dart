@@ -27,6 +27,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
   late TextEditingController _controller;
   late ScrollController _scrollController;
   bool _isLoading = false;
+  bool _isSyncing = false;
 
   @override
   void initState() {
@@ -65,6 +66,11 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
   }
 
   Future<void> _fetchFromGitHub() async {
+    // Avoid concurrent fetch/sync
+    if (_isSyncing) {
+      SnackHelper.showInfo(context, 'Sync in progress');
+      return;
+    }
     setState(() => _isLoading = true);
 
     try {
@@ -143,6 +149,12 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
   }
 
   Future<void> _syncToGitHub() async {
+    // Prevent concurrent syncs (race on first-click)
+    if (_isSyncing) {
+      SnackHelper.showInfo(context, 'Sync already in progress');
+      return;
+    }
+    _isSyncing = true;
     setState(() => _isLoading = true);
 
     try {
@@ -162,12 +174,64 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
       }
 
       // Call sync service
-      final result = await syncService.syncFile(
+      // Ensure token is available: githubTokenProvider may be still loading on first click
+      String? token;
+      final tokenState = ref.read(githubTokenProvider);
+      if (tokenState.isLoading) {
+        try {
+          token = await ref.read(githubTokenProvider.future).timeout(const Duration(seconds: 3));
+        } catch (_) {
+          token = tokenState.valueOrNull;
+        }
+      } else {
+        token = tokenState.valueOrNull;
+      }
+
+      if (token == null || token.isEmpty) {
+        if (!mounted) return;
+        SnackHelper.showError(
+            context, 'Missing GitHub token. Please add it in Settings and try again.');
+        return;
+      }
+
+      final ghOverride = GitHubService(token: token);
+
+      var result = await syncService.syncFile(
         context: context,
         projectFile: projectFile,
         content: _controller.text,
         localSha: existing?.githubSha,
+        githubServiceOverride: ghOverride,
       );
+
+      // Defensive retry for first-click latency: retry once after short delay
+      if (result is SyncError) {
+        final err = result as SyncError;
+        final shouldRetry = err.statusCode == 401 ||
+            err.message.toLowerCase().contains('unexpected') ||
+            err.message.toLowerCase().contains('network');
+
+        if (shouldRetry) {
+          await Future.delayed(const Duration(milliseconds: 800));
+          // try to refresh token provider value
+          try {
+            token = await ref.read(githubTokenProvider.future).timeout(const Duration(seconds: 3));
+          } catch (_) {
+            token = ref.read(githubTokenProvider).valueOrNull;
+          }
+
+          if (token != null && token.isNotEmpty) {
+            final gh2 = GitHubService(token: token);
+            result = await syncService.syncFile(
+              context: context,
+              projectFile: projectFile,
+              content: _controller.text,
+              localSha: existing?.githubSha,
+              githubServiceOverride: gh2,
+            );
+          }
+        }
+      }
 
       if (!mounted) return;
 
@@ -243,6 +307,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
       if (mounted) {
         setState(() => _isLoading = false);
       }
+      _isSyncing = false;
     }
   }
 
@@ -296,7 +361,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
             if (fileContentAsync.valueOrNull?.syncStatus == 'synced')
               IconButton(
                 icon: const Icon(Icons.refresh),
-                onPressed: _isLoading ? null : _fetchFromGitHub,
+                onPressed: (_isLoading || _isSyncing) ? null : _fetchFromGitHub,
                 tooltip: 'Fetch from GitHub',
               ),
           ],
@@ -385,7 +450,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
                           const SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton.icon(
-                              onPressed: _isLoading ? null : _syncToGitHub,
+                              onPressed: (_isLoading || _isSyncing) ? null : _syncToGitHub,
                               icon: const Icon(Icons.cloud_upload),
                               label: const Text('Sync GitHub'),
                               style: ElevatedButton.styleFrom(

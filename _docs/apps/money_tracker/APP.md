@@ -1,8 +1,9 @@
-# Money Tracker — Documentation de développement
+# Money Tracker — Documentation
 
-> **Status** : 🟡 En développement (Phase 2+ — Refonte UX transactions & favoris)  
-> **Version actuelle** : v0.1e+ (Phase 2+)  
-> **Dernière mise à jour** : 2025-12-26
+**Status** : ✅ v0.1 MVP (released 2025-12-30)  
+**Version actuelle** : v0.1.0  
+**Dernière update** : 2026-01-11  
+**Roadmap** : Voir section TODO pour phases 0.1e-f et v0.2
 
 ---
 
@@ -149,60 +150,93 @@ Suivi de dépenses et revenus rapide et sans friction, inspiré de Financisto ma
 - [ ] Types paiement SI demandé
 - [ ] Polish splash screen
 - [ ] Tests complets
----
+## 📝 TODO
 
-## 📋 TODO
+<!-- 
+RÈGLES :
+- Issues locales = #N (numéro séquentiel, pas GitHub)
+- Commit SHA = 7 premiers chars (ex: abc1234)
+- Date format = YYYY-MM-DD
+- Recently Done = garder max 15 items ou 2 semaines
+-->
+
+### 🚧 In Progress (max 3-5 items actifs)
+
+_Aucun item en cours actuellement._
+
+---
 
 ### 🔴 P1 — ASAP (Finalisation MVP v0.1)
 
 **Phase 0.1e - Analytics & Pub** :
-- [ ] Firebase Analytics + Crashlytics setup
-- [ ] Events tracking basiques (app_open, transaction_created, account_created)
-- [ ] AdMob bannière bottom
-- [ ] Flag isFirstLaunch pour Analytics
+- [ ] #1: Firebase Analytics + Crashlytics setup
+- [ ] #2: Events tracking basiques (app_open, transaction_created, account_created)
+- [ ] #3: AdMob bannière bottom
+- [ ] #4: Flag isFirstLaunch pour Analytics
 
 **Phase 0.1f - UX Lean & Polish** :
-- [ ] Simplifier transaction_form_sheet : masquer/rendre optionnel catégorie & bénéficiaire
-- [ ] Retirer navigation vers écrans catégories/bénéficiaires du drawer
-- [ ] Polish UI home : alléger, focus actions essentielles
-- [ ] SafeArea vérification (bannière pub)
-- [ ] Tests rapides flux utilisateur
+- [ ] #5: Simplifier transaction_form_sheet : masquer/rendre optionnel catégorie & bénéficiaire
+- [ ] #6: Retirer navigation vers écrans catégories/bénéficiaires du drawer
+- [ ] #7: Polish UI home : alléger, focus actions essentielles
+- [ ] #8: SafeArea vérification (bannière pub)
+- [ ] #9: Tests rapides flux utilisateur
 
 **Bugs/améliorations USER-NOTES** :
-- [ ] Refactoriser dialog ajout opération : bouton switch type au lieu dropdown
-- [ ] Revoir layout dialog : note au-dessus montant, date sous montant
-- [ ] Améliorer visuel statut opération (case à cocher vs couleur)
-- [ ] Vérifier taille/couleur FAB cohérence avec github-notes
+- [ ] #10: Refactoriser dialog ajout opération : bouton switch type au lieu dropdown
+- [ ] #11: Revoir layout dialog : note au-dessus montant, date sous montant
+- [ ] #12: Améliorer visuel statut opération (case à cocher vs couleur)
+- [ ] #13: Vérifier taille/couleur FAB cohérence avec github-notes
+
+**⛔ Issues GitHub DÉSACTIVÉES** (feature verrouillée) :
+<!-- NE PAS utiliser GitHub issues (GH#N) tant que feature non activée -->
+
+---
 
 ### 🟡 P2 — Post-Beta (selon feedback utilisateur)
 
 **Features à réintroduire SI demandé** :
-- [ ] Catégories personnalisées (création/édition/suppression)
-- [ ] Bénéficiaires actifs (CRUD complet visible)
-- [ ] Types de paiement (Carte/Virement/Chèque/Espèces)
-- [ ] Onboarding guidé (si confusion constatée)
-- [ ] Prélèvements automatiques / Opérations récurrentes
-- [ ] Solde prévisionnel
+- [ ] #20: Catégories personnalisées (création/édition/suppression)
+- [ ] #21: Bénéficiaires actifs (CRUD complet visible)
+- [ ] #22: Types de paiement (Carte/Virement/Chèque/Espèces)
+- [ ] #23: Onboarding guidé (si confusion constatée)
+- [ ] #24: Prélèvements automatiques / Opérations récurrentes
+- [ ] #25: Solde prévisionnel
 
 **Polish UI/UX** :
-- [ ] Optimiser splash screen (actuellement 3-4s)
-- [ ] Compacter éléments d'interface selon feedback
+- [ ] #26: Optimiser splash screen (actuellement 3-4s)
+- [ ] #27: Compacter éléments d'interface selon feedback
+
+---
 
 ### 🔵 P3 — Versions futures
 
-- [ ] v0.2 : Prélèvements automatiques
-- [ ] v0.3 : Import/Export + Sécurité
-- [ ] v0.4 : Graphiques + Analytics avancés
+- [ ] #30: v0.2 : Prélèvements automatiques
+- [ ] #31: v0.3 : Import/Export + Sécurité
+- [ ] #32: v0.4 : Graphiques + Analytics avancés
 
 ---
 
-## 🐛 Bugs Connus
+### ✅ Recently Done (last 15 items or 2 weeks)
 
-(Aucun pour l'instant - voir USER-NOTES.md pour notes d'utilisation)
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+_Aucun item avec commit SHA pour l'instant (migration workflow en cours)._
+
+**Items historiques (Pre-Workflow)** :
+- Phase 0.1a-d complétées (voir CHANGELOG.md [0.1.0])
+- Refactoring phases 1-3 (2025-12-30)
+- Performance optimization (startup < 1s)
 
 ---
 
-## 📝 Notes Techniques
+## 🔗 Liens
+
+- PITCH.md : [`PITCH.md`](PITCH.md)
+- CHANGELOG.md : [`../../../apps/money_tracker/CHANGELOG.md`](../../../apps/money_tracker/CHANGELOG.md)
+
+---
+
+##  Notes Techniques
 
 ### Fichiers Documentation
 - **APP.md** : Roadmap, TODO, notes techniques (fichier principal)
@@ -328,5 +362,12 @@ soldeDisponible(X) = initialBalance(X)
 
 ---
 
-**Branche active** : `feat/money-tracker-init`  
+**Branche active** : `main`  
 **Inspiration** : Financisto (GitHub: dsolonenko/financisto)
+
+---
+
+**Version** : 2.0  
+**Dernière mise à jour** : 2026-01-11  
+**Maintainer** : @sedounet
+

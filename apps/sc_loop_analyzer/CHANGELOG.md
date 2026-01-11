@@ -1,0 +1,23 @@
+# Changelog — SC Loop Analyzer
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [Unreleased]
+
+### Added 🆕
+_No features completed yet (app in initial conception)._
+
+### Changed ✨
+_No behavioral changes yet._
+
+### Fixed 🐛
+_No fixes yet._
+
+---
+
+[Unreleased]: https://github.com/sedounet/dotlyn-apps/compare/main...HEAD
