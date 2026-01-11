@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Button disable bug**: Sync button now properly re-enables after error via `finally` block
 - **Auto-fetch removed**: No automatic GitHub fetch on file load (allows offline file opening)
 - **Unused imports**: Cleaned up unused dialog_helpers and snack_helper imports in SyncService
+- **Concise GitHub error messages** (2026-01-11): Replaced verbose technical GitHub 404/401/network errors with user-friendly messages in file_editor_screen.dart ("File not found on GitHub" / "Invalid GitHub token" / "Network error")
+- **Offline tracked-file creation** (2026-01-11): Added fallback in settings_screen.dart — when remote existence check fails due to network error, file is now added locally with informational message ("No network: file added locally. It will sync when online")
 
 ## [0.1.0] - 2026-01-10
 

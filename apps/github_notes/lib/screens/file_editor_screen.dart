@@ -100,10 +100,21 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
       SnackHelper.showInfo(context, 'File loaded from GitHub');
     } on SocketException catch (_) {
       if (!mounted) return;
-      SnackHelper.showError(context, 'Network error: please check your connection');
+      // Friendly network error for users
+      SnackHelper.showError(context, 'Network error: please check your connection and try again.');
     } on GitHubApiException catch (e) {
       if (!mounted) return;
-      SnackHelper.showError(context, 'Error: ${e.message}');
+      // Map common GitHub API errors to concise, actionable messages
+      if (e.statusCode == 404) {
+        SnackHelper.showError(context,
+            'File not found on GitHub. You can create it from this device or save locally.');
+      } else if (e.statusCode == 401) {
+        SnackHelper.showError(
+            context, 'Invalid GitHub token. Go to Settings to update your token.');
+      } else {
+        SnackHelper.showError(
+            context, 'GitHub error (${e.statusCode ?? 'unknown'}). Please try again later.');
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -205,7 +216,18 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
           }
         },
         error: (error) {
-          SnackHelper.showError(context, error.message);
+          // Prefer short, user-friendly messages for sync errors
+          if (error.statusCode == 401) {
+            SnackHelper.showError(context, 'Invalid GitHub token. Check Settings.');
+          } else if (error.statusCode == 404) {
+            SnackHelper.showError(
+                context, 'File not found on GitHub. Choose to create it or save locally.');
+          } else if (error.message.contains('No network') ||
+              error.message.toLowerCase().contains('socket')) {
+            SnackHelper.showError(context, 'Offline: Cannot sync to GitHub. File saved locally.');
+          } else {
+            SnackHelper.showError(context, 'Sync failed: ${error.message}');
+          }
         },
       );
     } on SocketException catch (_) {
@@ -354,9 +376,8 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
-                              onPressed: !_isLoading
-                                  ? () async => await saveNow(_controller.text)
-                                  : null,
+                              onPressed:
+                                  !_isLoading ? () async => await saveNow(_controller.text) : null,
                               icon: const Icon(Icons.save),
                               label: const Text('Save Local'),
                             ),

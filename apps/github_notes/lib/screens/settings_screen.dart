@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -249,10 +250,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     // Not found — OK to add
                   } else {
                     if (!mounted) return;
-                    SnackHelper.showError(parentContext, 'GitHub error: ${e.message}');
+                    // Friendly messages for common cases
+                    if (e.statusCode == 401) {
+                      SnackHelper.showError(
+                          parentContext, 'Invalid GitHub token. Please update it in Settings.');
+                    } else {
+                      SnackHelper.showError(parentContext,
+                          'GitHub error (${e.statusCode ?? 'unknown'}). Please try again later.');
+                    }
                     return;
                   }
                 }
+              } on SocketException catch (_) {
+                // No network: allow adding the tracked file locally and inform the user.
+                final fileService = ref.read(projectFileServiceProvider);
+                await fileService.addFile(
+                  owner: owner,
+                  repo: repo,
+                  path: path,
+                  nickname: nickname,
+                );
+
+                if (!mounted) return;
+                navigator.pop();
+                SnackHelper.showInfo(
+                    parentContext, 'No network: file added locally. It will sync when online.');
+                return;
               } catch (e) {
                 if (!mounted) return;
                 SnackHelper.showError(parentContext, 'Error checking GitHub: $e');

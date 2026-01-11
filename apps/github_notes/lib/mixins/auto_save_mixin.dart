@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// Mixin for auto-save behavior with debouncing
-/// 
+///
 /// Provides auto-save functionality with configurable delay.
 /// Usage:
 /// ```dart
@@ -10,16 +10,16 @@ import 'package:flutter/material.dart';
 ///   @override
 ///   State<MyScreen> createState() => _MyScreenState();
 /// }
-/// 
+///
 /// class _MyScreenState extends State<MyScreen> with AutoSaveMixin {
 ///   @override
 ///   Duration get autoSaveDelay => const Duration(seconds: 2);
-///   
+///
 ///   @override
 ///   Future<void> performAutoSave(String content) async {
 ///     // Save your content here
 ///   }
-///   
+///
 ///   void onContentChanged(String newContent) {
 ///     scheduleAutoSave(newContent); // Triggers auto-save with debounce
 ///   }
@@ -46,7 +46,7 @@ mixin AutoSaveMixin<T extends StatefulWidget> on State<T> {
   void scheduleAutoSave(String content) {
     _pendingContent = content;
     _hasUnsavedChanges = true;
-    
+
     // Cancel existing timer to restart debounce
     _autoSaveTimer?.cancel();
     _autoSaveTimer = Timer(autoSaveDelay, () async {
@@ -71,7 +71,7 @@ mixin AutoSaveMixin<T extends StatefulWidget> on State<T> {
     _autoSaveTimer?.cancel();
     _autoSaveTimer = null;
     _pendingContent = null;
-    
+
     await performAutoSave(content);
     _hasUnsavedChanges = false;
   }
