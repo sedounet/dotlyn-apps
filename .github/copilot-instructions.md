@@ -165,13 +165,69 @@ melos bootstrap          # Récupère les dépendances de tous les packages
 **Chaque app a EXACTEMENT 4 fichiers** :
 
 #### APP.md (fichier de travail)
-- Versions (v0.1 MVP, v0.2, v0.3+)
-- TODO avec priorités :
-  - 🔴 P1 = ASAP (bugs bloquants + débloqueurs techniques)
-  - 🟡 P2 = Prochaine version
-  - 🔵 P3 = Plus tard
-- Liens vers issues GitHub (→ numéro issue)
-- Notes en vrac
+
+**Structure obligatoire (workflow v2.0)** :
+- **Header** : Status, Version, Date
+- **Vision** : Objectif de l'app (2-3 phrases)
+- **Versions** : v0.1, v0.2, etc. avec features complétées
+- **TODO** : Sections structurées :
+  - `🚧 In Progress` (max 3-5 items actifs avec branch + ETA)
+  - `🔴 P1 — ASAP` (bugs bloquants + débloqueurs techniques)
+  - `🟡 P2 — Prochaine version`
+  - `🔵 P3 — Plus tard`
+  - `✅ Recently Done` (max 15 items ou 2 semaines avec commit SHA obligatoire)
+- **Liens** : PITCH.md, CHANGELOG.md
+- **Footer** : Version doc, Date, Maintainer
+
+**Règles TODO STRICTES** :
+- **Issues locales** : Numérotation séquentielle #1, #2, #3... (PAS GitHub)
+- **Commit SHA** : 7 premiers caractères OBLIGATOIRES dans Recently Done (format: `- [x] #N: Description — Done YYYY-MM-DD (commit abc1234)`)
+- **Date format** : YYYY-MM-DD
+- **Recently Done** : Max 15 items OU 2 semaines, supprimer les plus anciens
+- **In Progress** : Max 3-5 items simultanés, avec `branch:`, `started:`, `ETA:`
+
+**Exemple TODO complet** :
+```markdown
+## 📝 TODO
+
+<!-- 
+RÈGLES :
+- Issues locales = #N (numéro séquentiel, pas GitHub)
+- Commit SHA = 7 premiers chars obligatoire dans Recently Done
+- Date format = YYYY-MM-DD
+- Recently Done = garder max 15 items ou 2 semaines
+-->
+
+### 🚧 In Progress (max 3-5 items actifs)
+
+- [ ] #3: Three-way merge dialog — branch: feat/github_notes-merge-ui, started: 2026-01-11, ETA: 2026-01-13
+
+### 🔴 P1 — ASAP
+
+- [ ] #1: Bug critique X
+- [ ] #2: Débloqueur technique Y
+
+### 🟡 P2 — Prochaine version
+
+- [ ] #10: Feature A
+- [ ] #11: Feature B
+
+### 🔵 P3 — Plus tard
+
+- [ ] #20: Feature future Z
+
+### ✅ Recently Done (last 15 items or 2 weeks)
+
+<!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
+
+- [x] #5: Help tooltips — Done 2026-01-10 (commit d8b2ac6)
+- [x] #4: Token visibility — Done 2026-01-09 (commit a1b2c3d)
+```
+
+**Migration depuis ancien format** :
+- Anciens items TODO sans # → ajouter numérotation séquentielle
+- Bugs Connus section → migrer vers P1 ou supprimer si résolus
+- Items terminés sans SHA → déplacer dans Recently Done avec mention "Pre-Workflow"
 
 #### CHANGELOG.md (historique versions)
 - Format Keep a Changelog (https://keepachangelog.com)
