@@ -22,13 +22,15 @@ class SyncService {
     required ProjectFile projectFile,
     required String content,
     required String? localSha,
+    GitHubService? githubServiceOverride,
   }) async {
     // Step 1: Try to fetch remote file
     RemoteFile? remoteFile;
     bool fileExistsOnGitHub = false;
 
     try {
-      remoteFile = await _fetchRemote(projectFile);
+      final gh = githubServiceOverride ?? _githubService;
+      remoteFile = await _fetchRemote(projectFile, githubService: gh);
       fileExistsOnGitHub = true;
     } on GitHubApiException catch (e) {
       if (e.statusCode == 404) {
@@ -65,9 +67,11 @@ class SyncService {
 
     // Step 3: Push to GitHub
     try {
+      final gh = githubServiceOverride ?? _githubService;
+
       final shaToUse = fileExistsOnGitHub ? (localSha ?? remoteFile?.sha) : null;
 
-      final newSha = await _githubService.updateFile(
+      final newSha = await gh.updateFile(
         owner: projectFile.owner,
         repo: projectFile.repo,
         path: projectFile.path,
@@ -93,8 +97,9 @@ class SyncService {
   }
 
   /// Fetch remote file from GitHub
-  Future<RemoteFile> _fetchRemote(ProjectFile projectFile) async {
-    final file = await _githubService.fetchFile(
+  Future<RemoteFile> _fetchRemote(ProjectFile projectFile, {GitHubService? githubService}) async {
+    final gh = githubService ?? _githubService;
+    final file = await gh.fetchFile(
       owner: projectFile.owner,
       repo: projectFile.repo,
       path: projectFile.path,

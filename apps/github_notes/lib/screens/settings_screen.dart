@@ -31,7 +31,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _tokenController = TextEditingController();
   bool _isTestingToken = false;
   bool? _tokenValid;
-  bool _showToken = true; // Show token by default (hide disabled)
+  bool _showToken = false; // Hide token by default
   bool _isSavingToken = false;
   String _themeMode = 'system';
   String _language = 'system';
@@ -49,6 +49,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   void dispose() {
+    // Ensure token is hidden when leaving settings
+    _showToken = false;
     _tokenController.dispose();
     super.dispose();
   }
