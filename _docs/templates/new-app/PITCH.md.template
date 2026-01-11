@@ -1,0 +1,68 @@
+# [APP_NAME] — Pitch
+
+## 📖 Concept
+
+[Description détaillée de l'app en 1-2 paragraphes]
+
+**Problème résolu** : [Quel besoin utilisateur cette app adresse]
+
+**Solution** : [Comment l'app résout ce problème]
+
+---
+
+## 🎨 Identité Visuelle
+
+**Couleurs** : [Référence styleguide ou couleurs spécifiques app]
+- Utilise DotlynColors (primary: #E36C2D, secondary: #2C2C2C)
+- [Couleurs accent spécifiques si applicable]
+
+**Typo** : Satoshi (titres) + Plus Jakarta Sans (UI)
+
+**Icônes** : Remix Icon (launcher) + Material Icons (UI interne)
+
+**Référence** : [`_docs/dotlyn/STYLEGUIDE.md`](../../dotlyn/STYLEGUIDE.md)
+
+---
+
+## 🎯 Public Cible
+
+**Persona principal** : [Description du persona utilisateur]
+- Âge : [tranche]
+- Contexte : [situation d'usage]
+- Besoins : [besoins spécifiques]
+
+**Cas d'usage typiques** :
+1. [Scénario 1]
+2. [Scénario 2]
+3. [Scénario 3]
+
+---
+
+## 💡 Différenciation
+
+**Pourquoi cette app vs. alternatives** :
+- [Point différenciant 1]
+- [Point différenciant 2]
+- [Point différenciant 3]
+
+**Apps concurrentes** :
+- [Nom app] : [Pourquoi notre app est différente]
+- [Nom app] : [Pourquoi notre app est différente]
+
+---
+
+## 📊 Métriques de Succès
+
+**v0.1 MVP** :
+- [X] utilisateurs actifs après 1 mois
+- [Y]% retention à 7 jours
+- [Z] actions clés par utilisateur par jour
+
+**v0.2+** :
+- [Métriques évoluées]
+
+---
+
+**Version** : 1.0  
+**Dernière mise à jour** : YYYY-MM-DD  
+**Maintainer** : @sedounet
