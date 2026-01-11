@@ -18,11 +18,17 @@ class SnackHelper {
   static void _show(BuildContext context, String message,
       {Color? backgroundColor, Duration? duration}) {
     final messenger = ScaffoldMessenger.of(context);
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final marginBottom = bottomPadding + 80.0; // place above action buttons
+
     messenger.showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: backgroundColor,
         duration: duration ?? const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.fromLTRB(16, 0, 16, marginBottom),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
