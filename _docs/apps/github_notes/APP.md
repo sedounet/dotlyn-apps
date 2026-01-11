@@ -101,6 +101,11 @@ _Aucun bug bloquant pour l'instant._
 
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
+- [x] #15: Token visibility default OFF; auto-hide on exiting Settings — Done 2026-01-11 (commit a0831b6)
+- [x] #16: Fix first-click Sync race (wait token + single retry) — Done 2026-01-11 (commit a0831b6)
+- [x] #17: Floating SnackBar above bottom action buttons — Done 2026-01-11 (commit a0831b6)
+
+
 - [x] #1: Token GitHub release fix (INTERNET permission + sanitization) — Done 2026-01-10 (commit 92ce174)
 - [x] #2: Theme persistence (themeModeProvider + secure storage) — Done 2026-01-10 (commit 92ce174)
 - [x] #3: Android 12+ splash config (android_12 section) — Done 2026-01-10 (commit 92ce174)
