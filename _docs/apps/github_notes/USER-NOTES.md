@@ -6,5 +6,9 @@
 
 ---
 
-[Tes notes ici...]
+UI/SÉCURITÉ :  mettre la visibilité du token a off par défaut, remettre a off une fois sorti de la page setting du token
+
+FIABILITÉ : au premier clic sur. bouton Sync dans l'éditeur échec de connexion/token. au 2em ça marche
+
+UI placer le snack au dessus des boutons
 
