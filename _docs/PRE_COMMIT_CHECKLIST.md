@@ -64,13 +64,24 @@ flutter test
 - [x] #5: Help tooltips sur Add File dialog — Done 2026-01-10 (commit d8b2ac6)  ← Ajouter ici
 ```
 
-**2.2 Mettre à jour CHANGELOG.md (section Unreleased)**
+**2.2 Mettre à jour CHANGELOG.md (section [Unreleased])**
+
+⚠️ **PAS de dates dans [Unreleased]** (ajoutées uniquement au release)
+
 ```markdown
 ## [Unreleased]
 
-### 2026-01-10 — Brief description
-- **Fixed**: Short description of fix
-- **Added**: Short description of feature
+### Added
+- **User-facing headline**
+  - Technical details
+  - User benefit
+  - (commit abc1234, closes #5)
+
+### Fixed
+- **Bug fix headline**
+  - Technical: root cause + solution
+  - Impact: what works now
+  - (commit def5678, closes #3)
 ```
 
 **2.3 Vérifier USER-NOTES.md (si applicable)**

@@ -82,5 +82,40 @@ Labels GitHub (issues/PR)
 Conseil
 - Rester simple : le but est de ne pas perdre de temps sur la gestion des branches.
 
+---
+
+## Intégration avec APP.md TODO
+
+### Lors création branche
+
+1. **Choisir issue** depuis APP.md P1/P2
+2. **Créer branche** : `git checkout -b feat/app-short-desc`
+3. **Move item vers In Progress** dans APP.md :
+   ```markdown
+   ### 🚧 In Progress
+   - [ ] #5: Add tooltips — branch: feat/github_notes-add-tooltips, started: 2026-01-11, ETA: 2026-01-12
+   ```
+4. **Commit tracking** : `git commit -m "[app] chore: move #5 to In Progress"`
+
+### Pendant développement
+
+- Coder, commiter régulièrement
+- Idées spontanées → **Parking Lot** (pas P1/P2 immédiatement)
+- Tests : `flutter analyze` + `flutter test`
+
+### Lors merge
+
+1. **Tests passent** (analyzer + tests)
+2. **Move item In Progress → Recently Done** avec SHA :
+   ```markdown
+   ### ✅ Recently Done
+   - [x] #5: Add tooltips — Done 2026-01-12 (commit d8b2ac6)
+   ```
+3. **Update CHANGELOG [Unreleased]**
+4. **Merge** : `git merge --no-ff feat/app-short-desc`
+5. **Cleanup** : `git branch -d feat/app-short-desc`
+
+---
+
 Version: 1.0
-Date: 2026-01-10
+Date: 2026-01-11

@@ -1,135 +1,156 @@
-# Workflow Proposals — Index
+# Workflow v2.0 — Documentation Définitive
 
-> **Statut** : BROUILLONS — Fichiers d'étude à valider avant application  
-> **Date création** : 2026-01-11  
-> **Objectif** : Améliorer workflow APP.md + CHANGELOG pour scalabilité et store-readiness
+> **Statut** : ✅ APPLIQUÉ — Source unique de vérité  
+> **Date mise à jour** : 2026-01-11  
+> **Objectif** : Workflow structuré, traçable, scalable
 
 ---
 
-## 📁 Fichiers créés
+## 📁 Fichiers Définitifs
 
-### 1. [APP_TEMPLATE_PROPOSAL.md](APP_TEMPLATE_PROPOSAL.md)
+### 1. [WORKFLOW.md](WORKFLOW.md) — Guide Complet (Source Unique)
 
-**Contenu** :
-- Structure APP.md complète avec commentaires explicatifs
-- Sections : In Progress / P1/P2/P3 / Parking Lot / Recently Done
-- Format issues locales (#N) et GitHub issues (GH#N)
-- Exemples concrets annotés
+**Contenu consolidé** (400 lignes) :
+- Vue d'ensemble : 5 étapes (Session Start → Branch → Dev → Validation → Doc)
+- APP.md structure complète (Header, Vision, Versions, TODO, Liens, Footer)
+- Sections TODO : In Progress, P1/P2/P3, Parking Lot, Recently Done
+- Issues convention : #N (local), ⛔ GitHub DÉSACTIVÉ par défaut
+- CHANGELOG workflow : [Unreleased] quotidien, format store-ready
+- Workflow détaillé étape par étape avec exemples concrets
+- Anti-patterns à éviter
+- Recently Done archivage (max 15 items / 2 semaines)
+
+**Remplace** :
+- APP_TEMPLATE_PROPOSAL.md
+- WORKFLOW_COMPLETE.md
+- ISSUES_LOCAL_VS_GITHUB.md
+- GAPS_ANALYSIS.md
 
 **Usage** :
-- Lire et adapter pour créer/refactorer APP.md d'une app
-- Copier structure et remplir avec contenu réel
-- Modifier sections selon besoins spécifiques
+- Référence quotidienne développement
+- Copier structure APP.md pour nouvelle app
+- Comprendre workflow complet 5 étapes
 
 ---
 
-### 2. [CHANGELOG_STRUCTURE_PROPOSAL.md](CHANGELOG_STRUCTURE_PROPOSAL.md)
+### 2. [VERSIONING_CHANGELOG.md](VERSIONING_CHANGELOG.md) — Versioning + Release
 
-**Contenu** :
-- Format CHANGELOG exploitable pour stores
-- Structure [Unreleased] vs versions numérotées
-- Pattern headline user-facing + détails techniques
-- Exemples GitHub Notes v0.1.0 et v0.2.0
+**Contenu consolidé** (300 lignes) :
+- Semantic versioning détaillé (MAJOR.MINOR.PATCH)
+- Règles décision : breaking changes, features, bug fixes
+- Cas particuliers : pre-release v0.x, hotfix
+- CHANGELOG format Keep a Changelog complet
+- Release workflow : [Unreleased] → [0.2.0], tagging Git
+- Release notes stores : Google Play (500 chars) + App Store (4000 chars)
+- Templates copier-coller pour stores
+- Decision tree + exemples
+
+**Remplace** :
+- VERSIONING_RULES.md
+- CHANGELOG_STRUCTURE_PROPOSAL.md
+- RELEASE_NOTES_FORMAT.md
 
 **Usage** :
-- Référence pour structurer CHANGELOG.md
-- Copier format lors création nouvelle version
-- Extraire headlines pour release notes stores
+- Décider version lors release (v0.1.1 vs v0.2.0 vs v1.0.0)
+- Formater CHANGELOG pour stores
+- Extraire headlines release notes
 
 ---
 
-### 3. [ISSUES_LOCAL_VS_GITHUB.md](ISSUES_LOCAL_VS_GITHUB.md)
+### 3. [README.md](README.md) — Index (Ce Fichier)
 
 **Contenu** :
-- Explication pattern issues locales (#N) vs GitHub (GH#N)
-- Critères escalade vers GitHub issues
-- Commandes gh CLI (installation, création, fermeture)
-- Workflow hybride selon phase projet (MVP → beta → public)
+- Vue d'ensemble documentation workflow
+- Liens vers 2 fichiers définitifs
+- Quick start workflow
+- Références croisées
 
 **Usage** :
-- Décider quand créer GitHub issue vs tracking local
-- Référence commandes gh CLI si besoin
-- Adapter workflow selon taille équipe/communauté
+- Point d'entrée documentation workflow
+- Navigation rapide
 
 ---
 
-### 4. [RELEASE_NOTES_FORMAT.md](RELEASE_NOTES_FORMAT.md)
+## 🎯 Quick Start Workflow
 
-**Contenu** :
-- Templates copier-coller pour Google Play / App Store
-- Contraintes stores (500 chars Google, 4000 chars Apple)
-- Workflow manuel : CHANGELOG → extraction headlines → format store
-- Exemples GitHub Notes v0.1.0 complets
-
-**Usage** :
-- Lors release : copier template et adapter
-- Extraire headlines depuis CHANGELOG [version]
-- Coller dans console store (Google Play / App Store Connect)
-
----
-
-### 5. [VERSIONING_RULES.md](VERSIONING_RULES.md)
-
-**Contenu** :
-- Semantic Versioning expliqué (MAJOR.MINOR.PATCH)
-- Critères décision : quand incrémenter quelle partie
-- Cas particuliers : pre-release (v0.x), hotfix, breaking changes
-- Decision tree + exemples concrets GitHub Notes
-
-**Usage** :
-- Référence lors décision version nouvelle release
-- Comprendre impact changements (breaking vs compatible)
-- Tagging Git recommandations
-
----
-
-## 🎯 Workflow proposé (synthèse)
-
-### Phase 1 : Développement quotidien
+### Développement Quotidien
 
 ```
-1. Prendre issue #N depuis APP.md P1
-2. Créer branche feat/app-short-desc
-3. Coder + commits
-4. Idées spontanées → Parking Lot (APP.md)
-5. Tests passent → cocher #N, move to Recently Done
-6. Ajouter à CHANGELOG [Unreleased] :
-   - **User headline**
-     - Technical details (commit SHA)
-7. Commit: [app] type: description (closes #N)
-8. Merge main, delete branch
+1. SESSION START
+   → Ouvrir APP.md, choisir issue #N depuis P1/P2
+
+2. BRANCH CREATION
+   git checkout -b feat/app-desc
+   → Move #N vers In Progress (branch, started, ETA)
+
+3. DEVELOPMENT
+   → Coder, commiter régulièrement
+   → Idées spontanées → Parking Lot
+
+4. VALIDATION
+   flutter analyze  # MUST be clean
+   flutter test     # MUST pass
+
+5. DOCUMENTATION
+   → Move #N vers Recently Done (avec SHA commit)
+   → Update CHANGELOG [Unreleased]
+   → Commit: [app] type: description (closes #N)
+   → Merge, delete branch
 ```
 
-### Phase 2 : Release (ex: v0.2.0)
+### Release Version
 
 ```
-1. Trier Parking Lot (APP.md) : promouvoir ou archiver
-2. Nettoyer Recently Done : si > 15 items, copier vers CHANGELOG
-3. Renommer CHANGELOG [Unreleased] → [0.2.0] - YYYY-MM-DD
-4. Extraire headlines depuis CHANGELOG v0.2.0
-5. Copier-coller vers release_notes_en.txt (format store)
-6. flutter build appbundle --release
-7. Upload Google Play Console + coller release notes
-8. git tag github_notes-v0.2.0
-9. Créer nouveau [Unreleased] dans CHANGELOG
-```
-
-### Phase 3 : Post-release
-
-```
-1. Monitor crashes/feedback
-2. Hotfix urgent → PATCH (v0.2.1)
-3. Next features → P1/P2 APP.md + [Unreleased] CHANGELOG
+1. Décider version : MAJOR.MINOR.PATCH (voir VERSIONING_CHANGELOG.md)
+2. CHANGELOG : [Unreleased] → [0.2.0] - YYYY-MM-DD
+3. Tag Git : git tag v0.2.0
+4. Extraire headlines pour stores (Google Play, App Store)
+5. Build + upload
 ```
 
 ---
 
-## 📊 Récap décisions clés
+## 📚 Références Croisées
 
-| Aspect           | Décision                                                |
-| ---------------- | ------------------------------------------------------- |
-| **Issues**       | Locales (#N) par défaut, GitHub (GH#N) si besoin collab |
-| **Archive Done** | CHANGELOG après 15 items ou 2 semaines                  |
+### Documentation Workflow Complète
+- **Workflow quotidien** : [WORKFLOW.md](WORKFLOW.md) — Source unique, 400 lignes
+- **Versioning & Release** : [VERSIONING_CHANGELOG.md](VERSIONING_CHANGELOG.md) — 300 lignes
+- **Pre-commit checklist** : `_docs/PRE_COMMIT_CHECKLIST.md`
+- **Branching** : `_docs/BRANCHING.md`
+- **Templates** : `_docs/templates/new-app/`
+
+### Documentation Technique (non-workflow)
+- **Standards apps** : `_docs/APP_STANDARDS.md` (i18n, analytics, ads)
+- **State management** : `_docs/STATE_MANAGEMENT_CONVENTIONS.md` (Riverpod)
+- **Secure storage** : `_docs/SECURE_STORAGE_PATTERN.md` (tokens)
+- **Tests** : `_docs/GUIDE_TDD_TESTS.md`
+
+### Copilot Instructions
+- **AI workflow** : `.github/copilot-instructions.md` (intégration workflow v2.0)
+
+---
+
+## 🗂️ Fichiers Archivés
+
+Les fichiers suivants ont été consolidés dans WORKFLOW.md et VERSIONING_CHANGELOG.md :
+
+**Archivés dans `_docs/archive/workflow-proposals-v1/`** :
+- `APP_TEMPLATE_PROPOSAL.md` → Intégré dans WORKFLOW.md
+- `WORKFLOW_COMPLETE.md` → Intégré dans WORKFLOW.md
+- `ISSUES_LOCAL_VS_GITHUB.md` → Intégré dans WORKFLOW.md
+- `VERSIONING_RULES.md` → Intégré dans VERSIONING_CHANGELOG.md
+- `CHANGELOG_STRUCTURE_PROPOSAL.md` → Intégré dans VERSIONING_CHANGELOG.md
+- `RELEASE_NOTES_FORMAT.md` → Intégré dans VERSIONING_CHANGELOG.md
+- `GAPS_ANALYSIS.md` → Obsolète (migration terminée)
+- `WORKFLOW_APPLIED.md` → Tracking temporaire (complété)
+
+**Raison archivage** : Consolidation vers 2 fichiers définitifs (WORKFLOW + VERSIONING_CHANGELOG) pour éviter redondances et disperser information.
+
+---
+
+**Version** : 2.0  
+**Date** : 2026-01-11  
+**Maintainer** : @sedounet
 | **Versioning**   | Semantic (MAJOR.MINOR.PATCH) strict                     |
 | **Store notes**  | Copier-coller manuel depuis CHANGELOG                   |
 | **Parking Lot**  | Ajouts organiques, trier en fin session                 |
