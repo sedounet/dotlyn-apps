@@ -139,14 +139,14 @@
 
 ## � Récap décisions clés
 
-| Aspect | Décision |
-|--------|----------|
-| **Issues** | ⛔ Locales (#N) UNIQUEMENT — GitHub (GH#N) VERROUILLÉ |
-| **Archive Done** | CHANGELOG après 15 items ou 2 semaines |
-| **Versioning** | Semantic (MAJOR.MINOR.PATCH) strict |
-| **Store notes** | Copier-coller manuel depuis CHANGELOG |
-| **Parking Lot** | Ajouts organiques, trier en fin session |
-| **Commit SHA** | 7 chars obligatoire dans Recently Done |
+| Aspect           | Décision                                             |
+| ---------------- | ---------------------------------------------------- |
+| **Issues**       | ⛔ Locales (#N) UNIQUEMENT — GitHub (GH#N) VERROUILLÉ |
+| **Archive Done** | CHANGELOG après 15 items ou 2 semaines               |
+| **Versioning**   | Semantic (MAJOR.MINOR.PATCH) strict                  |
+| **Store notes**  | Copier-coller manuel depuis CHANGELOG                |
+| **Parking Lot**  | Ajouts organiques, trier en fin session              |
+| **Commit SHA**   | 7 chars obligatoire dans Recently Done               |
 
 **⛔ IMPORTANT** : Issues GitHub (GH#N) désactivées par défaut. Ne pas utiliser sans activation manuelle explicite.
 
