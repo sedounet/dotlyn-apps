@@ -206,10 +206,9 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
 
       // Defensive retry for first-click latency: retry once after short delay
       if (result is SyncError) {
-        final err = result as SyncError;
-        final shouldRetry = err.statusCode == 401 ||
-            err.message.toLowerCase().contains('unexpected') ||
-            err.message.toLowerCase().contains('network');
+        final shouldRetry = result.statusCode == 401 ||
+            result.message.toLowerCase().contains('unexpected') ||
+            result.message.toLowerCase().contains('network');
 
         if (shouldRetry) {
           await Future.delayed(const Duration(milliseconds: 800));
