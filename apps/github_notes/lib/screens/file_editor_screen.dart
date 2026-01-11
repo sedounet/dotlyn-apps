@@ -147,6 +147,14 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
 
     try {
       final database = ref.read(databaseProvider);
+      // Ensure latest token is loaded so GitHub service has fresh credentials
+      try {
+        final _ = await ref.refresh(githubTokenProvider.future);
+        // ignore: unused_local_variable
+        _;
+      } catch (_) {
+        // proceed even if refresh fails
+      }
       final syncService = ref.read(syncServiceProvider);
       final existing = await database.getFileContent(widget.projectFile.id);
 

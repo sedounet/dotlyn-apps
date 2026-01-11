@@ -31,7 +31,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _tokenController = TextEditingController();
   bool _isTestingToken = false;
   bool? _tokenValid;
-  bool _showToken = true; // Show token by default (hide disabled)
+  bool _showToken = false; // Hide token by default
   bool _isSavingToken = false;
   String _themeMode = 'system';
   String _language = 'system';
@@ -49,6 +49,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   void dispose() {
+    // Ensure token visibility is turned off when leaving settings
+    _showToken = false;
     _tokenController.dispose();
     super.dispose();
   }
@@ -84,6 +86,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await tokenService.saveToken(token);
       // refresh token provider so consumers use the new value
       ref.invalidate(tokenServiceProvider);
+      // ensure GitHub token provider is refreshed so services use the new token
+      ref.invalidate(githubTokenProvider);
 
       // Update UI controller with sanitized token
       if (mounted) _tokenController.text = token;
