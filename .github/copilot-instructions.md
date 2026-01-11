@@ -35,7 +35,7 @@ dotlyn-apps/
 │   │       ├── USER-NOTES.md       ← Notes utilisateur (LECTURE SEULE Copilot)
 │   │       └── assets/             ← Screenshots, maquettes
 │   ├── dotlyn/                     ← Brand (styleguide, fonts, logos)
-│   ├── workflow-proposals/         ← Workflow v2.0 documentation
+│   ├── workflow/                   ← Workflow v2.0 documentation
 │   │   ├── WORKFLOW.md             ← Guide complet workflow (source unique)
 │   │   ├── VERSIONING_CHANGELOG.md ← Versioning + release notes stores
 │   │   └── README.md               ← Index
@@ -102,8 +102,8 @@ melos bootstrap
 
 ## 📝 Workflow v2.0 — Source Unique
 
-> **Documentation complète** : [`_docs/workflow-proposals/WORKFLOW.md`](../_docs/workflow-proposals/WORKFLOW.md) (400 lignes)  
-> **Versioning & Release** : [`_docs/workflow-proposals/VERSIONING_CHANGELOG.md`](../_docs/workflow-proposals/VERSIONING_CHANGELOG.md) (300 lignes)
+> **Documentation complète** : [`_docs/workflow/WORKFLOW.md`](../_docs/workflow/WORKFLOW.md) (400 lignes)  
+> **Versioning & Release** : [`_docs/workflow/VERSIONING_CHANGELOG.md`](../_docs/workflow/VERSIONING_CHANGELOG.md) (300 lignes)
 
 ### Vue d'Ensemble (5 Étapes)
 
@@ -735,8 +735,8 @@ git commit -m "[app] chore: weekly parking lot triage"
 ## 📚 Références Complètes
 
 ### Workflow v2.0
-- **Guide complet** : `_docs/workflow-proposals/WORKFLOW.md` (400 lignes, source unique)
-- **Versioning & Release** : `_docs/workflow-proposals/VERSIONING_CHANGELOG.md` (300 lignes)
+- **Guide complet** : `_docs/workflow/WORKFLOW.md` (400 lignes, source unique)
+- **Versioning & Release** : `_docs/workflow/VERSIONING_CHANGELOG.md` (300 lignes)
 - **Pre-commit checklist** : `_docs/PRE_COMMIT_CHECKLIST.md` (3 phases strictes)
 - **Branching** : `_docs/BRANCHING.md` (format + intégration APP.md)
 - **Templates** : `_docs/templates/new-app/` (copier-coller instant)

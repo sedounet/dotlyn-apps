@@ -127,7 +127,7 @@ git commit -m "[nom_app] init: create new app structure
 
 ## 📚 Références
 
-- **Workflow v2.0** : `_docs/workflow-proposals/`
+- **Workflow v2.0** : `_docs/workflow/`
 - **APP Standards** : `_docs/APP_STANDARDS.md` (i18n, analytics, ads à intégrer v0.2+)
 - **Styleguide** : `_docs/dotlyn/STYLEGUIDE.md`
 - **Branching** : `_docs/BRANCHING.md`
