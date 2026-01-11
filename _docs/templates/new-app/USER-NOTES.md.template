@@ -1,45 +1,7 @@
 # USER-NOTES.md — [APP_NAME]
 
-> **Usage** : Notes personnelles prises lors de l'utilisation de l'app  
-> **Format** : Libre, non structuré, style carnet de notes  
-> **Workflow** : Copilot lit ces notes et propose de les migrer vers APP.md TODO
+> Notes personnelles libre — Copilot LECTURE SEULE (propose migration vers APP.md TODO)
 
 ---
 
-## 🐛 Bugs Observés
-
-<!-- Date + contexte + comportement attendu vs. réel -->
-
-
-
----
-
-## 💡 Idées d'Amélioration
-
-<!-- Feature ideas + justification utilisateur -->
-
-
-
----
-
-## 📝 Observations Générales
-
-<!-- Impressions UX, comportements inattendus, feedback libre -->
-
-
-
----
-
-## ✅ Items Traités
-
-<!-- Items migrés vers APP.md TODO — garder trace temporaire puis supprimer -->
-
-
-
----
-
-**⚠️ IMPORTANT** :
-- Ce fichier est **LECTURE SEULE** pour Copilot (ne modifie pas sans validation)
-- Copilot propose actions → discussion → exécution après validation
-- Items traités supprimés UNIQUEMENT après validation utilisateur
-- Vérifier version main avant commit (sync mobile peut être plus récent)
+[Tes notes ici — format libre, pas de structure imposée]

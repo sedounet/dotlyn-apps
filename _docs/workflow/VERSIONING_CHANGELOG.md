@@ -6,7 +6,19 @@
 
 ---
 
-## 🔢 Semantic Versioning
+## � Scope du Versioning
+
+**Ce guide couvre** :
+1. **Apps individuelles** : `apps/[app]/CHANGELOG.md` — versioning indépendant par app (ex: github_notes v0.1.0, money_tracker v0.2.0)
+2. **Monorepo global** : `CHANGELOG.md` (racine) — versioning du workflow, docs, infrastructure, packages partagés (ex: dotlyn-apps v2.0.0)
+
+**Distinction** :
+- **App releases** → Tag Git : `apps/[app]-vX.Y.Z` (ex: `apps/github_notes-v0.1.0`)
+- **Monorepo releases** → Tag Git : `dotlyn-vX.Y.Z` (ex: `dotlyn-v2.0.0`)
+
+---
+
+## �🔢 Semantic Versioning
 
 ### Format
 

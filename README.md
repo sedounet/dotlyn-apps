@@ -2,6 +2,9 @@
 
 > Monorepo Flutter pour toutes les mini-apps Dotlyn
 
+**Version** : 2.0.0 (Workflow v2.0 consolidated)  
+**Changelog** : [CHANGELOG.md](CHANGELOG.md)
+
 ---
 
 ## 🎯 Structure

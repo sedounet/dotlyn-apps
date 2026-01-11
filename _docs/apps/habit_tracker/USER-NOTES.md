@@ -1,7 +1,7 @@
-# User Notes — Habit Tracker
+# USER-NOTES.md — Habit Tracker
 
-*Espace perso pour mes notes d'utilisation quotidienne*
+> Notes personnelles libre — Copilot LECTURE SEULE (propose migration vers APP.md TODO)
 
 ---
 
-[Aucune note pour l'instant - app en conception]
+[Aucune note pour l'instant]

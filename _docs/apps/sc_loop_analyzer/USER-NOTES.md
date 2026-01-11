@@ -1,4 +1,7 @@
-essai pour fetchdfsfdsfdsfd
+# USER-NOTES.md — SC Loop Analyzer
 
+> Notes personnelles libre — Copilot LECTURE SEULE (propose migration vers APP.md TODO)
 
-test conflit
+---
+
+[Aucune note pour l'instant]

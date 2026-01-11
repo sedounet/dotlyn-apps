@@ -455,6 +455,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 #### 4. USER-NOTES.md (notes utilisateur)
 - **LECTURE SEULE pour Copilot** (sauf validation explicite)
+- **Format minimal et libre**, pas de structure imposée
 - Notes perso utilisateur (bugs, idées, observations)
 - Workflow : Lire → Proposer ajout APP.md TODO → Attendre validation → Exécuter + nettoyer
 
