@@ -1,40 +1,41 @@
-# User Notes — Money Tracker
+# USER-NOTES.md — Money Tracker
 
-*Espace perso pour mes notes d'utilisation quotidienne*
-
----
-
-## Notes UI/UX
-
-**UI inspirations** :
-- Voir Financisto (https://github.com/dsolonenko/financisto) pour disposition cartes opération
-
-**Home screen** :
-- Passer liste opérations au-dessus boutons et soldes
-- Vérifier FAB correspondance avec styleguide + github-notes (diff couleur/taille)
-
-**Cartes opération** :
-- Au clic : menu avec icône grande + descriptif en sous-titre (police petite)
-- Disposition boutons : ligne ou grille (selon nombre)
-
-**Dialog ajout opération** :
-- Supprimer dropdown type (revenu/dépense/virement)
-- Placer bouton switch devant ligne montant pour changer type en 1 clic
-- Ordre champs : note au-dessus montant, date sous montant
-- Mode paiement : temporairement masqué, dans options avancées
-
-**Statut opération** :
-- Discuter visuel statut : case à cocher ou changement couleur ?
+> **Usage** : Notes personnelles prises lors de l'utilisation de l'app
+> **Format** : Libre, non structuré, style carnet de notes
+> **Workflow** : Copilot lit ces notes et propose de les migrer vers APP.md TODO
 
 ---
 
-## Notes logique
+## 🐛 Bugs Observés
 
-**Virements** :
-- Fonctionnement actuel pas optimal
-- Idée : dissocier temporairement virement des opérations
-- Utiliser héritage classe Opération pour faciliter maintenance
+<!-- Date + contexte + comportement attendu vs. réel -->
+
 
 ---
 
-[Autres notes...]
+## 💡 Idées d'Amélioration
+
+<!-- Feature ideas + justification utilisateur -->
+
+
+---
+
+## 📝 Observations Générales
+
+<!-- Impressions UX, comportements inattendus, feedback libre -->
+
+
+---
+
+## ✅ Items Traités
+
+<!-- Items migrés vers APP.md TODO — garder trace temporaire puis supprimer -->
+
+
+---
+
+**⚠️ IMPORTANT** :
+- Ce fichier est **LECTURE SEULE** pour Copilot (ne modifie pas sans validation)
+- Copilot propose actions → discussion → exécution après validation
+- Items traités supprimés UNIQUEMENT après validation utilisateur
+- Vérifier version main avant commit (sync mobile peut être plus récent)
