@@ -67,7 +67,7 @@ _Aucun item en cours actuellement._
 
 ### 🔴 P1 — ASAP (bugs bloquants, débloqueurs techniques)
 
-- [ ] #1: Token visibility default off in Settings; auto-hide when leaving token settings (from USER-NOTES 2026-01-11)
+- [x] #1: Token visibility default off in Settings; auto-hide when leaving token settings (from USER-NOTES 2026-01-11) — Done 2026-01-11 (commit eb2bbbe)
 - [ ] #2: Investigate intermittent first-click Sync failure in editor (possible race condition) (from USER-NOTES 2026-01-11)
 
 **⛔ Issues GitHub DÉSACTIVÉES** (feature verrouillée) :

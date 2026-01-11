@@ -22,7 +22,13 @@ _Aucune nouvelle feature pour l'instant._
 _Aucun changement comportemental pour l'instant._
 
 ### Fixed 🐛
-_Aucun fix en cours pour l'instant._
+- **Token visibility default hidden in Settings**
+  - Technical: Default `obscureText` set, visibility toggle stored in-memory and auto-hidden on leaving settings; token provider invalidated after save to refresh consumers
+  - Impact: Prevents accidental token exposure and reduces auth flakiness caused by stale token usage
+  - (commit eb2bbbe)
+
+### Notes
+- **Work in progress**: Investigating intermittent first-click sync failure; added token refresh before sync as mitigation (see commit eb2bbbe)
 
 ---
 
