@@ -9,7 +9,7 @@ ui cartes de fichier :
 
 bug :
 * dans les paramètres à l'édition d'un fichier après changement on ne peut pas cliquer sur save aucune modification dres paramètres de fichier ne sont enregistre ni n'apparaît 
-* à la joue d'un fichier qui existe déjà sur GitHub on a bien un message d'erreur qui est affiché en double par contre au lorsque l'on sync sur un github le fichier de destination est remplacé par le fichier local et nous n'avons plus le menu de trois choix que nous devrions avoir 
+* à l'ajout d'un fichier qui existe déjà sur GitHub on a bien un message d'erreur qui est affiché en double par contre au lorsque l'on sync sur un github le fichier de destination est remplacé par le fichier local et nous n'avons plus le menu de trois choix que nous devrions avoir 
 
 workflow : 
 * a la duplication d'un fichier on peu garder le même alias de fichier (son nom local)
