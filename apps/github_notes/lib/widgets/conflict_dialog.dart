@@ -6,9 +6,9 @@ class ConflictDialog extends StatelessWidget {
   final String remoteSha;
 
   const ConflictDialog({
-    Key? key,
+    super.key,
     required this.remoteSha,
-  }) : super(key: key);
+  });
 
   static Future<ConflictChoice?> show(
     BuildContext context, {
