@@ -56,8 +56,7 @@ class FileCard extends ConsumerWidget {
                         if (value == 'duplicate') onDuplicate?.call(file);
                       },
                       itemBuilder: (_) => const [
-                        PopupMenuItem(
-                            value: 'duplicate', child: Text('Duplicate')),
+                        PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
                       ],
                     ),
                   ],
@@ -102,6 +101,11 @@ class _SyncStatusBadge extends StatelessWidget {
         color = Colors.green;
         icon = Icons.check_circle;
         label = 'Synced';
+        break;
+      case 'pending':
+        color = Colors.orange;
+        icon = Icons.folder;
+        label = 'Local';
         break;
       case 'modified':
         color = DotlynColors.primary;

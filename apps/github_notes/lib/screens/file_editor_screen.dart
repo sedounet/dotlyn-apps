@@ -262,20 +262,52 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
           );
         },
         conflict: (conflict) async {
-          if (conflict.userChoice == ConflictChoice.fetchRemote && conflict.remoteContent != null) {
-            _controller.text = conflict.remoteContent!;
-            await database.upsertFileContent(
-              db.FileContentsCompanion(
-                id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
-                projectFileId: drift.Value(projectFile.id),
-                content: drift.Value(conflict.remoteContent!),
-                githubSha: drift.Value(conflict.remoteSha),
-                syncStatus: const drift.Value('synced'),
-                lastSyncAt: drift.Value(DateTime.now()),
-                localModifiedAt: drift.Value(DateTime.now()),
-              ),
-            );
-            SnackHelper.showSuccess(context, 'Fetched remote content');
+          if (conflict.userChoice == ConflictChoice.fetchRemote) {
+            // User chose to fetch remote version
+            if (conflict.remoteContent != null) {
+              _controller.text = conflict.remoteContent!;
+              await database.upsertFileContent(
+                db.FileContentsCompanion(
+                  id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+                  projectFileId: drift.Value(projectFile.id),
+                  content: drift.Value(conflict.remoteContent!),
+                  githubSha: drift.Value(conflict.remoteSha),
+                  syncStatus: const drift.Value('synced'),
+                  lastSyncAt: drift.Value(DateTime.now()),
+                  localModifiedAt: drift.Value(DateTime.now()),
+                ),
+              );
+              SnackHelper.showSuccess(context, 'Fetched remote content');
+            }
+          } else if (conflict.userChoice == ConflictChoice.overwriteGitHub) {
+            // User chose to overwrite GitHub with local version
+            // Push local content to GitHub
+            try {
+              final ghOverride2 = GitHubService(token: token ?? '');
+              final newSha = await ghOverride2.updateFile(
+                owner: projectFile.owner,
+                repo: projectFile.repo,
+                path: projectFile.path,
+                content: _controller.text,
+                sha: conflict.remoteSha,
+                message: 'Update ${projectFile.nickname} from GitHub Notes (resolved conflict)',
+              );
+
+              await database.upsertFileContent(
+                db.FileContentsCompanion(
+                  id: existing == null ? const drift.Value.absent() : drift.Value(existing.id),
+                  projectFileId: drift.Value(projectFile.id),
+                  content: drift.Value(_controller.text),
+                  githubSha: drift.Value(newSha),
+                  syncStatus: const drift.Value('synced'),
+                  lastSyncAt: drift.Value(DateTime.now()),
+                  localModifiedAt: drift.Value(DateTime.now()),
+                ),
+              );
+              SnackHelper.showSuccess(context, 'Overwritten on GitHub!');
+            } catch (e) {
+              SnackHelper.showError(context, 'Failed to overwrite GitHub: $e');
+            }
           }
         },
         error: (error) {
@@ -284,7 +316,7 @@ class _FileEditorScreenState extends ConsumerState<FileEditorScreen> with AutoSa
             SnackHelper.showError(context, 'Invalid GitHub token. Check Settings.');
           } else if (error.statusCode == 404) {
             SnackHelper.showError(
-                context, 'File not found on GitHub. Choose to create it or save locally.');
+                context, 'File not found on GitHub. Verify owner/repo/path or save locally first.');
           } else if (error.message.contains('No network') ||
               error.message.toLowerCase().contains('socket')) {
             SnackHelper.showError(context, 'Offline: Cannot sync to GitHub. File saved locally.');

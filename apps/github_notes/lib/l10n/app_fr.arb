@@ -11,5 +11,14 @@
   "sync": "Synchroniser",
   "settings": "Paramètres",
   "title": "Titre",
-  "content": "Contenu"
+  "content": "Contenu",
+  "conflictDialogTitle": "Conflit détecté",
+  "conflictDialogDescription": "Un conflit a été détecté entre votre fichier local et GitHub.",
+  "conflictFileExistsHeader": "Ce fichier existe déjà sur GitHub. Que souhaitez-vous faire ?",
+  "conflictBothModifiedHeader": "Des modifications ont été apportées à la fois localement et sur GitHub. Que souhaitez-vous faire pour résoudre ce conflit ?",
+  "conflictGenericHeader": "Un conflit a été détecté. Veuillez choisir comment procéder.",
+  "conflictFetchRemote": "Importer depuis GitHub",
+  "conflictOverwriteRemote": "Écraser sur GitHub",
+  "cannotDuplicateLinkedFile": "Impossible de dupliquer un fichier lié à GitHub",
+  "cannotDuplicateLinkedFileReason": "Ce fichier est déjà synchronisé avec GitHub. Vous ne pouvez avoir qu'une seule instance locale par fichier GitHub. Envisagez de créer un nouveau fichier à la place."
 }

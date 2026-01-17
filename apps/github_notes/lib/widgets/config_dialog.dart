@@ -6,7 +6,7 @@ import 'package:github_notes/widgets/field_help_button.dart';
 class ConfigDialog extends StatefulWidget {
   final ProjectFile projectFile;
 
-  const ConfigDialog({Key? key, required this.projectFile}) : super(key: key);
+  const ConfigDialog({super.key, required this.projectFile});
 
   static Future<ProjectFile?> show(
     BuildContext context, {

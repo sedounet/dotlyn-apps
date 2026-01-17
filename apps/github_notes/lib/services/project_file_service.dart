@@ -88,11 +88,18 @@ class ProjectFileService {
     required String owner,
     required String repo,
     required String path,
+    int? excludeId, // For edits: ignore this file ID
   }) async {
     final query = _database.select(_database.projectFiles)
       ..where((t) => t.owner.equals(owner) & t.repo.equals(repo) & t.path.equals(path));
-    final existing = await query.getSingleOrNull();
-    return existing != null;
+    final results = await query.get();
+
+    if (excludeId == null) {
+      return results.isNotEmpty;
+    }
+
+    // Exclude the given ID (for editing)
+    return results.any((f) => f.id != excludeId);
   }
 
   /// Get file content by project file ID
