@@ -59,7 +59,7 @@ RÈGLES :
 
 ### 🚧 In Progress (max 3-5 items actifs)
 
-_Aucun item en cours (app stable v0.1)._
+(empty)
 
 ---
 
@@ -71,24 +71,32 @@ _Aucun item en cours (app stable v0.1)._
 
 ### 🟡 P2 — Prochaine version (v0.2)
 
-- [ ] #10: Export settings (backup config JSON via Share/clipboard)
-- [ ] #11: Refactor Settings avec ExpansionTile pour sections foldables
+**Localization & Standards** :
 - [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md)
+
+**UX Improvements** :
+- [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
+- [ ] #27: Duplication fichier local : permettre alias identique pour copies locales (pas de conflit)
+- [ ] #28: Duplication GitHub : erreur bloquante au SAVE avec reutilisation d'infos pour nouveau fichier
+  - Workflow : User duplique fichier synced GitHub → Save modifications → Erreur "GitHub duplicate" + option "Créer nouveau fichier" avec préfill owner/repo/path customisable
+
+**Code Quality & Refactoring** :
+- [ ] #11: Refactor Settings avec ExpansionTile pour sections foldables
 - [ ] #13: Three-way merge option dans ConflictDialog (actuellement Keep Local/Keep Remote seulement)
 - [ ] #14: Extract dialog helpers (9x showDialog patterns en duplication)
+- [ ] #26: UI: Dans Settings, lister les fichiers avec le même menu que sur home (refactor widget)
 
-#22: UI: Afficher statut (local/sync/modifié) sur chaque fichier dans la liste (home screen)
-#23: UI: Changer "modifié" par "local" si le fichier n'est pas encore synchronisé (auto-save)
-#24: UI: Sur les cartes de fichiers, ajouter un menu (icône copier-coller, éditer, supprimer) dans les trois petits points (duplicate menu)
-#25: UI: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
-#26: UI: Dans Settings, lister les fichiers avec le même menu que sur home (refactor widget)
-#27: Workflow: Lors de la duplication d'un fichier, permettre de garder le même alias local (nom local)
+**Completed / Obsolete (closed in P1 #19)** :
+- [x] #22: UI: Afficher statut (local/sync/modifié) sur chaque fichier — Done (P1 #19: status badges implemented)
+- [x] #23: UI: Changer "modifié" par "local" si le fichier n'est pas encore synchronisé — Done (P1 #19: "Local" badge)
+- [x] #24: UI: Menu 3 petits points sur cartes fichiers — Done (P1 #19: popup menu exists)
 
 ---
 
 ### 🔵 P3 — Versions futures
 
 **v0.3 — Standards & Polish** :
+- [ ] #10: Export settings (backup config JSON via Share/clipboard)
 - [ ] #20: Analytics service abstraction + events clés + opt-out UI
 - [ ] #21: Ads placeholder widget (banner 50-60dp + feature flag)
 
