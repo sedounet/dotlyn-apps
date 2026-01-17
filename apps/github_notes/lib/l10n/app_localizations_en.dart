@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save => 'Save';
 
   @override
+  String get copilotTest => 'Copilot test string (en)';
+
+  @override
   String get cancel => 'Cancel';
 
   @override

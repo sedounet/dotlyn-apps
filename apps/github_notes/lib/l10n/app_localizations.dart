@@ -140,6 +140,12 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get save;
 
+  /// Test string for Copilot i18n setup verification
+  ///
+  /// In en, this message translates to:
+  /// **'Copilot test string (en)'**
+  String get copilotTest;
+
   /// Cancel button
   ///
   /// In en, this message translates to:

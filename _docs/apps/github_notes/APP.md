@@ -57,9 +57,10 @@ RÈGLES :
 - Recently Done = garder max 15 items ou 2 semaines
 -->
 
-### 🚧 In Progress (max 3-5 items actifs)
 
-(empty)
+### 🚧 In Progress (max 3-5 items actifs)
+- [x] #12: Localization (i18n) — Done 2026-01-17 (commit 66c9e3e)
+- [ ] #29: UI — Move last sync date to right under status labels; increase font 10%; improve colors for readability — branch: feat/github_notes-filecard-date, started: 2026-01-17, ETA: 2026-01-17
 
 ---
 
@@ -70,10 +71,11 @@ RÈGLES :
 
 ---
 
+
 ### 🟡 P2 — Prochaine version (v0.2)
 
 **Localization & Standards** :
-- [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md)
+<!-- #12 déplacé en In Progress -->
 
 **UX Improvements** :
 (empty)

@@ -20,5 +20,6 @@
   "conflictFetchRemote": "Importer depuis GitHub",
   "conflictOverwriteRemote": "Écraser sur GitHub",
   "cannotDuplicateLinkedFile": "Impossible de dupliquer un fichier lié à GitHub",
-  "cannotDuplicateLinkedFileReason": "Ce fichier est déjà synchronisé avec GitHub. Vous ne pouvez avoir qu'une seule instance locale par fichier GitHub. Envisagez de créer un nouveau fichier à la place."
+  "cannotDuplicateLinkedFileReason": "Ce fichier est déjà synchronisé avec GitHub. Vous ne pouvez avoir qu'une seule instance locale par fichier GitHub. Envisagez de créer un nouveau fichier à la place.",
+  "copilotTest": "Chaîne de test Copilot (fr)"
 }
