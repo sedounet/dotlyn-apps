@@ -76,9 +76,7 @@ RÈGLES :
 
 **UX Improvements** :
 - [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
-- [ ] #27: Duplication fichier local : permettre alias identique pour copies locales (pas de conflit)
-- [ ] #28: Duplication GitHub : erreur bloquante au SAVE avec reutilisation d'infos pour nouveau fichier
-  - Workflow : User duplique fichier synced GitHub → Save modifications → Erreur "GitHub duplicate" + option "Créer nouveau fichier" avec préfill owner/repo/path customisable
+- [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
 
 **Code Quality & Refactoring** :
 - [ ] #11: Refactor Settings avec ExpansionTile pour sections foldables
@@ -117,6 +115,7 @@ RÈGLES :
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
 - [x] #27: Smart file duplication: intelligent alias suggestion (_2, _3...) + allow duplication with same owner/repo/path — Done 2026-01-17 (commit 3b1e4a2)
+- [x] #28: Duplication GitHub — Bloqué si owner/repo/path identique ; smart alias recommandée pour copies — Done 2026-01-17 (commit cfa7fd0)
 - [x] #19: Harmonised conflict menu for add-file + duplicate prevention + status badges — Done 2026-01-17 (commit 6b5c308)
 - [x] #15: Token visibility default OFF; auto-hide on exiting Settings — Done 2026-01-11 (commit a0831b6)
 - [x] #16: Fix first-click Sync race (wait token + single retry) — Done 2026-01-11 (commit a0831b6)
