@@ -13,6 +13,7 @@ import 'package:github_notes/providers/project_file_service_provider.dart';
 
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/field_help_button.dart';
+import '../l10n/app_localizations.dart';
 import 'package:github_notes/models/sync_result.dart';
 import '../providers/theme_provider.dart';
 import 'package:github_notes/utils/snack_helper.dart';
@@ -92,10 +93,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (mounted) _tokenController.text = token;
 
       if (!mounted) return;
-      SnackHelper.showSuccess(context, 'GitHub token saved (secure) — ${token.length} chars');
+      SnackHelper.showSuccess(context, AppLocalizations.of(context)!.tokenSaved(token.length));
     } catch (e) {
       if (!mounted) return;
-      SnackHelper.showError(context, 'Error saving token: $e');
+      SnackHelper.showError(context, AppLocalizations.of(context)!.errorSavingToken(e.toString()));
     } finally {
       if (mounted) setState(() => _isSavingToken = false);
     }
@@ -113,7 +114,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (!mounted) return;
     setState(() => _themeMode = mode);
-    SnackHelper.showSuccess(context, 'Theme set to $mode');
+    SnackHelper.showSuccess(context, AppLocalizations.of(context)!.themeSet(mode));
   }
 
   Future<void> _saveLanguage(String lang) async {
@@ -121,7 +122,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await storage.write(key: 'app_language', value: lang);
     if (!mounted) return;
     setState(() => _language = lang);
-    SnackHelper.showSuccess(context, 'Language set to $lang (no translations yet)');
+    SnackHelper.showSuccess(context, AppLocalizations.of(context)!.languageSet(lang));
   }
 
   Future<void> _testToken() async {
@@ -141,9 +142,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (!mounted) return;
     if (isValid) {
-      SnackHelper.showSuccess(context, 'Token is valid!');
+      SnackHelper.showSuccess(context, AppLocalizations.of(context)!.tokenValid);
     } else {
-      SnackHelper.showError(context, 'Token is invalid');
+      SnackHelper.showError(context, AppLocalizations.of(context)!.tokenInvalid);
     }
   }
 
@@ -167,52 +168,51 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showDialog(
       context: parentContext,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Add File to Track'),
+        title: Text(AppLocalizations.of(context)!.addFileTitle),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: ownerController,
-                decoration: const InputDecoration(
-                  labelText: 'Owner',
-                  hintText: 'e.g., johndoe or my-org',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.ownerLabel,
+                  hintText: AppLocalizations.of(context)!.ownerHint,
                   suffixIcon: FieldHelpButton(
-                    message: 'Owner is the GitHub username or organization (e.g. johndoe)',
+                    message: AppLocalizations.of(context)!.ownerHint,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: repoController,
-                decoration: const InputDecoration(
-                  labelText: 'Repository',
-                  hintText: 'e.g., myapp',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.repoLabel,
+                  hintText: AppLocalizations.of(context)!.repoHint,
                   suffixIcon: FieldHelpButton(
-                    message: 'Repository name inside the owner/org (e.g. myapp)',
+                    message: AppLocalizations.of(context)!.repoHint,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: pathController,
-                decoration: const InputDecoration(
-                  labelText: 'File Path',
-                  hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.pathLabel,
+                  hintText: AppLocalizations.of(context)!.pathHint,
                   suffixIcon: FieldHelpButton(
-                    message:
-                        'Relative path within the repository (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
+                    message: AppLocalizations.of(context)!.pathHint,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: nicknameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nickname',
-                  hintText: 'e.g., MyApp - User Prompt',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.nicknameLabel,
+                  hintText: AppLocalizations.of(context)!.nicknameHint,
                   suffixIcon: FieldHelpButton(
-                    message: 'Friendly display name for this tracked file',
+                    message: AppLocalizations.of(context)!.nicknameHint,
                   ),
                 ),
               ),
@@ -222,7 +222,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -232,10 +232,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   repoController.text.isEmpty ||
                   pathController.text.isEmpty ||
                   nicknameController.text.isEmpty) {
-                SnackHelper.showError(parentContext, 'All fields are required');
+                SnackHelper.showError(parentContext, AppLocalizations.of(context)!.allFieldsRequired);
                 return;
-              }
-
               final owner = ownerController.text.trim();
               final repo = repoController.text.trim();
               final path = pathController.text.trim();
@@ -256,7 +254,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               if (alreadyExists) {
                 SnackHelper.showError(
                   parentContext,
-                  'This GitHub path ($owner/$repo/$path) is already tracked. Change the path or filename to create a duplicate.',
+                  AppLocalizations.of(context)!.duplicateTrackedPath(owner, repo, path),
                 );
                 return;
               }
@@ -314,8 +312,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   // Now show success message with dialog closed
                   final message = choice == ConflictChoice.fetchRemote
-                      ? 'File imported from GitHub'
-                      : 'File added (local only)';
+                      ? AppLocalizations.of(context)!.fileImported
+                      : AppLocalizations.of(context)!.fileAddedLocal;
                   SnackHelper.showSuccess(context, message);
                   return;
                 } on GitHubApiException catch (e) {
@@ -326,10 +324,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     // Friendly messages for common cases
                     if (e.statusCode == 401) {
                       SnackHelper.showError(
-                          parentContext, 'Invalid GitHub token. Please update it in Settings.');
+                          parentContext, AppLocalizations.of(context)!.invalidTokenPleaseUpdate);
                     } else {
                       SnackHelper.showError(parentContext,
-                          'GitHub error (${e.statusCode ?? 'unknown'}). Please try again later.');
+                          AppLocalizations.of(context)!.githubError(e.statusCode?.toString() ?? 'unknown'));
                     }
                     return;
                   }
@@ -346,11 +344,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 if (!mounted) return;
                 navigator.pop();
                 SnackHelper.showInfo(
-                    parentContext, 'No network: file added locally. It will sync when online.');
+                    parentContext, AppLocalizations.of(context)!.noNetworkFileAdded);
                 return;
               } catch (e) {
                 if (!mounted) return;
-                SnackHelper.showError(parentContext, 'Error checking GitHub: $e');
+                SnackHelper.showError(parentContext, AppLocalizations.of(context)!.errorCheckingGitHub(e.toString()));
                 return;
               }
 
@@ -370,9 +368,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               if (!mounted) return;
               navigator.pop();
-              SnackHelper.showSuccess(context, 'File added successfully');
+              SnackHelper.showSuccess(context, AppLocalizations.of(context)!.fileAddedSuccessfully);
             },
-            child: const Text('Add'),
+            child: Text(AppLocalizations.of(context)!.add),
           ),
         ],
       ),
@@ -388,7 +386,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Edit File Settings'),
+        title: Text(AppLocalizations.of(context)!.editFileTitle),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

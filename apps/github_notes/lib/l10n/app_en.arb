@@ -29,6 +29,46 @@
     "description": "Save button"
   },
   "copilotTest": "Copilot test string (en)",
+  "tokenSaved": "GitHub token saved (secure) — {count} chars",
+  "@tokenSaved": {
+    "description": "Message shown after saving the token with sanitized length",
+    "placeholders": { "count": {} }
+  },
+  "errorSavingToken": "Error saving token: {error}",
+  "@errorSavingToken": {
+    "description": "Error message when token saving fails",
+    "placeholders": { "error": {} }
+  },
+  "themeSet": "Theme set to {mode}",
+  "@themeSet": { "description": "Confirmation of theme set", "placeholders": { "mode": {} } },
+  "languageSet": "Language set to {lang} (no translations yet)",
+  "@languageSet": { "description": "Confirmation of language set", "placeholders": { "lang": {} } },
+  "tokenValid": "Token is valid!",
+  "tokenInvalid": "Token is invalid",
+  "addFileTitle": "Add File to Track",
+  "ownerLabel": "Owner",
+  "ownerHint": "e.g., johndoe or my-org",
+  "repoLabel": "Repository",
+  "repoHint": "e.g., myapp",
+  "pathLabel": "File Path",
+  "pathHint": "e.g., README.md or _docs/apps/myapp/PROMPT_USER.md",
+  "nicknameLabel": "Nickname",
+  "nicknameHint": "e.g., MyApp - User Prompt",
+  "allFieldsRequired": "All fields are required",
+  "duplicateTrackedPath": "This GitHub path ({owner}/{repo}/{path}) is already tracked. Change the path or filename to create a duplicate.",
+  "fileImported": "File imported from GitHub",
+  "fileAddedLocal": "File added (local only)",
+  "invalidTokenPleaseUpdate": "Invalid GitHub token. Please update it in Settings.",
+  "githubError": "GitHub error ({code}). Please try again later.",
+  "@githubError": { "description": "GitHub error message with status code", "placeholders": { "code": {} } },
+  "noNetworkFileAdded": "No network: file added locally. It will sync when online.",
+  "errorCheckingGitHub": "Error checking GitHub: {error}",
+  "@errorCheckingGitHub": { "description": "Error message when checking GitHub", "placeholders": { "error": {} } },
+  "fileAddedSuccessfully": "File added successfully",
+  "cancel": "Cancel",
+  "add": "Add",
+  "editFileTitle": "Edit File Settings",
+
   "@copilotTest": {
     "description": "Test string for Copilot i18n setup verification"
   },
