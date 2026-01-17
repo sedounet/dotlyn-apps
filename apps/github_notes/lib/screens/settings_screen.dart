@@ -1,24 +1,26 @@
+// ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:dotlyn_ui/dotlyn_ui.dart';
+
 import 'package:github_notes/data/database/app_database.dart';
+import 'package:github_notes/l10n/app_localizations.dart';
+import 'package:github_notes/models/sync_result.dart';
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/providers/github_provider.dart';
-import 'package:github_notes/providers/token_provider.dart';
 import 'package:github_notes/providers/project_file_service_provider.dart';
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:github_notes/providers/theme_provider.dart';
+import 'package:github_notes/providers/token_provider.dart';
 import 'package:github_notes/services/github_service.dart';
-import 'package:github_notes/widgets/field_help_button.dart';
-import '../l10n/app_localizations.dart';
-import 'package:github_notes/models/sync_result.dart';
-import '../providers/theme_provider.dart';
 import 'package:github_notes/utils/snack_helper.dart';
-import 'package:github_notes/widgets/conflict_dialog.dart';
 import 'package:github_notes/utils/token_helper.dart';
+import 'package:github_notes/widgets/conflict_dialog.dart';
+import 'package:github_notes/widgets/field_help_button.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   final ProjectFile? editingFile;
@@ -103,18 +105,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _saveThemeMode(String mode) async {
-    // Map string -> ThemeMode and persist via provider
+    final themeMode = _stringToThemeMode(mode);
     final notifier = ref.read(themeModeProvider.notifier);
-    if (mode == 'light') {
-      await notifier.setMode(ThemeMode.light);
-    } else if (mode == 'dark') {
-      await notifier.setMode(ThemeMode.dark);
-    } else {
-      await notifier.setMode(ThemeMode.system);
-    }
+    await notifier.setMode(themeMode);
     if (!mounted) return;
     setState(() => _themeMode = mode);
     SnackHelper.showSuccess(context, AppLocalizations.of(context)!.themeSet(mode));
+  }
+
+  ThemeMode _stringToThemeMode(String mode) {
+    return switch (mode) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
   }
 
   Future<void> _saveLanguage(String lang) async {

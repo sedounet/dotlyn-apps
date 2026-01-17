@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:github_notes/widgets/field_help_button.dart';
-import '../l10n/app_localizations.dart';
+import 'package:github_notes/l10n/app_localizations.dart';
+import 'package:github_notes/widgets/form_field_row.dart';
 
 /// Minimal data class used by the form dialog.
 class ProjectFileData {
@@ -78,45 +78,29 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
+            FormFieldRow(
               controller: _ownerController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.ownerLabel,
-                hintText: AppLocalizations.of(context)!.ownerHint,
-                suffixIcon: FieldHelpButton(
-                  message: AppLocalizations.of(context)!.ownerHint,
-                ),
-              ),
-              maxLines: 1,
+              labelText: AppLocalizations.of(context)!.ownerLabel,
+              hintText: AppLocalizations.of(context)!.ownerHint,
+              helpText: AppLocalizations.of(context)!.ownerHint,
               validator: (v) => (v == null || v.trim().isEmpty)
                   ? AppLocalizations.of(context)!.ownerRequired
                   : null,
             ),
-            const SizedBox(height: 12),
-            TextFormField(
+            FormFieldRow(
               controller: _repoController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.repoLabel,
-                hintText: AppLocalizations.of(context)!.repoHint,
-                suffixIcon: FieldHelpButton(
-                  message: AppLocalizations.of(context)!.repoHint,
-                ),
-              ),
-              maxLines: 1,
+              labelText: AppLocalizations.of(context)!.repoLabel,
+              hintText: AppLocalizations.of(context)!.repoHint,
+              helpText: AppLocalizations.of(context)!.repoHint,
               validator: (v) => (v == null || v.trim().isEmpty)
                   ? AppLocalizations.of(context)!.repoRequired
                   : null,
             ),
-            const SizedBox(height: 12),
-            TextFormField(
+            FormFieldRow(
               controller: _pathController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.pathLabel,
-                hintText: AppLocalizations.of(context)!.pathHint,
-                suffixIcon: FieldHelpButton(
-                  message: AppLocalizations.of(context)!.pathHint,
-                ),
-              ),
+              labelText: AppLocalizations.of(context)!.pathLabel,
+              hintText: AppLocalizations.of(context)!.pathHint,
+              helpText: AppLocalizations.of(context)!.pathHint,
               maxLines: 2,
               minLines: 1,
               keyboardType: TextInputType.multiline,
@@ -124,17 +108,11 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
                   ? AppLocalizations.of(context)!.pathRequired
                   : null,
             ),
-            const SizedBox(height: 12),
-            TextFormField(
+            FormFieldRow(
               controller: _nicknameController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.nicknameLabel,
-                hintText: AppLocalizations.of(context)!.nicknameHint,
-                suffixIcon: FieldHelpButton(
-                  message: AppLocalizations.of(context)!.nicknameHint,
-                ),
-              ),
-              maxLines: 1,
+              labelText: AppLocalizations.of(context)!.nicknameLabel,
+              hintText: AppLocalizations.of(context)!.nicknameHint,
+              helpText: AppLocalizations.of(context)!.nicknameHint,
               validator: (v) => (v == null || v.trim().isEmpty)
                   ? AppLocalizations.of(context)!.nicknameRequired
                   : null,
