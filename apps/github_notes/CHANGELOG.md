@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Localization (i18n) structure ready**
   - Technical: ARB files en/fr, l10n.yaml config, test key 'copilotTest' ajoutée, widget de test dans FilesListScreen
   - User benefit: future-proof pour traduction, conformité standards Dotlyn
-  - (en cours, branche feat/github_notes-i18n-setup, closes #12)
+  - (commit 66c9e3e, closes #12)
 
 ### Unreleased — Work in progress
 

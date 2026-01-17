@@ -40,9 +40,10 @@ class FileCard extends ConsumerWidget {
                           ),
                     ),
                   ),
+                  // Status badge only in the header; date is displayed aligned to the right of the file path below
                   fileContentAsync.when(
                     data: (content) {
-                      if (content == null) return const SizedBox.shrink();
+                      if (content == null) return _SyncStatusBadge(syncStatus: 'unknown');
                       return _SyncStatusBadge(syncStatus: content.syncStatus);
                     },
                     loading: () => const SizedBox.shrink(),
@@ -69,32 +70,57 @@ class FileCard extends ConsumerWidget {
                       color: DotlynColors.secondary.withAlpha(179),
                     ),
               ),
-              Text(
-                file.path,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: DotlynColors.secondary.withAlpha(128),
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
+              // Show file path and align the last-sync date to the right of the path
               fileContentAsync.when(
                 data: (content) {
-                  if (content == null) return const SizedBox.shrink();
-                  final date = content.lastSyncAt;
-                  final formattedDate = _formatRelativeDate(date);
-                  return Text(
-                    formattedDate,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: DotlynColors.secondary.withAlpha(102),
-                          fontSize: 11,
-                          fontStyle: FontStyle.italic,
+                  final formattedDate =
+                      content == null ? '' : _formatRelativeDate(content.lastSyncAt);
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          file.path,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: DotlynColors.secondary.withAlpha(128),
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                      if (formattedDate.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          formattedDate,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: DotlynColors.secondary.withAlpha(180),
+                                fontSize:
+                                    (Theme.of(context).textTheme.bodySmall?.fontSize ?? 12) * 1.1,
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                      ],
+                    ],
                   );
                 },
-                loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                loading: () => Text(
+                  file.path,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: DotlynColors.secondary.withAlpha(128),
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                error: (_, __) => Text(
+                  file.path,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: DotlynColors.secondary.withAlpha(128),
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(height: 4),
+              // Date moved up next to status badge for better alignment and readability
             ],
           ),
         ),
@@ -133,7 +159,8 @@ class _SyncStatusBadge extends StatelessWidget {
         label = 'Synced';
         break;
       case 'pending':
-        color = Colors.orange;
+        // Use Dotlyn primary color for pending/local state for brand consistency
+        color = DotlynColors.primary;
         icon = Icons.folder;
         label = 'Local';
         break;
@@ -161,9 +188,10 @@ class _SyncStatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withAlpha((0.1 * 255).round()),
+        // Slightly stronger background and border for better contrast per styleguide
+        color: color.withAlpha((0.16 * 255).round()),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withAlpha((0.3 * 255).round())),
+        border: Border.all(color: color.withAlpha((0.4 * 255).round())),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -30,6 +30,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get save => 'Enregistrer';
 
   @override
+  String get copilotTest => 'Chaîne de test Copilot (fr)';
+
+  @override
   String get cancel => 'Annuler';
 
   @override
