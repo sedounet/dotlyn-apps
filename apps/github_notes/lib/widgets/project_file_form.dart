@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:github_notes/widgets/field_help_button.dart';
+import '../l10n/app_localizations.dart';
 
 /// Minimal data class used by the form dialog.
 class ProjectFileData {
@@ -79,57 +80,64 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
           children: [
             TextFormField(
               controller: _ownerController,
-              decoration: const InputDecoration(
-                labelText: 'Owner',
-                hintText: 'e.g., johndoe or my-org',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.ownerLabel,
+                hintText: AppLocalizations.of(context)!.ownerHint,
                 suffixIcon: FieldHelpButton(
-                  message: 'GitHub owner: username or organization (e.g. johndoe)',
+                  message: AppLocalizations.of(context)!.ownerHint,
                 ),
               ),
               maxLines: 1,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter owner' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppLocalizations.of(context)!.ownerRequired
+                  : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _repoController,
-              decoration: const InputDecoration(
-                labelText: 'Repository',
-                hintText: 'e.g., myapp',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.repoLabel,
+                hintText: AppLocalizations.of(context)!.repoHint,
                 suffixIcon: FieldHelpButton(
-                  message: 'Repository name inside the owner/org (e.g. myapp)',
+                  message: AppLocalizations.of(context)!.repoHint,
                 ),
               ),
               maxLines: 1,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter repository' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppLocalizations.of(context)!.repoRequired
+                  : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _pathController,
-              decoration: const InputDecoration(
-                labelText: 'File Path',
-                hintText: 'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.pathLabel,
+                hintText: AppLocalizations.of(context)!.pathHint,
                 suffixIcon: FieldHelpButton(
-                  message:
-                      'Relative path in the repo (e.g. README.md or _docs/apps/myapp/PROMPT_USER.md)',
+                  message: AppLocalizations.of(context)!.pathHint,
                 ),
               ),
               maxLines: 2,
               minLines: 1,
               keyboardType: TextInputType.multiline,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter file path' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppLocalizations.of(context)!.pathRequired
+                  : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _nicknameController,
-              decoration: const InputDecoration(
-                labelText: 'Nickname',
-                hintText: 'e.g., MyApp - User Prompt',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.nicknameLabel,
+                hintText: AppLocalizations.of(context)!.nicknameHint,
                 suffixIcon: FieldHelpButton(
-                  message: 'Friendly name shown in the app (not used by GitHub)',
+                  message: AppLocalizations.of(context)!.nicknameHint,
                 ),
               ),
               maxLines: 1,
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a nickname' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? AppLocalizations.of(context)!.nicknameRequired
+                  : null,
             ),
             const SizedBox(height: 16),
             Row(
@@ -137,12 +145,14 @@ class _ProjectFileFormState extends State<ProjectFileForm> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _submit,
-                  child: Text(widget.submitLabel),
+                  child: Text(widget.submitLabel == 'Add'
+                      ? AppLocalizations.of(context)!.add
+                      : widget.submitLabel),
                 ),
               ],
             ),

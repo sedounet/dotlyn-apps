@@ -17,7 +17,7 @@ class FilesListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GitHub Notes'),
+        title: Text(AppLocalizations.of(context)!.appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -60,11 +60,11 @@ class FilesListScreen extends ConsumerWidget {
                               size: 64, color: DotlynColors.primary.withAlpha(128)),
                           const SizedBox(height: 16),
                           Text(
-                            'No files configured',
+                            AppLocalizations.of(context)!.noFilesConfigured,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
-                          const Text('Go to Settings to add files'),
+                          Text(AppLocalizations.of(context)!.goToSettings),
                           const SizedBox(height: 24),
                           ElevatedButton.icon(
                             onPressed: () {
@@ -74,7 +74,7 @@ class FilesListScreen extends ConsumerWidget {
                               );
                             },
                             icon: const Icon(Icons.settings),
-                            label: const Text('Open Settings'),
+                            label: Text(AppLocalizations.of(context)!.openSettings),
                           ),
                         ],
                       ),
@@ -107,7 +107,7 @@ class FilesListScreen extends ConsumerWidget {
                   );
                 },
                 error: (error, stack) => Center(
-                  child: Text('Error: $error'),
+                  child: Text(AppLocalizations.of(context)!.errorMessage(error.toString())),
                 ),
               ),
             ),

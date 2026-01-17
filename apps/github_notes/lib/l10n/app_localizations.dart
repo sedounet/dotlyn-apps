@@ -146,6 +146,330 @@ abstract class AppLocalizations {
   /// **'Copilot test string (en)'**
   String get copilotTest;
 
+  /// Message shown after saving the token with sanitized length
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub token saved (secure) — {count} chars'**
+  String tokenSaved(Object count);
+
+  /// Error message when token saving fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving token: {error}'**
+  String errorSavingToken(Object error);
+
+  /// Confirmation of theme set
+  ///
+  /// In en, this message translates to:
+  /// **'Theme set to {mode}'**
+  String themeSet(Object mode);
+
+  /// Confirmation of language set
+  ///
+  /// In en, this message translates to:
+  /// **'Language set to {lang} (no translations yet)'**
+  String languageSet(Object lang);
+
+  /// No description provided for @tokenValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Token is valid!'**
+  String get tokenValid;
+
+  /// No description provided for @tokenInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Token is invalid'**
+  String get tokenInvalid;
+
+  /// No description provided for @addFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add File to Track'**
+  String get addFileTitle;
+
+  /// No description provided for @ownerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get ownerLabel;
+
+  /// No description provided for @ownerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., johndoe or my-org'**
+  String get ownerHint;
+
+  /// No description provided for @repoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repository'**
+  String get repoLabel;
+
+  /// No description provided for @repoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., myapp'**
+  String get repoHint;
+
+  /// No description provided for @pathLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'File Path'**
+  String get pathLabel;
+
+  /// No description provided for @pathHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., README.md or _docs/apps/myapp/PROMPT_USER.md'**
+  String get pathHint;
+
+  /// No description provided for @nicknameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get nicknameLabel;
+
+  /// No description provided for @nicknameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., MyApp - User Prompt'**
+  String get nicknameHint;
+
+  /// No description provided for @allFieldsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'All fields are required'**
+  String get allFieldsRequired;
+
+  /// No description provided for @duplicateTrackedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'This GitHub path ({owner}/{repo}/{path}) is already tracked. Change the path or filename to create a duplicate.'**
+  String duplicateTrackedPath(Object owner, Object path, Object repo);
+
+  /// No description provided for @fileImported.
+  ///
+  /// In en, this message translates to:
+  /// **'File imported from GitHub'**
+  String get fileImported;
+
+  /// No description provided for @fileAddedLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'File added (local only)'**
+  String get fileAddedLocal;
+
+  /// No description provided for @invalidTokenPleaseUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid GitHub token. Please update it in Settings.'**
+  String get invalidTokenPleaseUpdate;
+
+  /// GitHub error message with status code
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub error ({code}). Please try again later.'**
+  String githubError(Object code);
+
+  /// No description provided for @noNetworkFileAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No network: file added locally. It will sync when online.'**
+  String get noNetworkFileAdded;
+
+  /// Error message when checking GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'Error checking GitHub: {error}'**
+  String errorCheckingGitHub(Object error);
+
+  /// No description provided for @fileAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'File added successfully'**
+  String get fileAddedSuccessfully;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @editFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit File Settings'**
+  String get editFileTitle;
+
+  /// No description provided for @noFilesConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No files configured'**
+  String get noFilesConfigured;
+
+  /// No description provided for @goToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings to add files'**
+  String get goToSettings;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// Error message prefix with error text
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorMessage(Object error);
+
+  /// No description provided for @ownerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter owner'**
+  String get ownerRequired;
+
+  /// No description provided for @repoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter repository'**
+  String get repoRequired;
+
+  /// No description provided for @pathRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter file path'**
+  String get pathRequired;
+
+  /// No description provided for @nicknameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a nickname'**
+  String get nicknameRequired;
+
+  /// No description provided for @duplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get duplicate;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @testToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Token'**
+  String get testToken;
+
+  /// No description provided for @saveToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Token'**
+  String get saveToken;
+
+  /// No description provided for @debugTokenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug: GitHub token'**
+  String get debugTokenTitle;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @showTokenDebug.
+  ///
+  /// In en, this message translates to:
+  /// **'Show token (debug)'**
+  String get showTokenDebug;
+
+  /// No description provided for @themeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeTitle;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTitle;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get languageSystem;
+
+  /// No description provided for @languageSystemDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'System (device)'**
+  String get languageSystemDevice;
+
+  /// No description provided for @languageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEn;
+
+  /// No description provided for @languageFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFr;
+
+  /// No description provided for @deleteFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete File?'**
+  String get deleteFileTitle;
+
+  /// Delete dialog content with nickname
+  ///
+  /// In en, this message translates to:
+  /// **'Remove \"{nickname}\" from tracked files?'**
+  String deleteFileContent(Object nickname);
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// Cancel button
   ///
   /// In en, this message translates to:
@@ -229,6 +553,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This file is already synced with GitHub. You can only have one local instance per GitHub file. Consider creating a new file instead.'**
   String get cannotDuplicateLinkedFileReason;
+
+  /// Label for very recent events
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
 }
 
 class _AppLocalizationsDelegate

@@ -232,8 +232,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   repoController.text.isEmpty ||
                   pathController.text.isEmpty ||
                   nicknameController.text.isEmpty) {
-                SnackHelper.showError(parentContext, AppLocalizations.of(context)!.allFieldsRequired);
+                SnackHelper.showError(
+                    parentContext, AppLocalizations.of(context)!.allFieldsRequired);
                 return;
+              }
               final owner = ownerController.text.trim();
               final repo = repoController.text.trim();
               final path = pathController.text.trim();
@@ -326,8 +328,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       SnackHelper.showError(
                           parentContext, AppLocalizations.of(context)!.invalidTokenPleaseUpdate);
                     } else {
-                      SnackHelper.showError(parentContext,
-                          AppLocalizations.of(context)!.githubError(e.statusCode?.toString() ?? 'unknown'));
+                      SnackHelper.showError(
+                          parentContext,
+                          AppLocalizations.of(context)!
+                              .githubError(e.statusCode?.toString() ?? 'unknown'));
                     }
                     return;
                   }
@@ -348,7 +352,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 return;
               } catch (e) {
                 if (!mounted) return;
-                SnackHelper.showError(parentContext, AppLocalizations.of(context)!.errorCheckingGitHub(e.toString()));
+                SnackHelper.showError(
+                    parentContext, AppLocalizations.of(context)!.errorCheckingGitHub(e.toString()));
                 return;
               }
 
@@ -436,7 +441,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -474,7 +479,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 SnackHelper.showError(context, 'Error updating file: $e');
               }
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -487,7 +492,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context)!.settings),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -552,7 +557,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Test Token'),
+                      : Text(AppLocalizations.of(context)!.testToken),
                 ),
               ),
               const SizedBox(width: 12),
@@ -565,7 +570,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           width: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Save Token'),
+                      : Text(AppLocalizations.of(context)!.saveToken),
                 ),
               ),
             ],
@@ -583,12 +588,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   showDialog<void>(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: const Text('Debug: GitHub token'),
+                      title: Text(AppLocalizations.of(context)!.debugTokenTitle),
                       content: SelectableText(token ?? '<empty>'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Close'),
+                          child: Text(AppLocalizations.of(context)!.close),
                         ),
                         TextButton(
                           onPressed: () {
@@ -597,14 +602,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             }
                             Navigator.pop(ctx);
                           },
-                          child: const Text('Copy'),
+                          child: Text(AppLocalizations.of(context)!.copy),
                         ),
                       ],
                     ),
                   );
                 });
               },
-              child: const Text('Show token (debug)'),
+              child: Text(AppLocalizations.of(context)!.showTokenDebug),
             ),
           ],
 
@@ -619,18 +624,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 8),
           ListTile(
-            title: const Text('Theme'),
+            title: Text(AppLocalizations.of(context)!.themeTitle),
             subtitle: Text(_themeMode == 'system'
-                ? 'System'
+                ? AppLocalizations.of(context)!.themeSystem
                 : _themeMode == 'light'
-                    ? 'Light'
-                    : 'Dark'),
+                    ? AppLocalizations.of(context)!.themeLight
+                    : AppLocalizations.of(context)!.themeDark),
             trailing: DropdownButton<String>(
               value: _themeMode,
-              items: const [
-                DropdownMenuItem(value: 'system', child: Text('System')),
-                DropdownMenuItem(value: 'light', child: Text('Light')),
-                DropdownMenuItem(value: 'dark', child: Text('Dark')),
+              items: [
+                DropdownMenuItem(
+                    value: 'system', child: Text(AppLocalizations.of(context)!.themeSystem)),
+                DropdownMenuItem(
+                    value: 'light', child: Text(AppLocalizations.of(context)!.themeLight)),
+                DropdownMenuItem(
+                    value: 'dark', child: Text(AppLocalizations.of(context)!.themeDark)),
               ],
               onChanged: (v) {
                 if (v != null) _saveThemeMode(v);
@@ -638,18 +646,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
           ListTile(
-            title: const Text('Language'),
+            title: Text(AppLocalizations.of(context)!.languageTitle),
             subtitle: Text(_language == 'system'
-                ? 'System (device)'
+                ? AppLocalizations.of(context)!.languageSystemDevice
                 : _language == 'en'
-                    ? 'English'
-                    : 'Français'),
+                    ? AppLocalizations.of(context)!.languageEn
+                    : AppLocalizations.of(context)!.languageFr),
             trailing: DropdownButton<String>(
               value: _language,
-              items: const [
-                DropdownMenuItem(value: 'system', child: Text('System')),
-                DropdownMenuItem(value: 'en', child: Text('English')),
-                DropdownMenuItem(value: 'fr', child: Text('Français')),
+              items: [
+                DropdownMenuItem(
+                    value: 'system', child: Text(AppLocalizations.of(context)!.languageSystem)),
+                DropdownMenuItem(
+                    value: 'en', child: Text(AppLocalizations.of(context)!.languageEn)),
+                DropdownMenuItem(
+                    value: 'fr', child: Text(AppLocalizations.of(context)!.languageFr)),
               ],
               onChanged: (v) {
                 if (v != null) _saveLanguage(v);
@@ -725,16 +736,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               final confirm = await showDialog<bool>(
                                 context: parentContext,
                                 builder: (ctx) => AlertDialog(
-                                  title: const Text('Delete File?'),
-                                  content: Text('Remove "${file.nickname}" from tracked files?'),
+                                  title: Text(AppLocalizations.of(context)!.deleteFileTitle),
+                                  content: Text(AppLocalizations.of(context)!
+                                      .deleteFileContent(file.nickname)),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(ctx, false),
-                                      child: const Text('Cancel'),
+                                      child: Text(AppLocalizations.of(context)!.cancel),
                                     ),
                                     TextButton(
                                       onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text('Delete'),
+                                      child: Text(AppLocalizations.of(context)!.delete),
                                     ),
                                   ],
                                 ),
@@ -757,7 +769,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Text('Error: $error'),
+            error: (error, _) => Text(AppLocalizations.of(context)!.errorMessage(error)),
           ),
         ],
       ),

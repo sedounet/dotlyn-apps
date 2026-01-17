@@ -65,13 +65,44 @@
   "errorCheckingGitHub": "Error checking GitHub: {error}",
   "@errorCheckingGitHub": { "description": "Error message when checking GitHub", "placeholders": { "error": {} } },
   "fileAddedSuccessfully": "File added successfully",
-  "cancel": "Cancel",
   "add": "Add",
   "editFileTitle": "Edit File Settings",
+  "noFilesConfigured": "No files configured",
+  "goToSettings": "Go to Settings to add files",
+  "openSettings": "Open Settings",
+  "errorMessage": "Error: {error}",
+  "@errorMessage": { "description": "Error message prefix with error text", "placeholders": { "error": {} } },
+  "ownerRequired": "Please enter owner",
+  "repoRequired": "Please enter repository",
+  "pathRequired": "Please enter file path",
+  "nicknameRequired": "Please enter a nickname",
+  "duplicate": "Duplicate",
 
   "@copilotTest": {
     "description": "Test string for Copilot i18n setup verification"
   },
+  "save": "Save",
+  "settingsTitle": "Settings",
+  "testToken": "Test Token",
+  "saveToken": "Save Token",
+  "debugTokenTitle": "Debug: GitHub token",
+  "close": "Close",
+  "copy": "Copy",
+  "showTokenDebug": "Show token (debug)",
+  "themeTitle": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "languageTitle": "Language",
+  "languageSystem": "System",
+  "languageSystemDevice": "System (device)",
+  "languageEn": "English",
+  "languageFr": "Français",
+  "deleteFileTitle": "Delete File?",
+  "deleteFileContent": "Remove \"{nickname}\" from tracked files?",
+  "@deleteFileContent": { "description": "Delete dialog content with nickname", "placeholders": { "nickname": {} } },
+  "delete": "Delete",
+
   "cancel": "Cancel",
   "@cancel": {
     "description": "Cancel button"
@@ -127,5 +158,7 @@
   "cannotDuplicateLinkedFileReason": "This file is already synced with GitHub. You can only have one local instance per GitHub file. Consider creating a new file instead.",
   "@cannotDuplicateLinkedFileReason": {
     "description": "Explanation for why a linked file cannot be duplicated"
-  }
-}
+  },
+  "justNow": "Just now",
+  "@justNow": { "description": "Label for very recent events" }
+} 

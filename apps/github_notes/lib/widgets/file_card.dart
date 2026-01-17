@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/data/database/app_database.dart' as db;
+import '../l10n/app_localizations.dart';
 
 class FileCard extends ConsumerWidget {
   final db.ProjectFile file;
@@ -43,7 +44,7 @@ class FileCard extends ConsumerWidget {
                   // Status badge only in the header; date is displayed aligned to the right of the file path below
                   fileContentAsync.when(
                     data: (content) {
-                      if (content == null) return _SyncStatusBadge(syncStatus: 'unknown');
+                      if (content == null) return const _SyncStatusBadge(syncStatus: 'unknown');
                       return _SyncStatusBadge(syncStatus: content.syncStatus);
                     },
                     loading: () => const SizedBox.shrink(),
@@ -56,8 +57,10 @@ class FileCard extends ConsumerWidget {
                       onSelected: (value) {
                         if (value == 'duplicate') onDuplicate?.call(file);
                       },
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                            value: 'duplicate',
+                            child: Text(AppLocalizations.of(context)!.duplicate)),
                       ],
                     ),
                   ],
@@ -74,7 +77,7 @@ class FileCard extends ConsumerWidget {
               fileContentAsync.when(
                 data: (content) {
                   final formattedDate =
-                      content == null ? '' : _formatRelativeDate(content.lastSyncAt);
+                      content == null ? '' : _formatRelativeDate(context, content.lastSyncAt);
                   return Row(
                     children: [
                       Expanded(
@@ -128,11 +131,11 @@ class FileCard extends ConsumerWidget {
     );
   }
 
-  static String _formatRelativeDate(DateTime date) {
+  static String _formatRelativeDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final diff = now.difference(date);
 
-    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inSeconds < 60) return AppLocalizations.of(context)!.justNow;
     if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     if (diff.inDays < 7) return '${diff.inDays}d ago';

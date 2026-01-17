@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:github_notes/l10n/app_localizations.dart';
 import 'package:github_notes/widgets/project_file_form.dart';
 
 void main() {
   testWidgets('validation shows errors when fields empty', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: Builder(
-      builder: (context) {
-        return ElevatedButton(
-          onPressed: () => showDialog(
-              context: context, builder: (_) => const AlertDialog(content: ProjectFileForm())),
-          child: const Text('open'),
-        );
-      },
-    )));
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Builder(
+        builder: (context) {
+          return ElevatedButton(
+            onPressed: () => showDialog(
+                context: context, builder: (_) => const AlertDialog(content: ProjectFileForm())),
+            child: const Text('open'),
+          );
+        },
+      ),
+    ));
 
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
@@ -28,15 +34,20 @@ void main() {
   });
 
   testWidgets('submits when valid', (tester) async {
-    await tester.pumpWidget(MaterialApp(home: Builder(
-      builder: (context) {
-        return ElevatedButton(
-          onPressed: () => showDialog(
-              context: context, builder: (_) => const AlertDialog(content: ProjectFileForm())),
-          child: const Text('open'),
-        );
-      },
-    )));
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Builder(
+        builder: (context) {
+          return ElevatedButton(
+            onPressed: () => showDialog(
+                context: context, builder: (_) => const AlertDialog(content: ProjectFileForm())),
+            child: const Text('open'),
+          );
+        },
+      ),
+    ));
 
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
