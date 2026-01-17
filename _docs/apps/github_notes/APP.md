@@ -116,6 +116,7 @@ RÈGLES :
 
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
+- [x] #27: Smart file duplication: intelligent alias suggestion (_2, _3...) + allow duplication with same owner/repo/path — Done 2026-01-17 (commit 3b1e4a2)
 - [x] #19: Harmonised conflict menu for add-file + duplicate prevention + status badges — Done 2026-01-17 (commit 6b5c308)
 - [x] #15: Token visibility default OFF; auto-hide on exiting Settings — Done 2026-01-11 (commit a0831b6)
 - [x] #16: Fix first-click Sync race (wait token + single retry) — Done 2026-01-11 (commit a0831b6)
