@@ -13,9 +13,10 @@ import 'package:github_notes/providers/project_file_service_provider.dart';
 
 import 'package:github_notes/services/github_service.dart';
 import 'package:github_notes/widgets/field_help_button.dart';
+import 'package:github_notes/models/sync_result.dart';
 import '../providers/theme_provider.dart';
 import 'package:github_notes/utils/snack_helper.dart';
-import 'package:github_notes/utils/dialog_helpers.dart';
+import 'package:github_notes/widgets/conflict_dialog.dart';
 import 'package:github_notes/utils/token_helper.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -146,11 +147,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  void _showAddFileDialog({ProjectFile? prefill}) {
+  void _showAddFileDialog({ProjectFile? prefill}) async {
     final ownerController = TextEditingController(text: prefill?.owner ?? '');
     final repoController = TextEditingController(text: prefill?.repo ?? '');
     final pathController = TextEditingController(text: prefill?.path ?? '');
-    final nicknameController = TextEditingController(text: prefill?.nickname ?? '');
+
+    // For duplication, suggest intelligently: append "_2", "_3", etc. to alias
+    late final String suggestedNickname;
+    if (prefill != null) {
+      // Generate smart suggestion: "essai" → "essai_2"
+      final baseName = prefill.nickname.replaceAll(RegExp(r'_\d+$'), '');
+      suggestedNickname = '${baseName}_2';
+    } else {
+      suggestedNickname = '';
+    }
+    final nicknameController = TextEditingController(text: suggestedNickname);
     final parentContext = context;
 
     showDialog(
@@ -230,23 +241,83 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               final path = pathController.text.trim();
               final nickname = nicknameController.text.trim();
 
-              // Check if file exists on GitHub (optional, for UX)
+              // Check if this owner/repo/path already exists (prevent duplication)
+              final fileService = ref.read(projectFileServiceProvider);
+              // IMPORTANT: If we're duplicating (prefill != null), we DON'T exclude it
+              // We want to BLOCK if owner/repo/path already exist
+              // Only exclude for edits where we're modifying the same file
+              final alreadyExists = await fileService.fileExists(
+                owner: owner,
+                repo: repo,
+                path: path,
+                excludeId: null, // Never exclude — we want to prevent exact duplicates
+              );
+
+              if (alreadyExists) {
+                SnackHelper.showError(
+                  parentContext,
+                  'This GitHub path ($owner/$repo/$path) is already tracked. Change the path or filename to create a duplicate.',
+                );
+                return;
+              }
+
+              // Check if file exists on GitHub (UX: propose harmonized conflict menu)
               try {
                 final githubService = ref.read(githubServiceProvider);
                 try {
-                  await githubService.fetchFile(owner: owner, repo: repo, path: path);
+                  final remoteContent =
+                      await githubService.fetchFile(owner: owner, repo: repo, path: path);
 
-                  // File exists remotely — confirm with user
+                  // File exists remotely — show harmonized conflict dialog
                   if (!mounted) return;
-                  final confirm = await DialogHelpers.showConfirmDialog(
+                  final choice = await ConflictDialog.show(
                     context,
-                    title: 'File exists on GitHub',
-                    message:
-                        'A file already exists at $path in $owner/$repo. Add to tracked files anyway?',
-                    yesLabel: 'Add',
+                    remoteSha: remoteContent.sha,
+                    situation: ConflictSituation.fileExistsRemote,
                   );
 
-                  if (confirm != true) return;
+                  // Handle user choice
+                  if (choice == null || choice == ConflictChoice.cancel) {
+                    return; // User cancelled
+                  }
+
+                  final fileService = ref.read(projectFileServiceProvider);
+
+                  if (choice == ConflictChoice.fetchRemote) {
+                    // Import remote: add file with remote content
+                    final fileId = await fileService.addFile(
+                      owner: owner,
+                      repo: repo,
+                      path: path,
+                      nickname: nickname,
+                    );
+                    // Save the remote content + SHA (mark as synced since we just fetched it)
+                    await fileService.saveFileContent(
+                      projectFileId: fileId,
+                      content: remoteContent.content,
+                      githubSha: remoteContent.sha,
+                      isImportedFromGitHub: true,
+                    );
+                  } else {
+                    // ConflictChoice.overwriteGitHub or default: add local config only
+                    await fileService.addFile(
+                      owner: owner,
+                      repo: repo,
+                      path: path,
+                      nickname: nickname,
+                    );
+                  }
+
+                  // Close the add file dialog FIRST, then show snack (so snack appears on top)
+                  if (!mounted) return;
+                  navigator.pop();
+
+                  // Now show success message with dialog closed
+                  final message = choice == ConflictChoice.fetchRemote
+                      ? 'File imported from GitHub'
+                      : 'File added (local only)';
+                  SnackHelper.showSuccess(context, message);
+                  return;
                 } on GitHubApiException catch (e) {
                   if (e.statusCode == 404) {
                     // Not found — OK to add
@@ -272,7 +343,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   path: path,
                   nickname: nickname,
                 );
-
                 if (!mounted) return;
                 navigator.pop();
                 SnackHelper.showInfo(
@@ -284,13 +354,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 return;
               }
 
-              // Use ProjectFileService to add file
-              final fileService = ref.read(projectFileServiceProvider);
-              await fileService.addFile(
+              // File doesn't exist remotely — add it locally
+              final fileId = await fileService.addFile(
                 owner: owner,
                 repo: repo,
                 path: path,
                 nickname: nickname,
+              );
+              // Create empty FileContent with "pending" status
+              await fileService.saveFileContent(
+                projectFileId: fileId,
+                content: '',
+                isImportedFromGitHub: false,
               );
 
               if (!mounted) return;
@@ -375,20 +450,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 return;
               }
 
-              // Use ProjectFileService to update file
-              final fileService = ref.read(projectFileServiceProvider);
-              await fileService.updateFile(
-                id: file.id,
-                owner: ownerController.text.trim(),
-                repo: repoController.text.trim(),
-                path: pathController.text.trim(),
-                nickname: nicknameController.text.trim(),
-              );
+              try {
+                // Use ProjectFileService to update file
+                final fileService = ref.read(projectFileServiceProvider);
+                final success = await fileService.updateFile(
+                  id: file.id,
+                  owner: ownerController.text.trim(),
+                  repo: repoController.text.trim(),
+                  path: pathController.text.trim(),
+                  nickname: nicknameController.text.trim(),
+                );
 
-              if (!mounted) return;
-              final navigator = Navigator.of(context);
-              navigator.pop();
-              SnackHelper.showSuccess(context, 'File updated successfully');
+                if (!mounted) return;
+
+                if (!success) {
+                  SnackHelper.showError(context, 'Failed to update file. Please try again.');
+                  return;
+                }
+
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                SnackHelper.showSuccess(context, 'File updated successfully');
+              } catch (e) {
+                if (!mounted) return;
+                SnackHelper.showError(context, 'Error updating file: $e');
+              }
             },
             child: const Text('Save'),
           ),
@@ -638,11 +724,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             icon: const Icon(Icons.delete, color: DotlynColors.error),
                             onPressed: () async {
                               final parentContext = context;
-                              final confirm = await DialogHelpers.showConfirmDialog(
-                                parentContext,
-                                title: 'Delete File?',
-                                message: 'Remove "${file.nickname}" from tracked files?',
-                                yesLabel: 'Delete',
+                              final confirm = await showDialog<bool>(
+                                context: parentContext,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Delete File?'),
+                                  content: Text('Remove "${file.nickname}" from tracked files?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                ),
                               );
 
                               if (!mounted) return;

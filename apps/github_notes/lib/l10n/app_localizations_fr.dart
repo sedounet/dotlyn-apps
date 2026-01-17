@@ -43,4 +43,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get content => 'Contenu';
+
+  @override
+  String get conflictDialogTitle => 'Conflit détecté';
+
+  @override
+  String get conflictDialogDescription =>
+      'Un conflit a été détecté entre votre fichier local et GitHub.';
+
+  @override
+  String get conflictFileExistsHeader =>
+      'Ce fichier existe déjà sur GitHub. Que souhaitez-vous faire ?';
+
+  @override
+  String get conflictBothModifiedHeader =>
+      'Des modifications ont été apportées à la fois localement et sur GitHub. Que souhaitez-vous faire pour résoudre ce conflit ?';
+
+  @override
+  String get conflictGenericHeader =>
+      'Un conflit a été détecté. Veuillez choisir comment procéder.';
+
+  @override
+  String get conflictFetchRemote => 'Importer depuis GitHub';
+
+  @override
+  String get conflictOverwriteRemote => 'Écraser sur GitHub';
+
+  @override
+  String get cannotDuplicateLinkedFile =>
+      'Impossible de dupliquer un fichier lié à GitHub';
+
+  @override
+  String get cannotDuplicateLinkedFileReason =>
+      'Ce fichier est déjà synchronisé avec GitHub. Vous ne pouvez avoir qu\'une seule instance locale par fichier GitHub. Envisagez de créer un nouveau fichier à la place.';
 }

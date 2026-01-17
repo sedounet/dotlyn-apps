@@ -47,5 +47,41 @@
   "content": "Content",
   "@content": {
     "description": "Content label"
+  },
+  "conflictDialogTitle": "Conflict detected",
+  "@conflictDialogTitle": {
+    "description": "Title for the conflict dialog"
+  },
+  "conflictDialogDescription": "A conflict was detected between your local file and GitHub.",
+  "@conflictDialogDescription": {
+    "description": "Description for the conflict dialog"
+  },
+  "conflictFileExistsHeader": "This file already exists on GitHub. What would you like to do?",
+  "@conflictFileExistsHeader": {
+    "description": "Header for add-file conflict when file exists remotely"
+  },
+  "conflictBothModifiedHeader": "Changes have been made both locally and on GitHub. How would you like to resolve this conflict?",
+  "@conflictBothModifiedHeader": {
+    "description": "Header for conflict when both local and remote have changes"
+  },
+  "conflictGenericHeader": "A conflict was detected. Please choose how to proceed.",
+  "@conflictGenericHeader": {
+    "description": "Generic header for conflict dialog"
+  },
+  "conflictFetchRemote": "Fetch remote",
+  "@conflictFetchRemote": {
+    "description": "Button label to fetch remote version"
+  },
+  "conflictOverwriteRemote": "Overwrite GitHub",
+  "@conflictOverwriteRemote": {
+    "description": "Button label to overwrite remote file"
+  },
+  "cannotDuplicateLinkedFile": "Cannot duplicate file linked to GitHub",
+  "@cannotDuplicateLinkedFile": {
+    "description": "Error message when trying to duplicate a file that is linked to GitHub"
+  },
+  "cannotDuplicateLinkedFileReason": "This file is already synced with GitHub. You can only have one local instance per GitHub file. Consider creating a new file instead.",
+  "@cannotDuplicateLinkedFileReason": {
+    "description": "Explanation for why a linked file cannot be duplicated"
   }
 }

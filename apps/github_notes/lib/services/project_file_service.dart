@@ -45,12 +45,18 @@ class ProjectFileService {
     required String path,
     required String nickname,
   }) async {
+    // Lire la valeur actuelle de createdAt
+    final existing = await getFileById(id);
+    if (existing == null) {
+      throw Exception('File not found for update: $id');
+    }
     final entry = db.ProjectFilesCompanion(
       id: drift.Value(id),
       owner: drift.Value(owner),
       repo: drift.Value(repo),
       path: drift.Value(path),
       nickname: drift.Value(nickname),
+      createdAt: drift.Value(existing.createdAt),
       updatedAt: drift.Value(DateTime.now()),
     );
     return _database.update(_database.projectFiles).replace(entry);
@@ -82,11 +88,18 @@ class ProjectFileService {
     required String owner,
     required String repo,
     required String path,
+    int? excludeId, // For edits: ignore this file ID
   }) async {
     final query = _database.select(_database.projectFiles)
       ..where((t) => t.owner.equals(owner) & t.repo.equals(repo) & t.path.equals(path));
-    final existing = await query.getSingleOrNull();
-    return existing != null;
+    final results = await query.get();
+
+    if (excludeId == null) {
+      return results.isNotEmpty;
+    }
+
+    // Exclude the given ID (for editing)
+    return results.any((f) => f.id != excludeId);
   }
 
   /// Get file content by project file ID
@@ -104,12 +117,20 @@ class ProjectFileService {
     required int projectFileId,
     required String content,
     String? githubSha,
+    bool isImportedFromGitHub = false,
   }) async {
     final now = DateTime.now();
+
+    // If importing from GitHub with a SHA, status is "synced"
+    // Otherwise, default to "pending"
+    final status = (isImportedFromGitHub && githubSha != null) ? 'synced' : 'pending';
+
     final entry = db.FileContentsCompanion(
       projectFileId: drift.Value(projectFileId),
       content: drift.Value(content),
       githubSha: githubSha != null ? drift.Value(githubSha) : const drift.Value.absent(),
+      syncStatus: drift.Value(status),
+      lastSyncAt: drift.Value(now),
       localModifiedAt: drift.Value(now),
     );
     return _database.into(_database.fileContents).insert(entry);

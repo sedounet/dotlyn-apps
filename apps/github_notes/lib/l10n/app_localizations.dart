@@ -169,6 +169,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content'**
   String get content;
+
+  /// Title for the conflict dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict detected'**
+  String get conflictDialogTitle;
+
+  /// Description for the conflict dialog
+  ///
+  /// In en, this message translates to:
+  /// **'A conflict was detected between your local file and GitHub.'**
+  String get conflictDialogDescription;
+
+  /// Header for add-file conflict when file exists remotely
+  ///
+  /// In en, this message translates to:
+  /// **'This file already exists on GitHub. What would you like to do?'**
+  String get conflictFileExistsHeader;
+
+  /// Header for conflict when both local and remote have changes
+  ///
+  /// In en, this message translates to:
+  /// **'Changes have been made both locally and on GitHub. How would you like to resolve this conflict?'**
+  String get conflictBothModifiedHeader;
+
+  /// Generic header for conflict dialog
+  ///
+  /// In en, this message translates to:
+  /// **'A conflict was detected. Please choose how to proceed.'**
+  String get conflictGenericHeader;
+
+  /// Button label to fetch remote version
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch remote'**
+  String get conflictFetchRemote;
+
+  /// Button label to overwrite remote file
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite GitHub'**
+  String get conflictOverwriteRemote;
+
+  /// Error message when trying to duplicate a file that is linked to GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot duplicate file linked to GitHub'**
+  String get cannotDuplicateLinkedFile;
+
+  /// Explanation for why a linked file cannot be duplicated
+  ///
+  /// In en, this message translates to:
+  /// **'This file is already synced with GitHub. You can only have one local instance per GitHub file. Consider creating a new file instead.'**
+  String get cannotDuplicateLinkedFileReason;
 }
 
 class _AppLocalizationsDelegate

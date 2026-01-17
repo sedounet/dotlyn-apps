@@ -56,8 +56,7 @@ class FileCard extends ConsumerWidget {
                         if (value == 'duplicate') onDuplicate?.call(file);
                       },
                       itemBuilder: (_) => const [
-                        PopupMenuItem(
-                            value: 'duplicate', child: Text('Duplicate')),
+                        PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
                       ],
                     ),
                   ],
@@ -78,11 +77,41 @@ class FileCard extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(height: 4),
+              fileContentAsync.when(
+                data: (content) {
+                  if (content == null) return const SizedBox.shrink();
+                  final date = content.lastSyncAt;
+                  final formattedDate = _formatRelativeDate(date);
+                  return Text(
+                    formattedDate,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: DotlynColors.secondary.withAlpha(102),
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic,
+                        ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  static String _formatRelativeDate(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
+    return '${date.day}/${date.month}/${date.year}';
   }
 }
 
@@ -102,6 +131,11 @@ class _SyncStatusBadge extends StatelessWidget {
         color = Colors.green;
         icon = Icons.check_circle;
         label = 'Synced';
+        break;
+      case 'pending':
+        color = Colors.orange;
+        icon = Icons.folder;
+        label = 'Local';
         break;
       case 'modified':
         color = DotlynColors.primary;
