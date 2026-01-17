@@ -28,6 +28,10 @@
   "@save": {
     "description": "Save button"
   },
+  "copilotTest": "Copilot test string (en)",
+  "@copilotTest": {
+    "description": "Test string for Copilot i18n setup verification"
+  },
   "cancel": "Cancel",
   "@cancel": {
     "description": "Cancel button"

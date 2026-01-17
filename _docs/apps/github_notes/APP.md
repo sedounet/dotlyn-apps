@@ -57,9 +57,9 @@ RÈGLES :
 - Recently Done = garder max 15 items ou 2 semaines
 -->
 
-### 🚧 In Progress (max 3-5 items actifs)
 
-(empty)
+### 🚧 In Progress (max 3-5 items actifs)
+- [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md) — branch: feat/github_notes-i18n-setup, started: 2026-01-17, ETA: 2026-01-17
 
 ---
 
@@ -70,10 +70,11 @@ RÈGLES :
 
 ---
 
+
 ### 🟡 P2 — Prochaine version (v0.2)
 
 **Localization & Standards** :
-- [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md)
+<!-- #12 déplacé en In Progress -->
 
 **UX Improvements** :
 (empty)
