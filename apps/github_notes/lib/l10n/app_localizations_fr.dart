@@ -156,6 +156,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get duplicate => 'Dupliquer';
 
   @override
+  String get edit => 'Modifier';
+
+  @override
   String get settingsTitle => 'Paramètres';
 
   @override

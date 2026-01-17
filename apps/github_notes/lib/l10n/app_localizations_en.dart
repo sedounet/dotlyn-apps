@@ -156,6 +156,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicate => 'Duplicate';
 
   @override
+  String get edit => 'Edit';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

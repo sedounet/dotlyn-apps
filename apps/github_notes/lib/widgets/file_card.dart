@@ -4,6 +4,7 @@ import 'package:dotlyn_ui/dotlyn_ui.dart';
 import 'package:github_notes/providers/database_provider.dart';
 import 'package:github_notes/data/database/app_database.dart' as db;
 import '../l10n/app_localizations.dart';
+import 'package:github_notes/widgets/card_menu.dart';
 
 class FileCard extends ConsumerWidget {
   final db.ProjectFile file;
@@ -52,15 +53,13 @@ class FileCard extends ConsumerWidget {
                   ),
                   if (onDuplicate != null) ...[
                     const SizedBox(width: 8),
-                    PopupMenuButton<String>(
-                      tooltip: 'Actions',
-                      onSelected: (value) {
-                        if (value == 'duplicate') onDuplicate?.call(file);
-                      },
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                            value: 'duplicate',
-                            child: Text(AppLocalizations.of(context)!.duplicate)),
+                    CardMenu(
+                      actions: [
+                        CardMenuAction(
+                          labelBuilder: (ctx) => AppLocalizations.of(ctx)!.duplicate,
+                          onSelected: () => onDuplicate?.call(file),
+                          icon: Icons.copy,
+                        ),
                       ],
                     ),
                   ],

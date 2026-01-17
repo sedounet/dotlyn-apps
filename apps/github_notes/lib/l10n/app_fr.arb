@@ -71,6 +71,7 @@
   "pathRequired": "Veuillez saisir le chemin du fichier",
   "nicknameRequired": "Veuillez saisir un surnom",
   "duplicate": "Dupliquer",
+  "edit": "Modifier",
   "save": "Enregistrer",
   "settingsTitle": "Paramètres",
   "testToken": "Tester le token",
