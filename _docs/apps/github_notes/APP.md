@@ -63,9 +63,9 @@ _Aucun item en cours (app stable v0.1)._
 
 ---
 
-### 🔴 P1 — ASAP (Post-release fixes)
 
-_Aucun bug bloquant pour l'instant._
+### 🔴 P1 — ASAP (Post-release fixes)
+- [ ] #18: Impossible d'enregistrer la modification d'un fichier dans les paramètres (bouton Save inactif, modif non prise en compte)
 
 ---
 
@@ -76,6 +76,13 @@ _Aucun bug bloquant pour l'instant._
 - [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md)
 - [ ] #13: Three-way merge option dans ConflictDialog (actuellement Keep Local/Keep Remote seulement)
 - [ ] #14: Extract dialog helpers (9x showDialog patterns en duplication)
+
+#22: UI: Afficher statut (local/sync/modifié) sur chaque fichier dans la liste (home screen)
+#23: UI: Changer "modifié" par "local" si le fichier n'est pas encore synchronisé (auto-save)
+#24: UI: Sur les cartes de fichiers, ajouter un menu (icône copier-coller, éditer, supprimer) dans les trois petits points (duplicate menu)
+#25: UI: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
+#26: UI: Dans Settings, lister les fichiers avec le même menu que sur home (refactor widget)
+#27: Workflow: Lors de la duplication d'un fichier, permettre de garder le même alias local (nom local)
 
 ---
 
@@ -101,6 +108,7 @@ _Aucun bug bloquant pour l'instant._
 
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
+- [x] #19: Harmonised conflict menu for add-file + duplicate prevention + status badges — Done 2026-01-17 (commit 6b5c308)
 - [x] #15: Token visibility default OFF; auto-hide on exiting Settings — Done 2026-01-11 (commit a0831b6)
 - [x] #16: Fix first-click Sync race (wait token + single retry) — Done 2026-01-11 (commit a0831b6)
 - [x] #17: Floating SnackBar above bottom action buttons — Done 2026-01-11 (commit a0831b6)
@@ -260,10 +268,10 @@ _Aucun bug bloquant pour l'instant._
 - [x] **Atomization Phase 1**: Extract SyncService, TokenService, dialogs — **Done 2026-01-10** (commit d6c7ef6)
 - [x] **Atomization Phase 2**: Extract ProjectFileService, refactor settings — **Done 2026-01-10** (commit 773fda1)
 - [x] **Atomization Phase 3**: Extract AutoSaveMixin — **Done 2026-01-10** (commit 63a8032)
-- [x] Simplify GitHub error messages (404 → concise user-facing text) — **Done 2026-01-11**
-- [x] Offline tracked-file creation fallback (add locally on network error) — **Done 2026-01-11**
-- [x] Device release smoke tests (create/edit/sync/conflict/offline) — **Done 2026-01-11** ✅
-- [x] Use githubServiceProvider consistently (replace 3x direct instantiation) — **Done 2026-01-10** (commit NEW)
+- [x] Simplifier les messages d'erreur GitHub (404 → texte utilisateur concis) — **Done 2026-01-11**
+- [x] Création de fichier hors ligne en cas d'erreur réseau (ajout local sur erreur) — **Done 2026-01-11**
+- [x] Tests de validation sur appareil (création/édition/sync/conflit/hors ligne) — **Done 2026-01-11** ✅
+- [x] Utiliser githubServiceProvider de manière cohérente (remplacer 3x instanciation directe) — **Done 2026-01-10** (commit NEW)
 - [x] **PHASE 1 ATOMIZATION** (2026-01-10, commit d6c7ef6) :
   - Extracted `SyncService` class (210 → 80 line reduction in file_editor_screen._syncToGitHub)
   - Created sealed class `SyncResult` with pattern matching (.when() extension)
@@ -284,38 +292,14 @@ _Aucun bug bloquant pour l'instant._
   - All phases compile clean: 0 errors, 5 info warnings only
 - [ ] Extract dialog helpers (9x showDialog patterns)
 
-### 🔵 P3 — Futur (roadmap long terme)
+### 🅿️ Parking Lot (idées organiques)
+- Idée pendant #5 : améliorer dialog X
+- Observation UX : bouton Y plus visible
 
-**v0.3 — Early Standards** (prioritaire, voir APP_STANDARDS.md) :
-- [ ] **Localization (i18n)** : ARB files en/fr, externaliser strings
-- [ ] **Analytics** : service abstraction + events clés + opt-out UI
-- [ ] **Ads Placeholder** : widget banner 50-60dp + feature flag
-
-**v0.4 — Auto-sync & Conflict UX** :
-- [ ] Auto-sync optionnel (toggle + interval)
-- [ ] Background sync service (WorkManager)
-- [ ] Conflict resolution UI améliorée (diff view)
-- [ ] Historique versions locales (rollback)
-
-**v0.5 — OAuth & Multi-compte** :
-- [ ] OAuth GitHub flow (remplace PAT)
-- [ ] Stockage tokens par compte
-- [ ] Account switcher UI
-- [ ] Support orgas GitHub
-
-**v1.0 — Release Publique** :
-- [ ] Tests complets (>80% coverage) + CI/CD
-- [ ] Privacy policy + Terms
-- [ ] Store listings (screenshots, descriptions)
-- [ ] Analytics opérationnelles + Ads SDK
-
-**Autres (optionnel)** :
-- [ ] Preview markdown avancé (flutter_markdown renderer)
-- [ ] Édition collaborative (notif si autre commit)
-- [ ] Export local (.md file)
-- [ ] Widget home screen (quick add note)
-- [ ] Search/filter fichiers
-- [ ] Tags/labels pour organisation
+# UI/UX: Améliorer affichage statut fichier (local/sync/modifié)
+# UI: Ajouter date de dernière modification sur carte fichier
+# UI: Uniformiser menu fichier (home/settings)
+# Workflow: Duplication fichier avec alias identique possible
 
 ---
 

@@ -11,12 +11,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased — Work in progress
 
+- **Harmonised conflict menu for add-file workflow** — Adding a file that already exists on GitHub now shows contextual conflict resolution menu instead of silently overwriting.
+  - Technical: `ConflictDialog` widget with 3 situation types (fileExistsRemote, bothModified, generic), integrated in `settings_screen.dart` after GitHub API check, with proper dialog closure ordering and snackbar display.
+  - User benefit: Clear menu with "Fetch Remote", "Overwrite", "Cancel" options + localized messages (en/fr).
+  - (commit 6b5c308, closes #19)
+
+- **Duplicate prevention for GitHub-linked files** — Attempting to add a file that is already linked to GitHub shows a clear error dialog instead of creating duplicate.
+  - Technical: Check githubSha before adding file, show localized error dialog with explanation.
+  - User benefit: Prevents confusing duplicate file states and sync conflicts.
+  - (commit 6b5c308)
+
+- **File status badges: "Local" for new files** — Files created locally (not yet synced to GitHub) now show "Local" status badge with folder icon and orange color.
+  - Technical: Added "pending" case in `_SyncStatusBadge` switch, renamed label to "Local" for clarity.
+  - User benefit: Clear visual indication of file sync state (Local/Synced/Modified).
+  - (commit 6b5c308)
+
+- **Improved 404 error message for sync failures** — When syncing to a non-existent remote path, user now sees "Verify owner/repo/path or save locally first" instead of generic "Choose to create it".
+  - Technical: Better UX guidance in `file_editor_screen.dart` error message.
+  - User benefit: Clearer understanding that the path might be incorrect, not that file creation failed.
+  - (commit 6b5c308)
+
+- **Auto-create FileContent for local files** — When adding files that don't exist on GitHub, FileContent is now automatically created with "pending" status instead of leaving it empty.
+  - Technical: Added FileContent creation in `settings_screen.dart` for local-only files with proper status assignment.
+  - User benefit: File status badges display correctly for all files, no more "unknown" states.
+  - (commit 6b5c308)
+
+- **Imported files marked as "synced"** — Files fetched from GitHub now correctly show "Synced" status instead of "Pending".
+  - Technical: Added `isImportedFromGitHub` parameter to `saveFileContent()`, logic: if imported + has SHA, status = "synced".
+  - User benefit: Distinguishes between imported files (synced) and locally-created files (pending).
+  - (commit 6b5c308)
+
+---
+
+### Previous work (v0.1)
+
 - **Hidden token by default** — GitHub token input is hidden by default and automatically hidden when leaving Settings.
   - Technical: `settings_screen.dart` now defaults `_showToken = false` and hides token on dispose.
   - Benefit: Reduces accidental token exposure in shared/dev devices.
 
 - **First-click sync retry** — Defensively retry first sync after short delay when token/loading latency or transient network errors occur.
-  - Technical: `file_editor_screen.dart` waits briefly for `githubTokenProvider` on first click, passes a `GitHubService(token: ...)` override to `SyncService`, and performs one retry after ~800ms when receiving transient `SyncError`.
+  - Technical: `file_editor_screen.dart` waits briefly for `githubTokenProvider` on first click, and performs one retry after ~800ms when receiving transient `SyncError`.
   - Benefit: Reduces user-facing failures on initial sync after app start.
 
 - **Floating SnackBar positioned above action buttons** — Snackbars are now floating and placed above the bottom action bar for better visibility.
