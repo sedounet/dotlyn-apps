@@ -65,7 +65,8 @@ RÈGLES :
 
 
 ### 🔴 P1 — ASAP (Post-release fixes)
-- [ ] #18: Impossible d'enregistrer la modification d'un fichier dans les paramètres (bouton Save inactif, modif non prise en compte)
+
+(empty)
 
 ---
 
@@ -75,7 +76,7 @@ RÈGLES :
 - [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md)
 
 **UX Improvements** :
-- [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
+(empty)
 - [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
 
 **Code Quality & Refactoring** :
@@ -114,6 +115,8 @@ RÈGLES :
 
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
+- [x] #25: Afficher date de dernière sync sur carte fichier (format relatif: "2h ago") — Done 2026-01-17 (commit abd7382)
+- [x] #18: Fix save button Settings (impossible d'enregistrer modifications) — Done 2026-01-17 (commit abd7382)
 - [x] #27: Smart file duplication: intelligent alias suggestion (_2, _3...) + allow duplication with same owner/repo/path — Done 2026-01-17 (commit 3b1e4a2)
 - [x] #28: Duplication GitHub — Bloqué si owner/repo/path identique ; smart alias recommandée pour copies — Done 2026-01-17 (commit cfa7fd0)
 - [x] #19: Harmonised conflict menu for add-file + duplicate prevention + status badges — Done 2026-01-17 (commit 6b5c308)
