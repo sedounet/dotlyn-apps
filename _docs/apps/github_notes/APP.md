@@ -77,7 +77,6 @@ RÈGLES :
 
 **UX Improvements** :
 (empty)
-- [ ] #25: Afficher la date de dernière modification/sync sur la carte fichier (sous le nom)
 
 **Code Quality & Refactoring** :
 - [ ] #11: Refactor Settings avec ExpansionTile pour sections foldables
