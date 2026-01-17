@@ -59,8 +59,8 @@ RÈGLES :
 
 
 ### 🚧 In Progress (max 3-5 items actifs)
-- [x] #12: Localization (i18n) — Done 2026-01-17 (commit 66c9e3e)
 - [ ] #29: UI — Move last sync date to right under status labels; increase font 10%; improve colors for readability — branch: feat/github_notes-filecard-date, started: 2026-01-17, ETA: 2026-01-17
+- [ ] #34: Add CardMenu widget & unify file card menus — branch: feat/github_notes-card-menu, started: 2026-01-17, ETA: 2026-01-17
 
 ---
 
@@ -87,9 +87,8 @@ RÈGLES :
 - [ ] #26: UI: Dans Settings, lister les fichiers avec le même menu que sur home (refactor widget)
 
 **Completed / Obsolete (closed in P1 #19)** :
-- [x] #22: UI: Afficher statut (local/sync/modifié) sur chaque fichier — Done (P1 #19: status badges implemented)
-- [x] #23: UI: Changer "modifié" par "local" si le fichier n'est pas encore synchronisé — Done (P1 #19: "Local" badge)
-- [x] #24: UI: Menu 3 petits points sur cartes fichiers — Done (P1 #19: popup menu exists)
+
+
 
 ---
 
@@ -117,6 +116,9 @@ RÈGLES :
 <!-- Format: [x] #N: Description — Done YYYY-MM-DD (commit SHA7CHAR) -->
 
 - [x] #25: Afficher date de dernière sync sur carte fichier (format relatif: "2h ago") — Done 2026-01-17 (commit abd7382)
+- [x] #22: UI: Afficher statut (local/sync/modifié) sur chaque fichier — Done 2026-01-17 (commit 6b5c308)
+- [x] #23: UI: Changer "modifié" par "local" si le fichier n'est pas encore synchronisé — Done 2026-01-17 (commit 6b5c308)
+- [x] #24: UI: Menu 3 petits points sur cartes fichiers — Done 2026-01-17 (commit 6b5c308)
 - [x] #18: Fix save button Settings (impossible d'enregistrer modifications) — Done 2026-01-17 (commit abd7382)
 - [x] #27: Smart file duplication: intelligent alias suggestion (_2, _3...) + allow duplication with same owner/repo/path — Done 2026-01-17 (commit 3b1e4a2)
 - [x] #28: Duplication GitHub — Bloqué si owner/repo/path identique ; smart alias recommandée pour copies — Done 2026-01-17 (commit cfa7fd0)
