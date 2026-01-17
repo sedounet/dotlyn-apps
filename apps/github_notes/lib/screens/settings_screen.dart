@@ -241,6 +241,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               final path = pathController.text.trim();
               final nickname = nicknameController.text.trim();
 
+              // Check if this owner/repo/path already exists (prevent duplication)
+              final fileService = ref.read(projectFileServiceProvider);
+              // IMPORTANT: If we're duplicating (prefill != null), we DON'T exclude it
+              // We want to BLOCK if owner/repo/path already exist
+              // Only exclude for edits where we're modifying the same file
+              final alreadyExists = await fileService.fileExists(
+                owner: owner,
+                repo: repo,
+                path: path,
+                excludeId: null, // Never exclude — we want to prevent exact duplicates
+              );
+
+              if (alreadyExists) {
+                SnackHelper.showError(
+                  parentContext,
+                  'This GitHub path ($owner/$repo/$path) is already tracked. Change the path or filename to create a duplicate.',
+                );
+                return;
+              }
+
               // Check if file exists on GitHub (UX: propose harmonized conflict menu)
               try {
                 final githubService = ref.read(githubServiceProvider);
