@@ -135,12 +135,14 @@ class FileCard extends ConsumerWidget {
     final now = DateTime.now();
     final diff = now.difference(date);
 
-    if (diff.inSeconds < 60) return AppLocalizations.of(context)!.justNow;
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
-    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()}w ago';
-    return '${date.day}/${date.month}/${date.year}';
+    return switch (diff) {
+      Duration(inSeconds: < 60) => AppLocalizations.of(context)!.justNow,
+      Duration(inMinutes: < 60) => '${diff.inMinutes}m ago',
+      Duration(inHours: < 24) => '${diff.inHours}h ago',
+      Duration(inDays: < 7) => '${diff.inDays}d ago',
+      Duration(inDays: < 30) => '${(diff.inDays / 7).floor()}w ago',
+      _ => '${date.day}/${date.month}/${date.year}',
+    };
   }
 }
 
