@@ -59,7 +59,8 @@ RÈGLES :
 
 
 ### 🚧 In Progress (max 3-5 items actifs)
-- [ ] #12: Localization (i18n) — ARB files en/fr (APP_STANDARDS.md) — branch: feat/github_notes-i18n-setup, started: 2026-01-17, ETA: 2026-01-17
+- [x] #12: Localization (i18n) — Done 2026-01-17 (commit 66c9e3e)
+- [ ] #29: UI — Move last sync date to right under status labels; increase font 10%; improve colors for readability — branch: feat/github_notes-filecard-date, started: 2026-01-17, ETA: 2026-01-17
 
 ---
 
